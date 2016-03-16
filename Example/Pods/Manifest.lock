@@ -1,0 +1,14 @@
+PODS:
+  - JTAppleCalendar (0.1.0)
+
+DEPENDENCIES:
+  - JTAppleCalendar (from `../`)
+
+EXTERNAL SOURCES:
+  JTAppleCalendar:
+    :path: ../
+
+SPEC CHECKSUMS:
+  JTAppleCalendar: 574ae0134e45a5a2f6fd6c5f9dd5dacbe82fc92a
+
+COCOAPODS: 0.39.0

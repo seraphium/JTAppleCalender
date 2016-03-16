@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = "JTAppleCalendar"
   s.version          = "0.1.0"
-  s.summary          = "A short description of JTAppleCalendar."
+  s.summary          = "This is the Apple Calendar control Apple whished they made."
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -17,9 +17,15 @@ Pod::Spec.new do |s|
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!  
   s.description      = <<-DESC
+This should be the first and last calendar control you ever try.
+This calendar is different from others in that it is highly configurable with minimal code.
+The problem with other calendars is they try to cram every feature into it hoping it will be enough for the programmer.
+This is an incorrect way to build controls. Take a look at UITableView; do you see Apple building what they think you want
+the UITableView to look like? No. So neither should we. Interested? Try a pod install today. Let's make this the only calendar
+pod any will ever want to try.
                        DESC
 
-  s.homepage         = "https://github.com/<GITHUB_USERNAME>/JTAppleCalendar"
+  s.homepage         = "https://github.com/patchthecode/JTAppleCalendar"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
   s.author           = { "JayT" => "patchthecode@gmail.com" }
