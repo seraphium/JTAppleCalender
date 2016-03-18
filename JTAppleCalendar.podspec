@@ -29,7 +29,7 @@ pod any will ever want to try.
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
   s.author           = { "JayT" => "patchthecode@gmail.com" }
-  s.source           = { :git => "https://github.com/<GITHUB_USERNAME>/JTAppleCalendar.git", :tag => s.version.to_s }
+  s.source           = { :git => "https://github.com/patchthecode/JTAppleCalendar.git", :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.platform     = :ios, '8.0'
