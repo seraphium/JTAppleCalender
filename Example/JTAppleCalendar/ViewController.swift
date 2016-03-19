@@ -13,7 +13,7 @@ import JTAppleCalendar
 class ViewController: UIViewController {
 
     
-    @IBOutlet weak var calendarView: JTCalendarView!
+    @IBOutlet weak var calendarView: JTAppleCalendarView!
     @IBOutlet weak var monthLabel: UILabel!
     
     @IBAction func reloadCalendarView(sender: UIButton) {
@@ -28,30 +28,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
 
-        
         calendarView.dataSource = self
         calendarView.delegate = self
-
-        calendarView.cellInset = CGPoint(x: 0.0, y: 0.0)
         calendarView.registerCellViewXib(fileName: "cellView")
-        calendarView.direction = .Horizontal
-        
-        
-
-        
-        let formatter = NSDateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        var date = formatter.dateFromString("2016-01-01")!
-        
-        
-
-        date = formatter.dateFromString("2016-03-01")!
-
-        calendarView.numberOfRowsPerMonth = 6
-        
-        self.calendarView.scrollToDate(date, animateScroll: false, completionHandler: nil)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -69,13 +49,12 @@ class ViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.calendarView.frame = self.calendarView.frame
+        calendarView.frame = calendarView.frame
     }
-
 }
 
-// MARK : KDCalendarDelegate
-extension ViewController: JTCalendarViewDataSource, JTCalendarViewDelegate {
+// MARK : JTAppleCalendarDelegate
+extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDelegate {
     
     func configureCalendar() -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar) {
         let startDateComponents = NSDateComponents()
@@ -95,25 +74,20 @@ extension ViewController: JTCalendarViewDataSource, JTCalendarViewDelegate {
         return (startDate: firstDate!, endDate: secondDate!, calendar: calendar)
     }
 
-    func calendar<cell : UIView where cell : protocol<JTDayCellViewProtocol>>(
-        calendar: JTCalendarView,
-        isAboutToDisplayCell cell: cell,
-        date: NSDate,
-        cellState: CellState)
-    {
-        (cell as? CellView)?.setupCellBeforeDisplay(cellState, userCellState: nil, date: date)
+    func calendar(calendar: JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date: NSDate, cellState: CellState) {
+        (cell as! CellView).setupCellBeforeDisplay(cellState, date: date)
     }
 
-    func calendar(calendar: JTCalendarView, didDeselectDate date: NSDate, cell: JTDayCellView?, cellState: CellState) {
+    func calendar(calendar: JTAppleCalendarView, didDeselectDate date: NSDate, cell: JTAppleDayCellView?, cellState: CellState) {
         (cell as? CellView)?.cellSelectionChanged(cellState)
     }
     
-    func calendar(calendar: JTCalendarView, didSelectDate date: NSDate, cell: JTDayCellView, cellState: CellState) {
+    func calendar(calendar: JTAppleCalendarView, didSelectDate date: NSDate, cell: JTAppleDayCellView, cellState: CellState) {
         (cell as? CellView)?.cellSelectionChanged(cellState)
         print( date)
     }
     
-    func calendar(calendar: JTCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {
+    func calendar(calendar: JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {
         if let _ = date, _ = endingWithDate {
             let  gmtCalendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
             gmtCalendar.timeZone = NSTimeZone(abbreviation: "GMT")!
@@ -123,7 +97,6 @@ extension ViewController: JTCalendarViewDataSource, JTCalendarViewDelegate {
             let year = NSCalendar.currentCalendar().component(NSCalendarUnit.Year, fromDate: date!)
             monthLabel.text = monthName + " " + String(year)
         }
-        
     }
 }
 

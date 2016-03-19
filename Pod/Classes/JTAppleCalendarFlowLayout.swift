@@ -1,5 +1,5 @@
 //
-//  JTCalendarFlowLayout.swift
+//  JTAppleCalendarFlowLayout.swift
 //  JTAppleCalendar
 //
 //  Created by Jay Thomas on 2016-03-01.
@@ -7,7 +7,7 @@
 //
 import UIKit
 
-public class JTCalendarFlowLayout: UICollectionViewFlowLayout {
+public class JTAppleCalendarFlowLayout: UICollectionViewFlowLayout {
     var pathForFocusItem: NSIndexPath = NSIndexPath(forItem: 0, inSection: 0)
     
     

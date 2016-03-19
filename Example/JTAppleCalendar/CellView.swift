@@ -12,12 +12,8 @@ import UIKit
 import JTAppleCalendar
 
 
-struct UserDataCellState {
-    let shouldDisplaySupplementraryView: Bool
-}
 
-
-class CellView: JTDayCellView {
+class CellView: JTAppleDayCellView {
     @IBInspectable var todayColor: UIColor!// = UIColor(red: 254.0/255.0, green: 73.0/255.0, blue: 64.0/255.0, alpha: 0.3)
     @IBInspectable var normalDayColor: UIColor! //UIColor(white: 0.0, alpha: 0.1)
     @IBOutlet var selectedView: CircleView!
@@ -40,7 +36,7 @@ class CellView: JTDayCellView {
         return f
     }()
     
-    func setupCellBeforeDisplay(cellState: CellState, userCellState: UserDataCellState?, date: NSDate) {
+    func setupCellBeforeDisplay(cellState: CellState, date: NSDate) {
         // Setup Cell text
         dayLabel.text =  cellState.text
         
@@ -66,7 +62,7 @@ class CellView: JTDayCellView {
             cellState.dateBelongsTo == .FollowingMonthWithinBoundary {
             self.hidden = false
         } else {
-            self.hidden = true
+            self.hidden = false
         }
     }
     

@@ -1,5 +1,5 @@
 //
-//  JTCalendarView.swift
+//  JTAppleCalendarView.swift
 //  JTAppleCalendar
 //
 //  Created by Jay Thomas on 2016-03-01.
@@ -36,37 +36,37 @@ public enum DaysOfWeek: Int {
     case Sunday = 7, Monday = 6, Tuesday = 5, Wednesday = 4, Thursday = 10, Friday = 9, Saturday = 8
 }
 
-public protocol JTCalendarViewDataSource {
+public protocol JTAppleCalendarViewDataSource {
     func configureCalendar() -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar)
 }
 
-public protocol JTCalendarViewDelegate {
+public protocol JTAppleCalendarViewDelegate {
     // Optional functions
-    func calendar(calendar : JTCalendarView, canSelectDate date : NSDate, cell: JTDayCellView, cellState: CellState) -> Bool
-    func calendar(calendar : JTCalendarView, canDeselectDate date : NSDate, cell: JTDayCellView, cellState: CellState) -> Bool
-    func calendar(calendar : JTCalendarView, didSelectDate date : NSDate, cell: JTDayCellView, cellState: CellState) -> Void
-    func calendar(calendar : JTCalendarView, didDeselectDate date : NSDate, cell: JTDayCellView?, cellState: CellState) -> Void
-    func calendar(calendar : JTCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) -> Void
-    func calendar<cell: UIView where cell:protocol<JTDayCellViewProtocol>>(calendar : JTCalendarView, isAboutToDisplayCell cell: cell, date:NSDate, cellState: CellState) -> Void
+    func calendar(calendar : JTAppleCalendarView, canSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
+    func calendar(calendar : JTAppleCalendarView, canDeselectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
+    func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Void
+    func calendar(calendar : JTAppleCalendarView, didDeselectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) -> Void
+    func calendar(calendar : JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) -> Void
+    func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) -> Void
 }
 
-public extension JTCalendarViewDelegate {
-    func calendar(calendar : JTCalendarView, canSelectDate date : NSDate, cell: JTDayCellView, cellState: CellState)->Bool {return true}
-    func calendar(calendar : JTCalendarView, canDeselectDate date : NSDate, cell: JTDayCellView, cellState: CellState)->Bool {return true}
-    func calendar(calendar : JTCalendarView, didSelectDate date : NSDate, cell: JTDayCellView, cellState: CellState) {}
-    func calendar(calendar : JTCalendarView, didDeselectDate date : NSDate, cell: JTDayCellView?, cellState: CellState) {}
-    func calendar(calendar : JTCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {}
-    func calendar<cell: UIView where cell:protocol<JTDayCellViewProtocol>>(calendar : JTCalendarView, isAboutToDisplayCell cell: cell, date:NSDate, cellState: CellState) {}
+public extension JTAppleCalendarViewDelegate {
+    func calendar(calendar : JTAppleCalendarView, canSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState)->Bool {return true}
+    func calendar(calendar : JTAppleCalendarView, canDeselectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState)->Bool {return true}
+    func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) {}
+    func calendar(calendar : JTAppleCalendarView, didDeselectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) {}
+    func calendar(calendar : JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {}
+    func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) {}
 }
 
 
-public class JTCalendarView: UIView {
+public class JTAppleCalendarView: UIView {
     public var bufferTop: CGFloat    = 0.0
     public var bufferBottom: CGFloat = 0.0
     public var animationsEnabled = true
     public var direction : UICollectionViewScrollDirection = .Horizontal {
         didSet {
-            if let layout = self.calendarView.collectionViewLayout as? JTCalendarFlowLayout {
+            if let layout = self.calendarView.collectionViewLayout as? JTAppleCalendarFlowLayout {
                 layout.scrollDirection = direction
                 self.calendarView.reloadData()
             }
@@ -86,8 +86,8 @@ public class JTCalendarView: UIView {
         }
     }
     
-    @IBInspectable public var dataSource : JTCalendarViewDataSource?
-    @IBInspectable public var delegate : JTCalendarViewDelegate?
+    @IBInspectable public var dataSource : JTAppleCalendarViewDataSource?
+    @IBInspectable public var delegate : JTAppleCalendarViewDelegate?
     
     private var scrollToDatePathOnRowChange: NSDate?
     private var delayedExecutionClosure: (()->Void)?
@@ -195,7 +195,7 @@ public class JTCalendarView: UIView {
     
     lazy var calendarView : UICollectionView = {
      
-        let layout = JTCalendarFlowLayout()
+        let layout = JTAppleCalendarFlowLayout()
         layout.scrollDirection = self.direction;
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
@@ -215,7 +215,7 @@ public class JTCalendarView: UIView {
     override public var frame: CGRect {
         didSet {
             self.calendarView.frame = CGRect(x:0.0, y:bufferTop, width: self.frame.size.width, height:self.frame.size.height - bufferBottom)
-            self.calendarView.collectionViewLayout = self.calendarView.collectionViewLayout as! JTCalendarFlowLayout // Needed?
+            self.calendarView.collectionViewLayout = self.calendarView.collectionViewLayout as! JTAppleCalendarFlowLayout // Needed?
             
             let layout = self.calendarView.collectionViewLayout as! UICollectionViewFlowLayout
             layout.itemSize = CGSizeMake(
@@ -241,7 +241,7 @@ public class JTCalendarView: UIView {
     // MARK: Setup
     func initialSetup() {
         self.clipsToBounds = true
-        self.calendarView.registerClass(JTCalendarDayCell.self, forCellWithReuseIdentifier: cellReuseIdentifier)
+        self.calendarView.registerClass(JTAppleDayCell.self, forCellWithReuseIdentifier: cellReuseIdentifier)
         self.addSubview(self.calendarView)
     }
     
@@ -532,7 +532,7 @@ public class JTCalendarView: UIView {
 }
 
 // MARK: scrollViewDelegates
-extension JTCalendarView: UIScrollViewDelegate {
+extension JTAppleCalendarView: UIScrollViewDelegate {
     
     public func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
         scrollViewDidEndDecelerating(scrollView)
@@ -549,7 +549,7 @@ extension JTCalendarView: UIScrollViewDelegate {
         let section = currentSectionPage
         
         // When ever the month/section is switched, let the flowlayout know which page it is on. This is needed in the event user switches orientatoin, we can use the index to snap back to correct position
-        (calendarView.collectionViewLayout as! JTCalendarFlowLayout).pathForFocusItem = NSIndexPath(forItem: 0, inSection: section)
+        (calendarView.collectionViewLayout as! JTAppleCalendarFlowLayout).pathForFocusItem = NSIndexPath(forItem: 0, inSection: section)
         
         let monthData = monthInfo[section]
 
@@ -567,7 +567,7 @@ extension JTCalendarView: UIScrollViewDelegate {
 }
 
 // MARK: public functions
-extension JTCalendarView {
+extension JTAppleCalendarView {
     private func cellStateFromIndexPath(indexPath: NSIndexPath)->CellState {
 
         let itemIndex = indexPath.item
@@ -671,10 +671,10 @@ extension JTCalendarView {
 }
 
 // MARK: CollectionView delegates
-extension JTCalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
+extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
     public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
-        let dayCell = collectionView.dequeueReusableCellWithReuseIdentifier(cellReuseIdentifier, forIndexPath: indexPath) as! JTCalendarDayCell
+        let dayCell = collectionView.dequeueReusableCellWithReuseIdentifier(cellReuseIdentifier, forIndexPath: indexPath) as! JTAppleDayCell
         
         let cellState = cellStateFromIndexPath(indexPath)
 
@@ -701,7 +701,7 @@ extension JTCalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
         if let
             dateUserSelected = dateFromPath(indexPath),
             delegate = self.delegate,
-            cell = collectionView.cellForItemAtIndexPath(indexPath) as? JTCalendarDayCell {
+            cell = collectionView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell {
                 if cell.cellView.hidden == false && cell.cellView.userInteractionEnabled == true{
                     let cellState = cellStateFromIndexPath(indexPath)
                     delegate.calendar(self, canSelectDate: dateUserSelected, cell: cell.cellView, cellState: cellState)
@@ -724,7 +724,7 @@ extension JTCalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
                 selectedIndexPaths.removeAtIndex(index)
                 selectedDates.removeAtIndex(index)
                 
-                let selectedCell = collectionView.cellForItemAtIndexPath(indexPath) as? JTCalendarDayCell // Cell may be nil if user switches month sections
+                let selectedCell = collectionView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell // Cell may be nil if user switches month sections
                 let cellState = cellStateFromIndexPath(indexPath) // Although the cell may be nil, we still want to return the cellstate
                 delegate.calendar(self, didDeselectDate: dateSelectedByUser!, cell: selectedCell?.cellView, cellState: cellState)
         }
@@ -736,7 +736,7 @@ extension JTCalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
             dateUserSelected = dateFromPath(indexPath),
             delegate = self.delegate {
                 
-                let cell = collectionView.cellForItemAtIndexPath(indexPath) as! JTCalendarDayCell
+                let cell = collectionView.cellForItemAtIndexPath(indexPath) as! JTAppleDayCell
                 let cellState = cellStateFromIndexPath(indexPath)
                 delegate.calendar(self, canDeselectDate: dateUserSelected, cell: cell.cellView, cellState:  cellState)
                 return true
@@ -756,7 +756,7 @@ extension JTCalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
                 selectedDates.append(dateSelectedByUser)
             }
             
-            let selectedCell = collectionView.cellForItemAtIndexPath(indexPath) as! JTCalendarDayCell
+            let selectedCell = collectionView.cellForItemAtIndexPath(indexPath) as! JTAppleDayCell
             let cellState = cellStateFromIndexPath(indexPath)
 
             delegate.calendar(self, didSelectDate: dateSelectedByUser, cell: selectedCell.cellView, cellState: cellState)

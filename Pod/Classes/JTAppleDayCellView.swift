@@ -1,5 +1,5 @@
 //
-//  JTDayCellView.swift
+//  JTAppleDayCellView.swift
 //  testApplicationCalendar
 //
 //  Created by Jay Thomas on 2016-03-05.
@@ -8,9 +8,9 @@
 
 
 
-public protocol JTDayCellViewProtocol {
+public protocol JTAppleDayCellViewProtocol {
 }
 
 
-public class JTDayCellView: UIView, JTDayCellViewProtocol {
+public class JTAppleDayCellView: UIView, JTAppleDayCellViewProtocol {
 }
