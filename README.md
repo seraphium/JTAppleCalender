@@ -14,7 +14,7 @@ JTAppleCalendar is the final iOS calendar control you will ever try.
 <li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>First Day of week</B> - pick anyday to be first day of the week</li>
 <li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Ability to add custom functionality easily</B> - change the color of weekends, customize days according to data in your data-source. You want it, you build it</li>
 
-<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <a href="http://cocoadocs.org/docsets/Alamofire">Complete Documentation</a></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <a href="https://github.com/patchthecode/JTAppleCalendar">Complete Documentation</a></li>
 
 
 ### **Requirements**
@@ -35,7 +35,7 @@ JTAppleCalendar is the final iOS calendar control you will ever try.
 
 CocoaPods is a dependency manager for Cocoa projects. You can install it with the following command:
 
-$ gem install cocoapods
+    $ gem install cocoapods
 
 
 
@@ -43,14 +43,14 @@ $ gem install cocoapods
 
 To integrate Alamofire into your Xcode project using CocoaPods, specify it in your Podfile:
 
-platform :ios, '8.0'
-use_frameworks!
+    platform :ios, '8.0'
+    use_frameworks!
 
-pod 'JTAppleCalendar', '~> 1.0'
+    pod 'JTAppleCalendar', '~> 1.0'
 
 Then, run the following command at your project location:
 
-$ pod install
+    $ pod install
 
 ### **The Problem**
 ---
@@ -90,10 +90,10 @@ class CellView: JTAppleDayCellView {
 ~~~
 
 * Finally head back to your *cellView.xib* file and make the outlet connections.
-- First,  select the view for the cell
-- Second, click on the identity inspector
-- Third, change the name of the class to one you just created: *CellView*
-- Then connect your UILabel to your `dayLabel` outlet
+    - First,  select the view for the cell
+    - Second, click on the identity inspector
+    - Third, change the name of the class to one you just created: *CellView*
+    - Then connect your UILabel to your `dayLabel` outlet
 
 ![Instructions](Images/setupInstructions.png)
 
