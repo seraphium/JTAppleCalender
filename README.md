@@ -1,10 +1,10 @@
-<p align="center">
-   <img src ="https://raw.githubusercontent.com/patchthecode/JTAppleCalendar/master/Images/JTAppleCalendar.jpg" />
-</p>
+![JTAppleCalendar](Images/JTAppleCalendar.jpg)
+
+The final iOS calendar control you'll ever try
+
 
 [![CI Status](http://img.shields.io/travis/JayT/JTAppleCalendar.svg?style=flat)](https://travis-ci.org/JayT/JTAppleCalendar) [![Version](https://img.shields.io/cocoapods/v/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![License](https://img.shields.io/cocoapods/l/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![Platform](https://img.shields.io/cocoapods/p/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar)
 
-JTAppleCalendar is the final iOS calendar control you will ever try.
 
 ### **Features**
 ---
