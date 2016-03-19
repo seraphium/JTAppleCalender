@@ -28,10 +28,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-
-        calendarView.dataSource = self
-        calendarView.delegate = self
-        calendarView.registerCellViewXib(fileName: "cellView")
+        self.calendarView.dataSource = self
+        self.calendarView.delegate = self
+        self.calendarView.registerCellViewXib(fileName: "CellView")
     }
     
     override func viewDidAppear(animated: Bool) {
