@@ -86,8 +86,8 @@ public class JTCalendarView: UIView {
         }
     }
     
-    public var dataSource : JTCalendarViewDataSource?
-    public var delegate : JTCalendarViewDelegate?
+    @IBInspectable public var dataSource : JTCalendarViewDataSource?
+    @IBInspectable public var delegate : JTCalendarViewDelegate?
     
     private var scrollToDatePathOnRowChange: NSDate?
     private var delayedExecutionClosure: (()->Void)?
