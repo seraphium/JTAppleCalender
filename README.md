@@ -1,6 +1,4 @@
-![JTAppleCalendar](https://img42.com/UIaPm+)
-
-![JTAppleCalendarT](Images/JTAppleCalendar.jpg)
+![JTAppleCalendar](Images/JTAppleCalendar.jpg)
 
 [![CI Status](http://img.shields.io/travis/JayT/JTAppleCalendar.svg?style=flat)](https://travis-ci.org/JayT/JTAppleCalendar) [![Version](https://img.shields.io/cocoapods/v/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![License](https://img.shields.io/cocoapods/l/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![Platform](https://img.shields.io/cocoapods/p/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar)
 
@@ -67,8 +65,9 @@ This is an incorrect way to build controls. Do you see Apple building their `UIT
 
 #### How to setup the calendar - Quick tutorial
 
-JTAppleCalendar is similar to setting up a UITableView with a custom cell. 
-![Calendar Overview](https://img42.com/bfqF6+)
+JTAppleCalendar is similar to setting up a UITableView with a custom cell.
+![Calendar Overview](Images/CalendarArchitecture.png)
+
 
 There are two parts
 ##### 1. The cell
@@ -78,8 +77,8 @@ Like a UITableView, the cell has 2 parts.
 * First let's create a new xib file. I'll call mine *CellView.xib*. I will setup the bare minimum; a single `UILabel` to show the date. It will be centered with Autolayout constraints. 
 
 > Do you need more views setup on your cell like: dots, animated selection view, custom images etc? No problem. Design the cell however you want. This repository has sample code which demonstrates how you can do this easily.
+![CellView](Images/cellXib.png)
 
-![CellView](https://img42.com/AmcXX+)
 
 * Second , create a custom class for the xib. The new class must be a subclass of `JTAppleDayCellView`. I called mine *CellView.swift*.  Inside the class setup the following:
 
@@ -96,7 +95,7 @@ class CellView: JTAppleDayCellView {
 - Third, change the name of the class to one you just created: *CellView*
 - Then connect your UILabel to your `dayLabel` outlet
 
-![CellView](https://img42.com/e4hkc+)
+![Instructions](Images/setupInstructions.png)
 
 ##### 2. The calendarView
 ---
