@@ -1,4 +1,4 @@
-![JTAppleCalendar](https://img42.com/UIaPm+)
+[JTAppleCalendar](Images/JTAppleCalendar.jpg)
 
 [![CI Status](http://img.shields.io/travis/JayT/JTAppleCalendar.svg?style=flat)](https://travis-ci.org/JayT/JTAppleCalendar) [![Version](https://img.shields.io/cocoapods/v/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![License](https://img.shields.io/cocoapods/l/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![Platform](https://img.shields.io/cocoapods/p/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar)
 
@@ -8,11 +8,11 @@ JTAppleCalendar is the final iOS calendar control you will ever try.
 ---
 
 <li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Boundary dates</B> - limit the calendar range to your liking</li>
-<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Week/month mode</B> - Show 1 row of weekdays. Or 2, 3, 4 or 6. Your choice</li>
-<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Custom cells</B> - make your day-cells look however you want, with what ever <I>extra</I> functionality you want</li>
-<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Custom calendarView</B> - make your calendar look however you want, with what ever <I>extra</I> functionality you want</li>
-<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>First Day of week</B> - Want it to be Sunday? maybe Monday? Pick which ever day you want</li>
-<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Ability to add custom functionality easily</B> - Change the color of weekends, customize days according to data in your data-source. You want it, you build it</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Week/month mode</B> - show 1 row of weekdays. Or 2, 3, 4 or 6</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Custom cells</B> - make your day-cells look however you want, with what ever functionality you want</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Custom calendarView</B> - make your calendar look however you want, with what ever functionality you want</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>First Day of week</B> - pick anyday to be first day of the week</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Ability to add custom functionality easily</B> - change the color of weekends, customize days according to data in your data-source. You want it, you build it</li>
 
 <li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <a href="http://cocoadocs.org/docsets/Alamofire">Complete Documentation</a></li>
 
@@ -56,7 +56,7 @@ $ pod install
 ---
 
 1. Apple has no calendar control.
-2. Other calendar projects on Github try to cram every feature their control, hoping it will be enough to meet the programmer's needs.
+2. Other calendar projects on Github try to cram every feature into their control, hoping it will meet the programmer's requirements.
 
 This is an incorrect way to build controls. Do you see Apple building their `UITableView` by guessing what they think you want the UITableView to look like? No. So neither should we. 
 
@@ -84,7 +84,7 @@ Like a UITableView, the cell has 2 parts.
 ~~~swift
 import JTAppleCalendar 
 class CellView: JTAppleDayCellView {
-@IBOutlet var dayLabel: UILabel!
+   @IBOutlet var dayLabel: UILabel!
 }
 ~~~
 
