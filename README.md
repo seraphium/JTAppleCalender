@@ -77,6 +77,8 @@ Like a UITableView, the cell has 2 parts.
 * First let's create a new xib file. I'll call mine *CellView.xib*. I will setup the bare minimum; a single `UILabel` to show the date. It will be centered with Autolayout constraints. 
 
 > Do you need more views setup on your cell like: dots, animated selection view, custom images etc? No problem. Design the cell however you want. This repository has sample code which demonstrates how you can do this easily.
+
+
 ![CellView](Images/cellXib.png)
 
 
