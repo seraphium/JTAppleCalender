@@ -9,14 +9,13 @@ The final iOS calendar control you'll ever try
 ### **Features**
 ---
 
-<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Boundary dates</B> - limit the calendar range to your liking</li>
-<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Week/month mode</B> - show 1 row of weekdays. Or 2, 3, 4 or 6</li>
-<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Custom cells</B> - make your day-cells look however you want, with what ever functionality you want</li>
-<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Custom calendarView</B> - make your calendar look however you want, with what ever functionality you want</li>
-<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>First Day of week</B> - pick anyday to be first day of the week</li>
-<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <B>Ability to add custom functionality easily</B> - change the color of weekends, customize days according to data in your data-source. You want it, you build it</li>
-
-<li class="task-list-item"><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <a href="https://github.com/patchthecode/JTAppleCalendar">Complete Documentation</a></li>
+- [x] Boundary dates - limit the calendar date range
+- [x] Week/month mode - show 1 row of weekdays. Or 2, 3, 4 or 6
+- [x] Custom cells - make your day-cells look however you want, with any functionality you want
+- [x] Custom calendar view - make your calendar look however you want, with what ever functionality you want
+- [x] First Day of week - pick anyday to be first day of the week
+- [x] Ability to add custom functionality easily - change the color of weekends, customize days according to data in your data-source. You want it, you build it
+- [x] [Complete Documentation](http://cocoadocs.org/docsets/JTAppleCalendar)
 
 
 ### **Requirements**
@@ -45,14 +44,18 @@ CocoaPods is a dependency manager for Cocoa projects. You can install it with th
 
 To integrate JTAppleCalendar into your Xcode project using CocoaPods, specify it in your Podfile:
 
+```ruby
     platform :ios, '8.0'
     use_frameworks!
 
     pod 'JTAppleCalendar', '~> 1.0'
+```
 
 Then, run the following command at your project location:
 
+```bash
     $ pod install
+```
 
 ### **The Problem**
 ---
@@ -86,12 +89,12 @@ Like a UITableView, the cell has 2 parts.
 
 * Second , create a custom class for the xib. The new class must be a subclass of `JTAppleDayCellView`. I called mine *CellView.swift*.  Inside the class setup the following:
 
-~~~swift
+```swift
 import JTAppleCalendar 
 class CellView: JTAppleDayCellView {
    @IBOutlet var dayLabel: UILabel!
 }
-~~~
+```
 
 * Finally head back to your *cellView.xib* file and make the outlet connections.
     - First,  select the view for the cell
@@ -110,12 +113,15 @@ class CellView: JTAppleDayCellView {
 Similar to UITableView, your viewController has to conform to 2 protocols for it to work
 
 * JTAppleCalendarViewDataSource
-~~~swift
+
+```swift
 // This method is required. You provide a startDate, endDate, and a calendar configured to your liking.
 func configureCalendar() -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar)
-~~~
-* JTAppleCalendarViewDelegate 
-~~~swift
+```
+
+* JTAppleCalendarViewDelegate
+
+```swift
 // These methods are optional. And are self descriptive	
 func calendar(calendar : JTAppleCalendarView, canSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
 func calendar(calendar : JTAppleCalendarView, canDeselectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
@@ -123,9 +129,7 @@ func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell:
 func calendar(calendar : JTAppleCalendarView, didDeselectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) -> Void
 func calendar(calendar : JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) -> Void
 func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) -> Void
-~~~
-
-
+```
 
 JTAppleCalendar is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
