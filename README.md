@@ -1,4 +1,6 @@
+<p align="center">
 ![JTAppleCalendar](Images/JTAppleCalendar.jpg)
+</p>
 
 [![CI Status](http://img.shields.io/travis/JayT/JTAppleCalendar.svg?style=flat)](https://travis-ci.org/JayT/JTAppleCalendar) [![Version](https://img.shields.io/cocoapods/v/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![License](https://img.shields.io/cocoapods/l/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![Platform](https://img.shields.io/cocoapods/p/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar)
 
@@ -41,7 +43,7 @@ CocoaPods is a dependency manager for Cocoa projects. You can install it with th
 
 > CocoaPods 0.39.0+ is required to build JTAppleCalendar
 
-To integrate Alamofire into your Xcode project using CocoaPods, specify it in your Podfile:
+To integrate JTAppleCalendar into your Xcode project using CocoaPods, specify it in your Podfile:
 
     platform :ios, '8.0'
     use_frameworks!
