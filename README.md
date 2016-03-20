@@ -8,7 +8,7 @@ The final iOS calendar control you'll ever try
 ### **About Screenshots**
 Much like a UITableView, because you can design this calendar to look however you want, screenshots will not be an accurate depiction of what this control looks like and are therefore not included here. A sample iOS application however is included in this project's [Github Repository](https://github.com/patchthecode/JTAppleCalendar) to give you an idea of what you can do.
 
-* Download it ?
+* Downloaded it ?
 * Tried it ?
 * Then don't forget to leave a ![rating](Images/rating.png) on Github if you like it. It's needed to make this control #1 :)
 
@@ -225,10 +225,11 @@ Your cell now has the ability to display text and color based on which day of th
 ---
 
 Create all the other views on your xib that you need. Dots view, customWhatEverView etc. Then create the functionality of it just like you did in the example above.
+You can also download the example project on Github and see the possibilities.
 
 
 #### Other stuff to help configure your calendar
-##### Determining what type of date it is
+
 The following structure was returned when a cell is about to be displayed.
 
 ```swift
