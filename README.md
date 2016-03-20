@@ -99,10 +99,10 @@ Like a UITableView, the cell has 2 parts.
 * Second , create a custom class for the xib. The new class must be a subclass of `JTAppleDayCellView`. I called mine *CellView.swift*.  Inside the class setup the following:
 
 ```swift
-import JTAppleCalendar 
-class CellView: JTAppleDayCellView {
-@IBOutlet var dayLabel: UILabel!
-}
+    import JTAppleCalendar 
+    class CellView: JTAppleDayCellView {
+        @IBOutlet var dayLabel: UILabel!
+    }
 ```
 
 * Finally head back to your *cellView.xib* file and make the outlet connections.
@@ -124,22 +124,22 @@ Similar to UITableView protocls, your viewController has to conform to 2 protoco
 * JTAppleCalendarViewDataSource
 
 ```swift
-// This method is required. You provide a startDate, endDate, and a calendar configured to your liking.
-func configureCalendar() -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar)
+    // This method is required. You provide a startDate, endDate, and a calendar configured to your liking.
+    func configureCalendar() -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar)
 ```
 
 * JTAppleCalendarViewDelegate
 
 ```swift
-// These methods are optional.
-// I tried to keep them as close to UITableView protocols as possible to keep them self descriptive
+    // These methods are optional.
+    // I tried to keep them as close to UITableView protocols as possible to keep them self descriptive
 
-func calendar(calendar : JTAppleCalendarView, canSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
-func calendar(calendar : JTAppleCalendarView, canDeselectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
-func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Void
-func calendar(calendar : JTAppleCalendarView, didDeselectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) -> Void
-func calendar(calendar : JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) -> Void
-func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) -> Void
+    func calendar(calendar : JTAppleCalendarView, canSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
+    func calendar(calendar : JTAppleCalendarView, canDeselectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
+    func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Void
+    func calendar(calendar : JTAppleCalendarView, didDeselectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) -> Void
+    func calendar(calendar : JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) -> Void
+    func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) -> Void
 ```
 
 
@@ -148,20 +148,20 @@ Lets setup the delegate methods in your viewController. I have called my viewCon
 
 ```swift
 extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDelegate  {
-// Setting up manditory protocol method 
-func configureCalendar() -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar) {
-let startDateComponents = NSDateComponents()
-startDateComponents.month = -2
-let today = NSDate()
-let firstDate = NSCalendar.currentCalendar().dateByAddingComponents(startDateComponents, toDate: today, options: NSCalendarOptions())
+    // Setting up manditory protocol method 
+    func configureCalendar() -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar) {
+        let startDateComponents = NSDateComponents()
+        startDateComponents.month = -2
+        let today = NSDate()
+        let firstDate = NSCalendar.currentCalendar().dateByAddingComponents(startDateComponents, toDate: today, options: NSCalendarOptions())
 
-let endDateComponents = NSDateComponents()
-endDateComponents.month = 1
-let secondDate = NSCalendar.currentCalendar().dateByAddingComponents(endDateComponents, toDate: today, options: NSCalendarOptions())
+        let endDateComponents = NSDateComponents()
+        endDateComponents.month = 1
+        let secondDate = NSCalendar.currentCalendar().dateByAddingComponents(endDateComponents, toDate: today, options: NSCalendarOptions())
 
-let calendar = NSCalendar.currentCalendar()
-return (startDate: firstDate!, endDate: secondDate!, calendar: calendar)
-}
+        let calendar = NSCalendar.currentCalendar()
+        return (startDate: firstDate!, endDate: secondDate!, calendar: calendar)
+    }
 }
 ```
 
@@ -170,55 +170,55 @@ Now that JTAppleCalendar knows its `startDate`, `endDate`, and `calendarFormat`,
 Just like UITableViewCell is about to be displayed on a tableView protocol method, so is this JTAppleDayCellView about to be displayed. We will now apply some custom configuration to our cell before it is displayed on screen. Add the following code to your extension. 
 
 ```swift
-func calendar(calendar: JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date: NSDate, cellState: CellState) {
-(cell as! CellView).setupCellBeforeDisplay(cellState, date: date)
-}
+    func calendar(calendar: JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date: NSDate, cellState: CellState) {
+        (cell as! CellView).setupCellBeforeDisplay(cellState, date: date)
+    }
 ```
 
 Now you have not declared the function `setupCellBeforeDisplay:date:` on your custom CellView class as yet, so let's head over to that class and implement it. Setup the following code shown below.
 
 ```swift
-import JTAppleCalendar
+    import JTAppleCalendar
 
-class CellView: JTAppleDayCellView {
-@IBOutlet var dayLabel: UILabel!
-var normalDayColor = UIColor.blackColor()
-var weekendDayColor = UIColor.grayColor()
+    class CellView: JTAppleDayCellView {
+        @IBOutlet var dayLabel: UILabel!
+            var normalDayColor = UIColor.blackColor()
+            var weekendDayColor = UIColor.grayColor()
 
 
-func setupCellBeforeDisplay(cellState: CellState, date: NSDate) {
-// Setup Cell text
-dayLabel.text =  cellState.text
+            func setupCellBeforeDisplay(cellState: CellState, date: NSDate) {
+                // Setup Cell text
+                dayLabel.text =  cellState.text
 
-// Setup text color
-configureTextColor(cellState)
-}
+                // Setup text color
+                configureTextColor(cellState)
+            }
 
-func configureTextColor(cellState: CellState) {
-if cellState.dateBelongsTo == .ThisMonth {
-dayLabel.textColor = normalDayColor
-} else {
-dayLabel.textColor = weekendDayColor
-}
-}
-}
+            func configureTextColor(cellState: CellState) {
+                if cellState.dateBelongsTo == .ThisMonth {
+                    dayLabel.textColor = normalDayColor
+                } else {
+                    dayLabel.textColor = weekendDayColor
+            }
+        }
+    }
 ```
 
 Your cell now has the ability to display text and color based on which day of the week it is. One final thing needs to be done. The Calender does not have its delegate and datasource setup.  Head to your `ViewController` class, and add following code:
 
 ```swift
-@IBOutlet weak var calendarView: JTAppleCalendarView! // Don't forget to hook up the outlet to your calendarView on Storyboard
-override func viewDidLoad() {
-super.viewDidLoad()
-self.calendarView.dataSource = self
-self.calendarView.delegate = self
-self.calendarView.registerCellViewXib(fileName: "CellView")
-}
+    @IBOutlet weak var calendarView: JTAppleCalendarView! // Don't forget to hook up the outlet to your calendarView on Storyboard
+    override func viewDidLoad() {
+        super.viewDidLoad()
+            self.calendarView.dataSource = self
+            self.calendarView.delegate = self
+            self.calendarView.registerCellViewXib(fileName: "CellView")
+        }
 
-override func viewDidLayoutSubviews() {
-super.viewDidLayoutSubviews()
-calendarView.frame = calendarView.frame // This is the one "odd" code needed. I am currently looking into ways to have this done automatically. Currently, Without this code, your calender will not be the correct size.
-}
+        override func viewDidLayoutSubviews() {
+            super.viewDidLayoutSubviews()
+            calendarView.frame = calendarView.frame // This is the one "odd" code needed. I am currently looking into ways to have this done automatically. Currently, Without this code, your calender will not be the correct size.
+        }
 ```
 
 #### Completed! Where to go from here?
@@ -232,9 +232,9 @@ Create all the other views on your xib that you need. Dots view, customWhatEverV
 The following structure was returned when a cell is about to be displayed.
 
 ```swift
-public enum DateOwner: Int {
-case ThisMonth = 0, PreviousMonthWithinBoundary, PreviousMonthOutsideBoundary, FollowingMonthWithinBoundary, FollowingMonthOutsideBoundary
-}
+    public enum DateOwner: Int {
+        case ThisMonth = 0, PreviousMonthWithinBoundary, PreviousMonthOutsideBoundary, FollowingMonthWithinBoundary, FollowingMonthOutsideBoundary
+    }
 ```
 * `.ThisMonth` = the date to be displayed belongs to the month section
 * `.PreviousMonthWithinBoundary` = date belongs to the previous month, and it is within the date boundary you set
@@ -244,12 +244,12 @@ case ThisMonth = 0, PreviousMonthWithinBoundary, PreviousMonthOutsideBoundary, F
 
 
 ```swift
-public func changeNumberOfRowsPerMonthTo(number: Int, withFocusDate date: NSDate?) // After switching the number of rows shown, pick a date to autofocus on
-public func reloadData()
-public func scrollToNextSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil) 
-public func scrollToPreviousSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
-public func scrollToDate(date: NSDate, animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
-public func selectDate(date: NSDate)
+    public func changeNumberOfRowsPerMonthTo(number: Int, withFocusDate date: NSDate?) // After switching the number of rows shown, pick a date to autofocus on
+    public func reloadData()
+    public func scrollToNextSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil) 
+    public func scrollToPreviousSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
+    public func scrollToDate(date: NSDate, animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
+    public func selectDate(date: NSDate)
 ```
 
 Other functions are coming. This is a very active project.
