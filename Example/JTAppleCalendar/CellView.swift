@@ -7,11 +7,7 @@
 //
 
 
-
-import UIKit
 import JTAppleCalendar
-
-
 
 class CellView: JTAppleDayCellView {
     @IBInspectable var todayColor: UIColor!// = UIColor(red: 254.0/255.0, green: 73.0/255.0, blue: 64.0/255.0, alpha: 0.3)
@@ -39,6 +35,8 @@ class CellView: JTAppleDayCellView {
     func setupCellBeforeDisplay(cellState: CellState, date: NSDate) {
         // Setup Cell text
         dayLabel.text =  cellState.text
+        
+
         
         // Setup text color
         configureTextColor(cellState)

@@ -5,6 +5,12 @@ The final iOS calendar control you'll ever try
 
 [![CI Status](http://img.shields.io/travis/patchthecode/JTAppleCalendar.svg?style=flat)](https://travis-ci.org/patchthecode/JTAppleCalendar) [![Version](https://img.shields.io/cocoapods/v/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![License](https://img.shields.io/cocoapods/l/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![Platform](https://img.shields.io/cocoapods/p/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar)
 
+### **About Screenshots**
+Much like a UITableView, because you can design this calendar to look however you want, screenshots will not be an accurate depiction of what this control looks like and are therefore not included here. A sample iOS application however is included in this project's [Github Repository](https://github.com/patchthecode/JTAppleCalendar) to give you an idea of what you can do.
+
+* Download it ?
+* Tried it ?
+* Then don't forget to leave a ![rating](Images/rating.png) on Github if you like it. It's needed to make this control #1 :)
 
 ### **Features**
 ---
@@ -14,6 +20,7 @@ The final iOS calendar control you'll ever try
 - [x] Custom cells - make your day-cells look however you want, with any functionality you want
 - [x] Custom calendar view - make your calendar look however you want, with what ever functionality you want
 - [x] First Day of week - pick anyday to be first day of the week
+- [x] Horizontal or vertical mode
 - [x] Ability to add custom functionality easily - change the color of weekends, customize days according to data in your data-source. You want it, you build it
 - [x] [Complete Documentation](http://cocoadocs.org/docsets/JTAppleCalendar)
 
@@ -26,17 +33,19 @@ The final iOS calendar control you'll ever try
 
 
 
-### **Communication**
+### **Communication on Github**
 ---
-* If you found a bug, open an issue.
-* If you have a feature request, open an issue.
+* Found a bug? open an issue
+* Got a cool feature request? open an issue.
+* Need a question answered? open an issue
+* You can also open an issue if you think something should behave differently 
 
 
 ### **Installation using CocoaPods**
 
-CocoaPods is a dependency manager for Cocoa projects. You can install it with the following command:
+CocoaPods is a dependency manager for Cocoa projects. Cocoapods can be installed with the following command:
 
-    $ gem install cocoapods
+$ gem install cocoapods
 
 
 
@@ -45,16 +54,16 @@ CocoaPods is a dependency manager for Cocoa projects. You can install it with th
 To integrate JTAppleCalendar into your Xcode project using CocoaPods, specify it in your Podfile:
 
 ```ruby
-    platform :ios, '8.0'
-    use_frameworks!
+platform :ios, '8.0'
+use_frameworks!
 
-    pod 'JTAppleCalendar', '~> 1.0'
+pod 'JTAppleCalendar', '~> 1.0'
 ```
 
 Then, run the following command at your project location:
 
 ```bash
-    $ pod install
+$ pod install
 ```
 
 ### **The Problem**
@@ -92,15 +101,15 @@ Like a UITableView, the cell has 2 parts.
 ```swift
 import JTAppleCalendar 
 class CellView: JTAppleDayCellView {
-   @IBOutlet var dayLabel: UILabel!
+@IBOutlet var dayLabel: UILabel!
 }
 ```
 
 * Finally head back to your *cellView.xib* file and make the outlet connections.
-    - First,  select the view for the cell
-    - Second, click on the identity inspector
-    - Third, change the name of the class to one you just created: *CellView*
-    - Then connect your UILabel to your `dayLabel` outlet
+- First,  select the view for the cell
+- Second, click on the identity inspector
+- Third, change the name of the class to one you just created: *CellView*
+- Then connect your UILabel to your `dayLabel` outlet
 
 ![Instructions](Images/setupInstructions.png)
 
@@ -110,7 +119,7 @@ class CellView: JTAppleDayCellView {
 
 
 ##### Whats next?
-Similar to UITableView, your viewController has to conform to 2 protocols for it to work
+Similar to UITableView protocls, your viewController has to conform to 2 protocols for it to work
 
 * JTAppleCalendarViewDataSource
 
@@ -122,7 +131,9 @@ func configureCalendar() -> (startDate: NSDate, endDate: NSDate, calendar: NSCal
 * JTAppleCalendarViewDelegate
 
 ```swift
-// These methods are optional. And are self descriptive	
+// These methods are optional.
+// I tried to keep them as close to UITableView protocols as possible to keep them self descriptive
+
 func calendar(calendar : JTAppleCalendarView, canSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
 func calendar(calendar : JTAppleCalendarView, canDeselectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
 func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Void
@@ -131,7 +142,121 @@ func calendar(calendar : JTAppleCalendarView, didScrollToDateSegmentStartingWith
 func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) -> Void
 ```
 
-JTAppleCalendar is available through [CocoaPods](http://cocoapods.org). To install
+
+##### Setting up the delegate methods
+Lets setup the delegate methods in your viewController. I have called my viewController simply `ViewController`. I prefer setting up my protocols on my controllers using extensions to keep my code neat, but you can put it where ever youre accustomed to. This function needs 3 variables returned. (1). Start boundary date (2) End boundary date (3) Calendar which you should configure to the time zone of your liking.
+
+```swift
+extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDelegate  {
+// Setting up manditory protocol method 
+func configureCalendar() -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar) {
+let startDateComponents = NSDateComponents()
+startDateComponents.month = -2
+let today = NSDate()
+let firstDate = NSCalendar.currentCalendar().dateByAddingComponents(startDateComponents, toDate: today, options: NSCalendarOptions())
+
+let endDateComponents = NSDateComponents()
+endDateComponents.month = 1
+let secondDate = NSCalendar.currentCalendar().dateByAddingComponents(endDateComponents, toDate: today, options: NSCalendarOptions())
+
+let calendar = NSCalendar.currentCalendar()
+return (startDate: firstDate!, endDate: secondDate!, calendar: calendar)
+}
+}
+```
+
+Now that JTAppleCalendar knows its `startDate`, `endDate`, and `calendarFormat`, Let's setup up the protocol method to allow us to see the beautiful date cells we have designed earlier.
+
+Just like UITableViewCell is about to be displayed on a tableView protocol method, so is this JTAppleDayCellView about to be displayed. We will now apply some custom configuration to our cell before it is displayed on screen. Add the following code to your extension. 
+
+```swift
+func calendar(calendar: JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date: NSDate, cellState: CellState) {
+(cell as! CellView).setupCellBeforeDisplay(cellState, date: date)
+}
+```
+
+Now you have not declared the function `setupCellBeforeDisplay:date:` on your custom CellView class as yet, so let's head over to that class and implement it. Setup the following code shown below.
+
+```swift
+import JTAppleCalendar
+
+class CellView: JTAppleDayCellView {
+@IBOutlet var dayLabel: UILabel!
+var normalDayColor = UIColor.blackColor()
+var weekendDayColor = UIColor.grayColor()
+
+
+func setupCellBeforeDisplay(cellState: CellState, date: NSDate) {
+// Setup Cell text
+dayLabel.text =  cellState.text
+
+// Setup text color
+configureTextColor(cellState)
+}
+
+func configureTextColor(cellState: CellState) {
+if cellState.dateBelongsTo == .ThisMonth {
+dayLabel.textColor = normalDayColor
+} else {
+dayLabel.textColor = weekendDayColor
+}
+}
+}
+```
+
+Your cell now has the ability to display text and color based on which day of the week it is. One final thing needs to be done. The Calender does not have its delegate and datasource setup.  Head to your `ViewController` class, and add following code:
+
+```swift
+@IBOutlet weak var calendarView: JTAppleCalendarView! // Don't forget to hook up the outlet to your calendarView on Storyboard
+override func viewDidLoad() {
+super.viewDidLoad()
+self.calendarView.dataSource = self
+self.calendarView.delegate = self
+self.calendarView.registerCellViewXib(fileName: "CellView")
+}
+
+override func viewDidLayoutSubviews() {
+super.viewDidLayoutSubviews()
+calendarView.frame = calendarView.frame // This is the one "odd" code needed. I am currently looking into ways to have this done automatically. Currently, Without this code, your calender will not be the correct size.
+}
+```
+
+#### Completed! Where to go from here?
+---
+
+Create all the other views on your xib that you need. Dots view, customWhatEverView etc. Then create the functionality of it just like you did in the example above.
+
+
+#### Other stuff to help configure your calendar
+##### Determining what type of date it is
+The following structure was returned when a cell is about to be displayed.
+
+```swift
+public enum DateOwner: Int {
+case ThisMonth = 0, PreviousMonthWithinBoundary, PreviousMonthOutsideBoundary, FollowingMonthWithinBoundary, FollowingMonthOutsideBoundary
+}
+```
+* `.ThisMonth` = the date to be displayed belongs to the month section
+* `.PreviousMonthWithinBoundary` = date belongs to the previous month, and it is within the date boundary you set
+* `.PreviousMonthOutsideBoundary` = date belongs to previous month, and it is outside the boundary you have set
+* `.FollowingMonthWithinBoundary` = date belongs to following month, within boundary
+* `.FollowingMonthOutsideBoundary` = date belongs to following month, outside boundary
+
+
+```swift
+public func changeNumberOfRowsPerMonthTo(number: Int, withFocusDate date: NSDate?) // After switching the number of rows shown, pick a date to autofocus on
+public func reloadData()
+public func scrollToNextSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil) 
+public func scrollToPreviousSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
+public func scrollToDate(date: NSDate, animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
+public func selectDate(date: NSDate)
+```
+
+Other functions are coming. This is a very active project.
+
+
+
+JTAppleCalendar is available through [CocoaPods](https://cocoapods.org/pods/JTAppleCalendar). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
