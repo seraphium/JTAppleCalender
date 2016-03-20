@@ -57,7 +57,7 @@ To integrate JTAppleCalendar into your Xcode project using CocoaPods, specify it
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'JTAppleCalendar', '~> 1.0'
+pod 'JTAppleCalendar'
 ```
 
 Then, run the following command at your project location:
@@ -253,7 +253,23 @@ The following structure was returned when a cell is about to be displayed.
     public func selectDate(date: NSDate)
 ```
 
-Other functions are coming. This is a very active project.
+##### Properties
+
+* allowsMultipleSelection
+* animationsEnabled
+* bufferTop
+* bufferBottom
+* cellInset
+* direction
+* firstDayOfWeek
+* numberOfRowsPerMonth
+
+
+
+
+
+
+Other functions/properties are coming. This is a very active project.
 
 
 
