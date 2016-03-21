@@ -6,8 +6,6 @@
 //  Copyright © 2016 OS-Tech. All rights reserved.
 //
 
-import UIKit
-
 var cellViewXibName: String?
 var internalCellInset: CGPoint = CGPoint(x: 3.0, y: 3.0)
 

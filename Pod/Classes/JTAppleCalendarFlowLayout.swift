@@ -5,7 +5,6 @@
 //  Created by Jay Thomas on 2016-03-01.
 //  Copyright © 2016 OS-Tech. All rights reserved.
 //
-import UIKit
 
 public class JTAppleCalendarFlowLayout: UICollectionViewFlowLayout {
     var pathForFocusItem: NSIndexPath = NSIndexPath(forItem: 0, inSection: 0)

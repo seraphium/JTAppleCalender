@@ -11,6 +11,5 @@
 public protocol JTAppleDayCellViewProtocol {
 }
 
-
 public class JTAppleDayCellView: UIView, JTAppleDayCellViewProtocol {
 }

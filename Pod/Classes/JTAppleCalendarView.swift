@@ -5,7 +5,6 @@
 //  Created by Jay Thomas on 2016-03-01.
 //  Copyright © 2016 OS-Tech. All rights reserved.
 //
-import UIKit
 
 let cellReuseIdentifier = "JTDayCell"
 
@@ -80,9 +79,14 @@ public class JTAppleCalendarView: UIView {
     }
     
     public var firstDayOfWeek = DaysOfWeek.Sunday
+    
+    private var layoutNeedsUpdating = false
     public var numberOfRowsPerMonth = 6 {
         didSet {
-            configureChangeOfRows()
+            if numberOfRowsPerMonth == 4 || numberOfRowsPerMonth == 5 || numberOfRowsPerMonth > 6 || numberOfRowsPerMonth < 0 {numberOfRowsPerMonth = 6}
+            if monthInfoActivated {
+                layoutNeedsUpdating = true
+            }
         }
     }
     
@@ -169,29 +173,23 @@ public class JTAppleCalendarView: UIView {
     private(set) var selectedIndexPaths : [NSIndexPath] = [NSIndexPath]()
     private(set) var selectedDates : [NSDate] = [NSDate]()
 
+    var monthInfoActivated = false
     lazy var monthInfo : [[Int]] = {
         [weak self] in
             let newMonthInfo = self!.setupMonthInfoDataForStartAndEndDate()
+            self!.monthInfoActivated = true
             return newMonthInfo
     }()
 
     
     private var numberOfMonthSections: Int = 0
     private var numberOfSectionsPerMonth: Int = 0
-    private var numberOfItemsPerSection: Int {
-        return MAX_NUMBER_OF_DAYS_IN_WEEK * numberOfRowsPerMonth
-    }
+    private var numberOfItemsPerSection: Int {return MAX_NUMBER_OF_DAYS_IN_WEEK * numberOfRowsPerMonth}
     
     // MARK: Cell variables
     public var cellInset: CGPoint {
-        get {
-            
-            return internalCellInset
-        }
-        
-        set {
-            internalCellInset = newValue
-        }
+        get {return internalCellInset}
+        set {internalCellInset = newValue}
     }
     
     lazy var calendarView : UICollectionView = {
@@ -238,6 +236,10 @@ public class JTAppleCalendarView: UIView {
     override public func awakeFromNib() {
         self.initialSetup()
     }
+    
+    override public func layoutSubviews() {
+        self.frame = super.frame
+    }
         
     // MARK: Setup
     func initialSetup() {
@@ -255,7 +257,12 @@ public class JTAppleCalendarView: UIView {
     
     // Reloads the data on the calendarControl
     public func reloadData() {
-        self.calendarView.reloadData()
+        if layoutNeedsUpdating {
+            changeNumberOfRowsPerMonthTo(numberOfRowsPerMonth, withFocusDate: nil)
+            layoutNeedsUpdating = false
+        } else {
+            self.calendarView.reloadData()
+        }
     }
     
     public func changeNumberOfRowsPerMonthTo(number: Int, withFocusDate date: NSDate?) {
@@ -263,6 +270,7 @@ public class JTAppleCalendarView: UIView {
             case 1, 2, 3, 6:
                 scrollToDatePathOnRowChange = date
                 numberOfRowsPerMonth = number
+                configureChangeOfRows()
             
             default:
                 print("Months 4 and 5 are not allowed. Experimental at this point. Setting is not allowed.")   
@@ -274,6 +282,7 @@ public class JTAppleCalendarView: UIView {
         selectedIndexPaths.removeAll()
         
         monthInfo = setupMonthInfoDataForStartAndEndDate()
+        monthInfoActivated = true
         
         self.calendarView.reloadData()
         let position: UICollectionViewScrollPosition = self.direction == .Horizontal ? .Left : .Top
@@ -409,8 +418,26 @@ public class JTAppleCalendarView: UIView {
         }
     }
     
+    private func xibFileValid() -> Bool {
+        guard let xibName =  cellViewXibName else {
+//            print("Did you remember to register your xib file to JTAppleCalendarView? call the registerCellViewXib method on it because xib filename is nil")
+            return false
+        }
+        guard let viewObject = NSBundle.mainBundle().loadNibNamed(xibName, owner: self, options: [:]) where viewObject.count > 0 else {
+//            print("your nib file name \(cellViewXibName) could not be loaded)")
+            return false
+        }
+        
+        guard let _ = viewObject[0] as? JTAppleDayCellView else {
+//            print("xib file class does not conform to the protocol<JTAppleDayCellViewProtocol>")
+            return false
+        }
+        
+        return true
+    }
+    
     public func scrollToDate(date: NSDate, animateScroll: Bool = true, completionHandler:(()->Void)? = nil) {
-        if monthInfo.count < 1 {
+        if !monthInfoActivated {
             return
         }
         
@@ -655,17 +682,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
     }
     
     public func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        guard let xibName =  cellViewXibName else {
-            print("Did you remember to register your xib file to JTAppleCalendarView? call the registerCellViewXib method on it because xib filename is nil")
-            return 0
-        }
-        guard let viewObject = NSBundle.mainBundle().loadNibNamed(xibName, owner: self, options: [:]) where viewObject.count > 0 else {
-            print("your nib file name \(cellViewXibName) could not be loaded)")
-            return 0
-        }
-        
-        guard let _ = viewObject[0] as? JTAppleDayCellView else {
-            print("xib file class does not conform to the protocol<JTAppleDayCellViewProtocol>")
+        if !xibFileValid() {
             return 0
         }
         

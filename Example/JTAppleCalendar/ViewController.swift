@@ -6,8 +6,6 @@
 //  Copyright © 2016 OS-Tech. All rights reserved.
 //
 
-
-import UIKit
 import JTAppleCalendar
 
 class ViewController: UIViewController {
