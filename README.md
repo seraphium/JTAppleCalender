@@ -214,11 +214,6 @@ Your cell now has the ability to display text and color based on which day of th
             self.calendarView.delegate = self
             self.calendarView.registerCellViewXib(fileName: "CellView")
         }
-
-        override func viewDidLayoutSubviews() {
-            super.viewDidLayoutSubviews()
-            calendarView.frame = calendarView.frame // This is the one "odd" code needed. I am currently looking into ways to have this done automatically. Currently, Without this code, your calender will not be the correct size.
-        }
 ```
 
 #### Completed! Where to go from here?
