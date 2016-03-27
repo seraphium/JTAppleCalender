@@ -16,7 +16,7 @@ Much like a UITableView, because you can design this calendar to look however yo
 ---
 
 - [x] Boundary dates - limit the calendar date range
-- [x] Week/month mode - show 1 row of weekdays. Or 2, 3, 4 or 6
+- [x] Week/month mode - show 1 row of weekdays. Or 2, 3 or 6
 - [x] Custom cells - make your day-cells look however you want, with any functionality you want
 - [x] Custom calendar view - make your calendar look however you want, with what ever functionality you want
 - [x] First Day of week - pick anyday to be first day of the week

@@ -36,8 +36,6 @@ class CellView: JTAppleDayCellView {
         // Setup Cell text
         dayLabel.text =  cellState.text
         
-
-        
         // Setup text color
         configureTextColor(cellState)
 
@@ -89,7 +87,6 @@ class CellView: JTAppleDayCellView {
     private func configueViewIntoBubbleView(cellState: CellState, animateDeselection: Bool = false) {
         if cellState.isSelected {
             selectedView.layer.cornerRadius =  selectedView.frame.width  / 2
-//            selectedView.layer.shadowOpacity = 0.25
             configureTextColor(cellState)
             selectedView.hidden = false
         } else {

@@ -52,8 +52,7 @@ class ViewController: UIViewController {
 
 // MARK : JTAppleCalendarDelegate
 extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDelegate {
-    
-    func configureCalendar() -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar) {
+    func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar) {
         let startDateComponents = NSDateComponents()
         startDateComponents.month = -2
         let today = NSDate()

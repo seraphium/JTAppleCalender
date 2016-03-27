@@ -22,6 +22,14 @@ let DATE_SELECTED_INDEX = 2
 let TOTAL_DAYS_IN_MONTH = 3
 let DATE_BOUNDRY = 4
 
+/// Describes which month the cell belongs to
+/// - ThisMonth: Cell belongs to the current month
+/// - PreviousMonthWithinBoundary: Cell belongs to the previous month. Previous month is included in the date boundary you have set in your delegate
+/// - PreviousMonthOutsideBoundary: Cell belongs to the previous month. Previous month is not included in the date boundary you have set in your delegate
+/// - FollowingMonthWithinBoundary: Cell belongs to the following month. Following month is included in the date boundary you have set in your delegate
+/// - FollowingMonthOutsideBoundary: Cell belongs to the following month. Following month is not included in the date boundary you have set in your delegate
+///
+/// You can use these cell states to configure how you want your date cells to look. Eg. you can have the colors belonging to the month be in color black, while the colors of previous months be in color gray.
 public struct CellState {
     public enum DateOwner: Int {
         case ThisMonth = 0, PreviousMonthWithinBoundary, PreviousMonthOutsideBoundary, FollowingMonthWithinBoundary, FollowingMonthOutsideBoundary
@@ -31,21 +39,72 @@ public struct CellState {
     public let dateBelongsTo: DateOwner
 }
 
+/// Days of the week
 public enum DaysOfWeek: Int {
     case Sunday = 7, Monday = 6, Tuesday = 5, Wednesday = 4, Thursday = 10, Friday = 9, Saturday = 8
 }
 
 public protocol JTAppleCalendarViewDataSource {
-    func configureCalendar() -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar)
+    /// Asks the data source to return the start and end boundary dates as well as the calendar to use. You should properly configure your calendar at this point.
+    /// - Parameters:
+    ///     - calendar: The JTAppleCalendar view requesting this information.
+    /// - returns:
+    ///     - startDate: The *start* boundary date for your calendarView.
+    ///     - endDate: The *end* boundary date for your calendarView.
+    ///     - calendar: The *calendar* to be used by the calendarView.
+    func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar)
 }
 
 public protocol JTAppleCalendarViewDelegate {
-    // Optional functions
+    /// Asks the delegate if selecting the date-cell with a specified date is allowed
+    /// - Parameters:
+    ///     - calendar: The JTAppleCalendar view requesting this information.
+    ///     - date: The date attached to the date-cell.
+    ///     - cell: The date-cell view. This can be customized at this point.
+    ///     - cellState: The month the date-cell belongs to.
+    /// - returns:
+    ///     - A Bool value indicating if the operation can be done.
     func calendar(calendar : JTAppleCalendarView, canSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
+    
+    /// Asks the delegate if de-selecting the date-cell with a specified date is allowed
+    /// - Parameters:
+    ///     - calendar: The JTAppleCalendar view requesting this information.
+    ///     - date: The date attached to the date-cell.
+    ///     - cell: The date-cell view. This can be customized at this point.
+    ///     - cellState: The month the date-cell belongs to.
+    /// - returns:
+    ///     - A Bool value indicating if the operation can be done.
     func calendar(calendar : JTAppleCalendarView, canDeselectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
+    
+    /// Tells the delegate that a date-cell with a specified date was selected
+    /// - Parameters:
+    ///     - calendar: The JTAppleCalendar view giving this information.
+    ///     - date: The date attached to the date-cell.
+    ///     - cell: The date-cell view. This can be customized at this point.
+    ///     - cellState: The month the date-cell belongs to.
     func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Void
+    
+    /// Tells the delegate that a date-cell with a specified date was de-selected
+    /// - Parameters:
+    ///     - calendar: The JTAppleCalendar view giving this information.
+    ///     - date: The date attached to the date-cell.
+    ///     - cell: The date-cell view. This can be customized at this point.
+    ///     - cellState: The month the date-cell belongs to.
     func calendar(calendar : JTAppleCalendarView, didDeselectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) -> Void
+    
+    /// Tells the delegate that the JTAppleCalendar view scrolled to a segment beginning and ending with a particular date
+    /// - Parameters:
+    ///     - calendar: The JTAppleCalendar view giving this information.
+    ///     - date: The date at the start of the segment.
+    ///     - cell: The date at the end of the segment.
     func calendar(calendar : JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) -> Void
+    
+    /// Tells the delegate that the JTAppleCalendar is about to display a date-cell. This is the point of customization for your date cells
+    /// - Parameters:
+    ///     - calendar: The JTAppleCalendar view giving this information.
+    ///     - cell: The date-cell that is about to be displayed.
+    ///     - date: The date attached to the cell.
+    ///     - cellState: The month the date-cell belongs to.
     func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) -> Void
 }
 
@@ -60,9 +119,13 @@ public extension JTAppleCalendarViewDelegate {
 
 
 public class JTAppleCalendarView: UIView {
+    /// The amount of buffer space before the first row of date-cells
     public var bufferTop: CGFloat    = 0.0
+    /// The amount of buffer space after the last row of date-cells
     public var bufferBottom: CGFloat = 0.0
+    /// Enables and disables animations when scrolling to and from date-cells
     public var animationsEnabled = true
+    /// The scroll direction of the sections in JTAppleCalendar.
     public var direction : UICollectionViewScrollDirection = .Horizontal {
         didSet {
             if let layout = self.calendarView.collectionViewLayout as? JTAppleCalendarFlowLayout {
@@ -71,16 +134,17 @@ public class JTAppleCalendarView: UIView {
             }
         }
     }
-    
+    /// Enables/Disables multiple selection on JTAppleCalendar
     public var allowsMultipleSelection: Bool = false {
         didSet {
             self.calendarView.allowsMultipleSelection = allowsMultipleSelection
         }
     }
-    
+    /// First day of the week value for JTApleCalendar. You can set this to anyday
     public var firstDayOfWeek = DaysOfWeek.Sunday
     
     private var layoutNeedsUpdating = false
+    /// Number of rows to be displayed per month. Allowed values are 1, 2, 3 & 6
     public var numberOfRowsPerMonth = 6 {
         didSet {
             if numberOfRowsPerMonth == 4 || numberOfRowsPerMonth == 5 || numberOfRowsPerMonth > 6 || numberOfRowsPerMonth < 0 {numberOfRowsPerMonth = 6}
@@ -89,9 +153,10 @@ public class JTAppleCalendarView: UIView {
             }
         }
     }
-    
-    @IBInspectable public var dataSource : JTAppleCalendarViewDataSource?
-    @IBInspectable public var delegate : JTAppleCalendarViewDelegate?
+    /// The object that acts as the data source of the calendar view.
+    public var dataSource : JTAppleCalendarViewDataSource?
+    /// The object that acts as the delegate of the calendar view.
+    public var delegate : JTAppleCalendarViewDelegate?
     
     private var scrollToDatePathOnRowChange: NSDate?
     private var delayedExecutionClosure: (()->Void)?
@@ -110,7 +175,7 @@ public class JTAppleCalendarView: UIView {
 
     lazy private var startDateCache : NSDate? = {
        [weak self] in
-            if let  dateBoundary = self!.dataSource?.configureCalendar() {
+        if let  dateBoundary = self!.dataSource?.configureCalendar(self!) {
                 // Jt101 do a check in each lazy var to see if user has bad star/end dates
                 self!.endDateCache = dateBoundary.endDate
                 self!.calendar = dateBoundary.calendar
@@ -121,7 +186,7 @@ public class JTAppleCalendarView: UIView {
     
     lazy private var endDateCache : NSDate? = {
         [weak self] in
-            if let  dateBoundary = self!.dataSource?.configureCalendar() {
+            if let  dateBoundary = self!.dataSource?.configureCalendar(self!) {
                 self!.startDateCache = dateBoundary.startDate
                 self!.calendar = dateBoundary.calendar
                 return dateBoundary.endDate
@@ -132,7 +197,7 @@ public class JTAppleCalendarView: UIView {
     
     lazy private var calendar : NSCalendar = {
        [weak self] in
-        guard let  dateBoundary = self!.dataSource?.configureCalendar()  else {
+        guard let  dateBoundary = self!.dataSource?.configureCalendar(self!)  else {
             self!.startDateCache = NSDate()
             self!.endDateCache = NSDate()
             return NSCalendar.currentCalendar()
@@ -173,8 +238,8 @@ public class JTAppleCalendarView: UIView {
     private(set) var selectedIndexPaths : [NSIndexPath] = [NSIndexPath]()
     private(set) var selectedDates : [NSDate] = [NSDate]()
 
-    var monthInfoActivated = false
-    lazy var monthInfo : [[Int]] = {
+    private var monthInfoActivated = false
+    lazy private var monthInfo : [[Int]] = {
         [weak self] in
             let newMonthInfo = self!.setupMonthInfoDataForStartAndEndDate()
             self!.monthInfoActivated = true
@@ -186,13 +251,13 @@ public class JTAppleCalendarView: UIView {
     private var numberOfSectionsPerMonth: Int = 0
     private var numberOfItemsPerSection: Int {return MAX_NUMBER_OF_DAYS_IN_WEEK * numberOfRowsPerMonth}
     
-    // MARK: Cell variables
+    /// Cell inset padding for the x and y axis of every date-cell on the calendar view.
     public var cellInset: CGPoint {
         get {return internalCellInset}
         set {internalCellInset = newValue}
     }
     
-    lazy var calendarView : UICollectionView = {
+    lazy private var calendarView : UICollectionView = {
      
         let layout = JTAppleCalendarFlowLayout()
         layout.scrollDirection = self.direction;
@@ -248,6 +313,8 @@ public class JTAppleCalendarView: UIView {
         self.addSubview(self.calendarView)
     }
     
+    /// Let's the calendar know which cell xib to use for the displaying of it's date-cells.
+    /// - Parameter name: The name of the xib of your cell design
     public func registerCellViewXib(fileName name: String) {
         cellViewXibName = name
     }
@@ -255,7 +322,7 @@ public class JTAppleCalendarView: UIView {
     
     // MARK: functions
     
-    // Reloads the data on the calendarControl
+    /// Reloads the data on the calendar view
     public func reloadData() {
         if layoutNeedsUpdating {
             changeNumberOfRowsPerMonthTo(numberOfRowsPerMonth, withFocusDate: nil)
@@ -265,6 +332,8 @@ public class JTAppleCalendarView: UIView {
         }
     }
     
+    /// Change the number of rows per month on the calendar view. Once the row count is changed, the calendar view will auto-focus on tht date provided.
+    /// - Parameter number: The number of rows per month the calendar view should display. This is restricted to 1, 2, 3, & 6. 6 will be chosen as default.
     public func changeNumberOfRowsPerMonthTo(number: Int, withFocusDate date: NSDate?) {
         switch number {
             case 1, 2, 3, 6:
@@ -273,7 +342,10 @@ public class JTAppleCalendarView: UIView {
                 configureChangeOfRows()
             
             default:
-                print("Months 4 and 5 are not allowed. Experimental at this point. Setting is not allowed.")   
+//                print("Months 4 and 5 are not allowed. Experimental at this point. Setting is not allowed.")
+                scrollToDatePathOnRowChange = date
+                numberOfRowsPerMonth = 6
+                configureChangeOfRows()
         }
     }
     
@@ -302,8 +374,8 @@ public class JTAppleCalendarView: UIView {
         var retval: [[Int]] = []
         
         if let  dateBoundary = dataSource?.configureCalendar {
-            let startDate = dateBoundary().startDate,
-            endDate = dateBoundary().endDate
+            let startDate = dateBoundary(self).startDate,
+            endDate = dateBoundary(self).endDate
             
             // check if the dates are in correct order
             if calendar.compareDate(startDate, toDate: endDate, toUnitGranularity: NSCalendarUnit.Nanosecond) == NSComparisonResult.OrderedDescending {
@@ -401,7 +473,9 @@ public class JTAppleCalendarView: UIView {
         return retval
     }
 
-    // Selects a date on the calendar control
+    /// Scrolls the calendar view to the next section view. It will execute a completion handler at the end of scroll animation if provided.
+    /// - Paramater animateScroll: Bool indicating if animation should be enabled
+    /// - Parameter completionHandler: A completion handler that will be executed at the end of the scroll animation
     public func scrollToNextSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil) {
         let page = currentSectionPage
         if page + 1 < monthInfo.count {
@@ -409,7 +483,9 @@ public class JTAppleCalendarView: UIView {
             calendarView.scrollToItemAtIndexPath(NSIndexPath(forItem: 0, inSection:page + 1), atScrollPosition: position, animated: animateScroll)
         }
     }
-    
+    /// Scrolls the calendar view to the previous section view. It will execute a completion handler at the end of scroll animation if provided.
+    /// - Paramater animateScroll: Bool indicating if animation should be enabled
+    /// - Parameter completionHandler: A completion handler that will be executed at the end of the scroll animation
     public func scrollToPreviousSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil) {
         let page = currentSectionPage
         if page - 1 > -1 {
@@ -435,7 +511,10 @@ public class JTAppleCalendarView: UIView {
         
         return true
     }
-    
+    /// Scrolls the calendar view to the start of a section view containing a specified date.
+    /// - Paramater date: The calendar view will scroll to a date-cell containing this date if it exists
+    /// - Paramater animateScroll: Bool indicating if animation should be enabled
+    /// - Parameter completionHandler: A completion handler that will be executed at the end of the scroll animation
     public func scrollToDate(date: NSDate, animateScroll: Bool = true, completionHandler:(()->Void)? = nil) {
         if !monthInfoActivated {
             return
@@ -471,6 +550,8 @@ public class JTAppleCalendarView: UIView {
         }
     }
     
+    /// Select a date-cell if it is on screen
+    /// - Parameter date: The date-cell with this date will be selected
     public func selectDate(date: NSDate) {
         delayRunOnMainThread(0.0) { 
             let components = self.calendar.components([.Year, .Month, .Day],  fromDate: date)
@@ -502,7 +583,8 @@ public class JTAppleCalendarView: UIView {
 
     }
     
-    // reload cell
+    /// Reload the date of specified date-cells on the calendar-view
+    /// - Parameter dates: Date-cells with these specified dates will be reloaded
     public func reloadDates(dates: [NSDate]) {
         let paths = pathsFromDates(dates)
         if paths.count > 0 {
@@ -542,13 +624,13 @@ public class JTAppleCalendarView: UIView {
 // MARK: scrollViewDelegates
 extension JTAppleCalendarView: UIScrollViewDelegate {
     
-    public func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
+    private func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
         scrollViewDidEndDecelerating(scrollView)
         delayedExecutionClosure?()
         delayedExecutionClosure = nil
     }
     
-    public func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+    private func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         
         // Determing the section from the scrollView direction
         let section = currentSectionPage
@@ -571,7 +653,6 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
     }
 }
 
-// MARK: public functions
 extension JTAppleCalendarView {
     private func cellStateFromIndexPath(indexPath: NSIndexPath)->CellState {
 
@@ -629,13 +710,13 @@ extension JTAppleCalendarView {
         return cellState
     }
     
-    func startMonthSectionForSection(aSection: Int)->Int {
+    private func startMonthSectionForSection(aSection: Int)->Int {
         let monthIndexWeAreOn = aSection / numberOfSectionsPerMonth
         let nextSection = numberOfSectionsPerMonth * monthIndexWeAreOn
         return nextSection
     }
     
-    func dateFromPath(indexPath: NSIndexPath)-> NSDate? { // Returns nil if date is out of scope
+    private func dateFromPath(indexPath: NSIndexPath)-> NSDate? { // Returns nil if date is out of scope
         let itemIndex = indexPath.item
         let itemSection = indexPath.section
         let monthIndexWeAreOn = itemSection / numberOfSectionsPerMonth
@@ -651,7 +732,7 @@ extension JTAppleCalendarView {
         return calendar.dateByAddingComponents(offsetComponents, toDate: startOfMonthCache, options: [])
     }
     
-    func delayRunOnMainThread(delay:Double, closure:()->()) {
+    private func delayRunOnMainThread(delay:Double, closure:()->()) {
         dispatch_after(
             dispatch_time(
                 DISPATCH_TIME_NOW,
@@ -660,7 +741,7 @@ extension JTAppleCalendarView {
             dispatch_get_main_queue(), closure)
     }
     
-    func delayRunOnGlobalThread(delay:Double, qos: qos_class_t,closure:()->()) {
+    private func delayRunOnGlobalThread(delay:Double, qos: qos_class_t,closure:()->()) {
         dispatch_after(
             dispatch_time(
                 DISPATCH_TIME_NOW,
@@ -716,8 +797,6 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
     }
     
     public func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
-
-        
         if let
             delegate = self.delegate,
             index = selectedIndexPaths.indexOf(indexPath),
@@ -732,7 +811,6 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         }
     }
     
-    
     public func collectionView(collectionView: UICollectionView, shouldDeselectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
         if let
             dateUserSelected = dateFromPath(indexPath),
@@ -744,7 +822,6 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         }
         return false
     }
-    
 
     public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if let
@@ -763,35 +840,35 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
 }
 
 private extension NSDate {
-    func isGreaterThanDate(dateToCompare: NSDate) -> Bool {
+    private func isGreaterThanDate(dateToCompare: NSDate) -> Bool {
         if self.compare(dateToCompare) == .OrderedDescending {
             return true
         }
         return false
     }
     
-    func isLessThanDate(dateToCompare: NSDate) -> Bool {
+    private func isLessThanDate(dateToCompare: NSDate) -> Bool {
         if self.compare(dateToCompare) == .OrderedAscending {
             return true
         }
         return false
     }
     
-    func equalToDate(dateToCompare: NSDate) -> Bool {
+    private func equalToDate(dateToCompare: NSDate) -> Bool {
         if self.compare(dateToCompare) == .OrderedSame {
             return true
         }
         return false
     }
     
-    func isWithinInclusiveBoundaryDates(startDate: NSDate, endDate: NSDate)->Bool {
+    private func isWithinInclusiveBoundaryDates(startDate: NSDate, endDate: NSDate)->Bool {
         if (self.equalToDate(startDate) || self.isGreaterThanDate(startDate)) && (self.equalToDate(endDate) || self.isLessThanDate(endDate)) {
             return true
         }
         return false
     }
     
-    func isWithinExclusiveBoundaryDates(startDate: NSDate, endDate: NSDate)->Bool {
+    private func isWithinExclusiveBoundaryDates(startDate: NSDate, endDate: NSDate)->Bool {
         if self.isGreaterThanDate(startDate) && self.isLessThanDate(endDate) {
             return true
         }
