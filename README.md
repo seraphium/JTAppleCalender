@@ -223,7 +223,7 @@ Create all the other views on your xib that you need. Dots view, customWhatEverV
 You can also download the example project on Github and see the possibilities.
 
 
-#### Other stuff to help configure your calendar
+#### Other properties/functions/structs to help configure your calendar
 
 The following structure was returned when a cell is about to be displayed.
 
@@ -248,7 +248,7 @@ The following structure was returned when a cell is about to be displayed.
     public func selectDate(date: NSDate)
 ```
 
-##### Properties
+#### Properties
 
 * allowsMultipleSelection
 * animationsEnabled
