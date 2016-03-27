@@ -19,6 +19,25 @@ class Tests: XCTestCase {
         XCTAssert(true, "Pass")
     }
     
+    func testDateBoundary() {
+        let testString = "To check the date boundaries"
+        XCTAssert(testString == "To check the date boundaries")
+    }
+    
+    func testCalendarSection() {
+        let testString = "To check the date sections"
+        XCTAssert(testString == "To check the date sections")
+    }
+    
+    func testToMakeSureStringAppends() {
+        var s1 = "Foo";
+        let expectation = expectationWithDescription("Handler called")
+        s1 = s1.stringByAppendingString("sd")
+        expectation.fulfill()
+        waitForExpectationsWithTimeout(0.1, handler:nil)
+    }
+
+    
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measureBlock() {

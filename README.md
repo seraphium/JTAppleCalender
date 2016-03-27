@@ -115,7 +115,7 @@ Like a UITableView, the cell has 2 parts.
 
 ##### 2. The calendarView
 ---
-* This step is easy. Go to your Storyboard and add a `UIView` to it. Set the class of the view to be `JTAppleCalendarView`. Then setup an outlet for it to your viewController. 
+* This step is easy. Go to your Storyboard and add a `UIView` to it. Set the class of the view to be `JTAppleCalendarView`. Then setup an outlet for it to your viewController. You can setupup your autolayout constrainst for the calendar view at this point.
 
 
 ##### Whats next?
@@ -125,7 +125,7 @@ Similar to UITableView protocls, your viewController has to conform to 2 protoco
 
 ```swift
     // This method is required. You provide a startDate, endDate, and a calendar configured to your liking.
-    func configureCalendar() -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar)
+    func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar)
 ```
 
 * JTAppleCalendarViewDelegate
@@ -144,12 +144,15 @@ Similar to UITableView protocls, your viewController has to conform to 2 protoco
 
 
 ##### Setting up the delegate methods
-Lets setup the delegate methods in your viewController. I have called my viewController simply `ViewController`. I prefer setting up my protocols on my controllers using extensions to keep my code neat, but you can put it where ever youre accustomed to. This function needs 3 variables returned. (1). Start boundary date (2) End boundary date (3) Calendar which you should configure to the time zone of your liking.
+Lets setup the delegate methods in your viewController. I have called my viewController simply `ViewController`. I prefer setting up my protocols on my controllers using extensions to keep my code neat, but you can put it where ever youre accustomed to. This function needs 3 variables returned. 
+- Start boundary date 
+- End boundary date 
+- Calendar which you should configure to the time zone of your liking.
 
 ```swift
 extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDelegate  {
     // Setting up manditory protocol method 
-    func configureCalendar() -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar) {
+    func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar) {
         let startDateComponents = NSDateComponents()
         startDateComponents.month = -2
         let today = NSDate()
@@ -232,11 +235,14 @@ The following structure was returned when a cell is about to be displayed.
         case ThisMonth = 0, PreviousMonthWithinBoundary, PreviousMonthOutsideBoundary, FollowingMonthWithinBoundary, FollowingMonthOutsideBoundary
     }
 ```
+
+
 * `.ThisMonth` = the date to be displayed belongs to the month section
 * `.PreviousMonthWithinBoundary` = date belongs to the previous month, and it is within the date boundary you set
 * `.PreviousMonthOutsideBoundary` = date belongs to previous month, and it is outside the boundary you have set
 * `.FollowingMonthWithinBoundary` = date belongs to following month, within boundary
 * `.FollowingMonthOutsideBoundary` = date belongs to following month, outside boundary
+
 
 
 ```swift
