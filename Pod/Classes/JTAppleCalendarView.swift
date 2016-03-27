@@ -62,8 +62,7 @@ public protocol JTAppleCalendarViewDelegate {
     ///     - date: The date attached to the date-cell.
     ///     - cell: The date-cell view. This can be customized at this point.
     ///     - cellState: The month the date-cell belongs to.
-    /// - returns:
-    ///     - A Bool value indicating if the operation can be done.
+    /// - returns: A Bool value indicating if the operation can be done.
     func calendar(calendar : JTAppleCalendarView, canSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
     
     /// Asks the delegate if de-selecting the date-cell with a specified date is allowed
@@ -72,8 +71,7 @@ public protocol JTAppleCalendarViewDelegate {
     ///     - date: The date attached to the date-cell.
     ///     - cell: The date-cell view. This can be customized at this point.
     ///     - cellState: The month the date-cell belongs to.
-    /// - returns:
-    ///     - A Bool value indicating if the operation can be done.
+    /// - returns: A Bool value indicating if the operation can be done.
     func calendar(calendar : JTAppleCalendarView, canDeselectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
     
     /// Tells the delegate that a date-cell with a specified date was selected
@@ -154,7 +152,14 @@ public class JTAppleCalendarView: UIView {
         }
     }
     /// The object that acts as the data source of the calendar view.
-    public var dataSource : JTAppleCalendarViewDataSource?
+    public var dataSource : JTAppleCalendarViewDataSource? {
+        didSet {
+            if monthInfo.count < 1 {
+                monthInfo = setupMonthInfoDataForStartAndEndDate()
+            }
+            reloadData()
+        }
+    }
     /// The object that acts as the delegate of the calendar view.
     public var delegate : JTAppleCalendarViewDelegate?
     
@@ -258,7 +263,6 @@ public class JTAppleCalendarView: UIView {
     }
     
     lazy private var calendarView : UICollectionView = {
-     
         let layout = JTAppleCalendarFlowLayout()
         layout.scrollDirection = self.direction;
         layout.minimumInteritemSpacing = 0
@@ -273,7 +277,6 @@ public class JTAppleCalendarView: UIView {
         cv.showsVerticalScrollIndicator = false
         cv.allowsMultipleSelection = false
         return cv
-        
     }()
     
     override public var frame: CGRect {
@@ -618,6 +621,29 @@ public class JTAppleCalendarView: UIView {
         }
         return returnPaths
     }
+    
+    /// Returns the calendar view's current section boundary dates.
+    /// - returns:
+    ///     - startDate: The start date of the current section
+    ///     - endDate: The end date of the current section
+    public func currentCalendarSegment() -> (startDate: NSDate, endDate: NSDate)? {
+        if monthInfo.count < 1 {
+            return nil
+        }
+        
+        let section = currentSectionPage
+        let monthData = monthInfo[section]
+        let itemLength = monthData[NUMBER_OF_DAYS_INDEX]
+        let fdIndex = monthData[FIRST_DAY_INDEX]
+        let startIndex = NSIndexPath(forItem: fdIndex, inSection: section)
+        let endIndex = NSIndexPath(forItem: fdIndex + itemLength - 1, inSection: section)
+
+        if let theStartDate = dateFromPath(startIndex), theEndDate = dateFromPath(endIndex) {
+            return (theStartDate, theEndDate)
+        }
+        
+        return nil
+    }
 
 }
 
@@ -638,17 +664,8 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
         // When ever the month/section is switched, let the flowlayout know which page it is on. This is needed in the event user switches orientatoin, we can use the index to snap back to correct position
         (calendarView.collectionViewLayout as! JTAppleCalendarFlowLayout).pathForFocusItem = NSIndexPath(forItem: 0, inSection: section)
         
-        let monthData = monthInfo[section]
-
-        let itemLength = monthData[NUMBER_OF_DAYS_INDEX]
-
-        let fdIndex = monthData[FIRST_DAY_INDEX]
-        
-        let startIndex = NSIndexPath(forItem: fdIndex, inSection: section)
-        let endIndex = NSIndexPath(forItem: fdIndex + itemLength - 1, inSection: section)
-        
-        if let startDate = dateFromPath(startIndex), endDate = dateFromPath(endIndex) {
-            self.delegate?.calendar(self, didScrollToDateSegmentStartingWith: startDate, endingWithDate: endDate)
+        if let currentSegmentDates = currentCalendarSegment() {
+            self.delegate?.calendar(self, didScrollToDateSegmentStartingWith: currentSegmentDates.startDate, endingWithDate: currentSegmentDates.endDate)
         }
     }
 }
@@ -659,12 +676,11 @@ extension JTAppleCalendarView {
         let itemIndex = indexPath.item
         let itemSection = indexPath.section
         
-        let currentMonthInfo = monthInfo[itemSection] // we are guaranteed an array by the fact that we reached this line (so unwrap)
+        let currentMonthInfo = monthInfo[itemSection]
         
         let fdIndex = currentMonthInfo[FIRST_DAY_INDEX]
         let nDays = currentMonthInfo[NUMBER_OF_DAYS_INDEX]
         let offSet = currentMonthInfo[OFFSET_CALC]
-
 
         var cellText: String = ""
         var dateBelongsTo: CellState.DateOwner  = .ThisMonth

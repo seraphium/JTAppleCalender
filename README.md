@@ -209,6 +209,7 @@ Now you have not declared the function `setupCellBeforeDisplay:date:` on your cu
 
 Your cell now has the ability to display text and color based on which day of the week it is. One final thing needs to be done. The Calender does not have its delegate and datasource setup.  Head to your `ViewController` class, and add following code:
 
+
 ```swift
     @IBOutlet weak var calendarView: JTAppleCalendarView! // Don't forget to hook up the outlet to your calendarView on Storyboard
     override func viewDidLoad() {
@@ -219,6 +220,7 @@ Your cell now has the ability to display text and color based on which day of th
         }
 ```
 
+
 #### Completed! Where to go from here?
 ---
 
@@ -227,6 +229,7 @@ You can also download the example project on Github and see the possibilities.
 
 
 #### Other properties/functions/structs to help configure your calendar
+
 
 The following structure was returned when a cell is about to be displayed.
 
@@ -254,7 +257,7 @@ The following structure was returned when a cell is about to be displayed.
     public func selectDate(date: NSDate)
 ```
 
-#### Properties
+#### Properties you can configure
 
 * allowsMultipleSelection
 * animationsEnabled
@@ -269,7 +272,6 @@ The following structure was returned when a cell is about to be displayed.
 
 
 
-
 Other functions/properties are coming. This is a very active project.
 
 
@@ -278,7 +280,7 @@ JTAppleCalendar is available through [CocoaPods](https://cocoapods.org/pods/JTAp
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "JTAppleCalendar"
+pod 'JTAppleCalendar', '~> 1.1'
 ```
 
 ## Author
