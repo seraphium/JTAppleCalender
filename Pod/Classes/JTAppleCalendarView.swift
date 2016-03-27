@@ -624,13 +624,13 @@ public class JTAppleCalendarView: UIView {
 // MARK: scrollViewDelegates
 extension JTAppleCalendarView: UIScrollViewDelegate {
     
-    private func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
+    public func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
         scrollViewDidEndDecelerating(scrollView)
         delayedExecutionClosure?()
         delayedExecutionClosure = nil
     }
     
-    private func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+    public func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         
         // Determing the section from the scrollView direction
         let section = currentSectionPage
