@@ -55,6 +55,10 @@ public protocol JTAppleCalendarViewDataSource {
     func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar)
 }
 
+/**
+    The delegate of a JTAppleCalendarView object must adopt the JTAppleCalendarViewDelegate protocol.
+    Optional methods of the protocol allow the delegate to manage selections, and configure the cells.
+ */
 public protocol JTAppleCalendarViewDelegate {
     /// Asks the delegate if selecting the date-cell with a specified date is allowed
     /// - Parameters:
@@ -105,7 +109,6 @@ public protocol JTAppleCalendarViewDelegate {
     ///     - cellState: The month the date-cell belongs to.
     func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) -> Void
 }
-
 public extension JTAppleCalendarViewDelegate {
     func calendar(calendar : JTAppleCalendarView, canSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState)->Bool {return true}
     func calendar(calendar : JTAppleCalendarView, canDeselectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState)->Bool {return true}
@@ -115,7 +118,7 @@ public extension JTAppleCalendarViewDelegate {
     func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) {}
 }
 
-
+/// An instance of JTAppleCalendarView (or simply, a calendar view) is a means for displaying and interacting with a gridstyle layout of date-cells
 public class JTAppleCalendarView: UIView {
     /// The amount of buffer space before the first row of date-cells
     public var bufferTop: CGFloat    = 0.0
@@ -382,7 +385,7 @@ public class JTAppleCalendarView: UIView {
             
             // check if the dates are in correct order
             if calendar.compareDate(startDate, toDate: endDate, toUnitGranularity: NSCalendarUnit.Nanosecond) == NSComparisonResult.OrderedDescending {
-                print("No dates can be generated because your start date is greater than your end date.")
+//                print("No dates can be generated because your start date is greater than your end date.")
                 return retval
             }
             
