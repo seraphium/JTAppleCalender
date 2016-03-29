@@ -32,6 +32,7 @@ let DATE_BOUNDRY = 4
 /// You can use these cell states to configure how you want your date cells to look. Eg. you can have the colors belonging to the month be in color black, while the colors of previous months be in color gray.
 public struct CellState {
     public enum DateOwner: Int {
+        /// Describes the state of a date-cell
         case ThisMonth = 0, PreviousMonthWithinBoundary, PreviousMonthOutsideBoundary, FollowingMonthWithinBoundary, FollowingMonthOutsideBoundary
     }
     public let isSelected: Bool
@@ -39,11 +40,13 @@ public struct CellState {
     public let dateBelongsTo: DateOwner
 }
 
-/// Days of the week
+/// Days of the week. By setting you calandar's first day of week, you can change which day is the first for the week. Sunday is by default.
 public enum DaysOfWeek: Int {
+    /// Days of the week.
     case Sunday = 7, Monday = 6, Tuesday = 5, Wednesday = 4, Thursday = 10, Friday = 9, Saturday = 8
 }
 
+/// The JTAppleCalendarViewDataSource protocol is adopted by an object that mediates the application’s data model for a JTAppleCalendarViewDataSource object. The data source provides the calendar-view object with the information it needs to construct and modify it self
 public protocol JTAppleCalendarViewDataSource {
     /// Asks the data source to return the start and end boundary dates as well as the calendar to use. You should properly configure your calendar at this point.
     /// - Parameters:
@@ -55,10 +58,9 @@ public protocol JTAppleCalendarViewDataSource {
     func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar)
 }
 
-/**
-    The delegate of a JTAppleCalendarView object must adopt the JTAppleCalendarViewDelegate protocol.
-    Optional methods of the protocol allow the delegate to manage selections, and configure the cells.
- */
+
+/// The delegate of a JTAppleCalendarView object must adopt the JTAppleCalendarViewDelegate protocol.
+/// Optional methods of the protocol allow the delegate to manage selections, and configure the cells.
 public protocol JTAppleCalendarViewDelegate {
     /// Asks the delegate if selecting the date-cell with a specified date is allowed
     /// - Parameters:
@@ -282,6 +284,7 @@ public class JTAppleCalendarView: UIView {
         return cv
     }()
     
+    /// The frame rectangle which defines the view's location and size in its superview coordinate system.
     override public var frame: CGRect {
         didSet {
             self.calendarView.frame = CGRect(x:0.0, y:bufferTop, width: self.frame.size.width, height:self.frame.size.height - bufferBottom)
@@ -304,10 +307,12 @@ public class JTAppleCalendarView: UIView {
         super.init(coder: aDecoder)
     }
     
+    /// Prepares the receiver for service after it has been loaded from an Interface Builder archive, or nib file.
     override public func awakeFromNib() {
         self.initialSetup()
     }
     
+    /// Lays out subviews.
     override public func layoutSubviews() {
         self.frame = super.frame
     }
@@ -652,13 +657,14 @@ public class JTAppleCalendarView: UIView {
 
 // MARK: scrollViewDelegates
 extension JTAppleCalendarView: UIScrollViewDelegate {
-    
+    /// Tells the delegate when a scrolling animation in the scroll view concludes.
     public func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
         scrollViewDidEndDecelerating(scrollView)
         delayedExecutionClosure?()
         delayedExecutionClosure = nil
     }
     
+    /// Tells the delegate that the scroll view has ended decelerating the scrolling movement.
     public func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         
         // Determing the section from the scrollView direction
@@ -771,8 +777,8 @@ extension JTAppleCalendarView {
 
 // MARK: CollectionView delegates
 extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
+    /// Asks your data source object for the cell that corresponds to the specified item in the collection view.
     public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        
         let dayCell = collectionView.dequeueReusableCellWithReuseIdentifier(cellReuseIdentifier, forIndexPath: indexPath) as! JTAppleDayCell
         let cellState = cellStateFromIndexPath(indexPath)
         let date = dateFromPath(indexPath)!

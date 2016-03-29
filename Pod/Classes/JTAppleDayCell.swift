@@ -9,6 +9,7 @@
 var cellViewXibName: String?
 var internalCellInset: CGPoint = CGPoint(x: 3.0, y: 3.0)
 
+/// The JTAppleDayCell class defines the attributes and behavior of the cells that appear in JTAppleCalendarView objects.
 public class JTAppleDayCell: UICollectionViewCell {
     
     var cellView: JTAppleDayCellView!
@@ -36,7 +37,8 @@ public class JTAppleDayCell: UICollectionViewCell {
         self.setupCellView()
         self.addSubview(self.cellView)        
     }
-
+    
+    ///Returns an object initialized from data in a given unarchiver.
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
