@@ -84,7 +84,7 @@ public protocol JTAppleCalendarViewDelegate {
     /// - Parameters:
     ///     - calendar: The JTAppleCalendar view giving this information.
     ///     - date: The date attached to the date-cell.
-    ///     - cell: The date-cell view. This can be customized at this point.
+    ///     - cell: The date-cell view. This can be customized at this point. This may be nil if the selected cell is off the screen
     ///     - cellState: The month the date-cell belongs to.
     func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) -> Void
     
@@ -92,7 +92,7 @@ public protocol JTAppleCalendarViewDelegate {
     /// - Parameters:
     ///     - calendar: The JTAppleCalendar view giving this information.
     ///     - date: The date attached to the date-cell.
-    ///     - cell: The date-cell view. This can be customized at this point.
+    ///     - cell: The date-cell view. This can be customized at this point. This may be nil if the selected cell is off the screen
     ///     - cellState: The month the date-cell belongs to.
     func calendar(calendar : JTAppleCalendarView, didDeselectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) -> Void
     
@@ -147,7 +147,8 @@ public class JTAppleCalendarView: UIView {
     public var firstDayOfWeek = DaysOfWeek.Sunday
     
     private var layoutNeedsUpdating = false
-    /// Number of rows to be displayed per month. Allowed values are 1, 2, 3 & 6
+    /// Number of rows to be displayed per month. Allowed values are 1, 2, 3 & 6.
+    /// After changing this value, you should reload your calendarView to show your change
     public var numberOfRowsPerMonth = 6 {
         didSet {
             if numberOfRowsPerMonth == 4 || numberOfRowsPerMonth == 5 || numberOfRowsPerMonth > 6 || numberOfRowsPerMonth < 0 {numberOfRowsPerMonth = 6}
@@ -612,7 +613,6 @@ public class JTAppleCalendarView: UIView {
                 // Must be added here. If added in delegate didSelectItemAtIndexPath
                 
                 selectTheDate()
-                
             } else { // If multiple selection is on. Multiple selection behaves differently to singleselection. It behaves like a toggle.
                 
                 if self.selectedIndexPaths.contains(sectionIndexPath) { // If this cell is already selected, then deselect it

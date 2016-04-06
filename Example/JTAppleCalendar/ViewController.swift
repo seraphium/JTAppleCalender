@@ -13,22 +13,56 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var calendarView: JTAppleCalendarView!
     @IBOutlet weak var monthLabel: UILabel!
+    let formatter = NSDateFormatter()
     
     @IBAction func reloadCalendarView(sender: UIButton) {
-        calendarView.changeNumberOfRowsPerMonthTo(3, withFocusDate: NSDate())
+        let date = formatter.dateFromString("2016 04 11")
+        calendarView.changeNumberOfRowsPerMonthTo(3, withFocusDate: date)
     }
     
     @IBAction func reloadCalendarViewTo6(sender: UIButton) {
-        calendarView.changeNumberOfRowsPerMonthTo(6, withFocusDate: NSDate())
+        let date = formatter.dateFromString("2016 04 11")
+        calendarView.changeNumberOfRowsPerMonthTo(6, withFocusDate: date)
     }
     
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
-        self.calendarView.dataSource = self
-        self.calendarView.delegate = self
-        self.calendarView.registerCellViewXib(fileName: "CellView")
+        formatter.dateFormat = "yyyy MM dd"
+
+        calendarView.dataSource = self
+        calendarView.delegate = self
+        calendarView.registerCellViewXib(fileName: "CellView")     // manditory
+        
+        // The following default code can be removed since they are already the default.
+        // They are only included here so that you can know what properties can be configured
+        calendarView.direction = .Horizontal                       // default is horizontal
+        calendarView.numberOfRowsPerMonth = 6                      // default is 6
+        calendarView.cellInset = CGPoint(x: 0, y: 0)               // default is (3,3)
+        calendarView.allowsMultipleSelection = false               // default is false
+        calendarView.bufferTop = 0                                 // default is 0. - still work in progress
+        calendarView.bufferBottom = 0                              // default is 0. - still work in progress
+        calendarView.firstDayOfWeek = .Sunday                      // default is Sunday
+        calendarView.reloadData()
+    }
+    
+    @IBAction func select10(sender: AnyObject?) {
+        let date = formatter.dateFromString("2016 02 10")
+        self.calendarView.selectDate(date!)
+    }
+    
+    @IBAction func select11(sender: AnyObject?) {
+        let date = formatter.dateFromString("2016 02 11")
+        self.calendarView.selectDate(date!)
+    }
+    
+    @IBAction func scrollToDate(sender: AnyObject?) {
+        let date = formatter.dateFromString("2016 03 11")
+        calendarView.scrollToDate(date!)
+    }
+    
+    @IBAction func printSelectedDates() {
+        print(calendarView.selectedDates)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -55,15 +89,12 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
     func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar) {
         let startDateComponents = NSDateComponents()
         startDateComponents.month = -2
-        let today = NSDate()
+        let today = formatter.dateFromString("2016 04 05")!
         let firstDate = NSCalendar.currentCalendar().dateByAddingComponents(startDateComponents, toDate: today, options: NSCalendarOptions())
         
         let endDateComponents = NSDateComponents()
         endDateComponents.month = 1
         let secondDate = NSCalendar.currentCalendar().dateByAddingComponents(endDateComponents, toDate: today, options: NSCalendarOptions())
-
-//        let  calendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
-//        calendar.timeZone = NSTimeZone(abbreviation: "GMT")!
 
         let calendar = NSCalendar.currentCalendar()
 
@@ -78,9 +109,8 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
         (cell as? CellView)?.cellSelectionChanged(cellState)
     }
     
-    func calendar(calendar: JTAppleCalendarView, didSelectDate date: NSDate, cell: JTAppleDayCellView, cellState: CellState) {
+    func calendar(calendar: JTAppleCalendarView, didSelectDate date: NSDate, cell: JTAppleDayCellView?, cellState: CellState) {
         (cell as? CellView)?.cellSelectionChanged(cellState)
-        print( date)
     }
     
     func calendar(calendar: JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {
