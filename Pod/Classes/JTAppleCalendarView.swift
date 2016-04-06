@@ -86,7 +86,7 @@ public protocol JTAppleCalendarViewDelegate {
     ///     - date: The date attached to the date-cell.
     ///     - cell: The date-cell view. This can be customized at this point.
     ///     - cellState: The month the date-cell belongs to.
-    func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Void
+    func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) -> Void
     
     /// Tells the delegate that a date-cell with a specified date was de-selected
     /// - Parameters:
@@ -114,7 +114,7 @@ public protocol JTAppleCalendarViewDelegate {
 public extension JTAppleCalendarViewDelegate {
     func calendar(calendar : JTAppleCalendarView, canSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState)->Bool {return true}
     func calendar(calendar : JTAppleCalendarView, canDeselectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState)->Bool {return true}
-    func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) {}
+    func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) {}
     func calendar(calendar : JTAppleCalendarView, didDeselectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) {}
     func calendar(calendar : JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {}
     func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) {}
@@ -246,7 +246,7 @@ public class JTAppleCalendarView: UIView {
     
     
     private(set) var selectedIndexPaths : [NSIndexPath] = [NSIndexPath]()
-    private(set) var selectedDates : [NSDate] = [NSDate]()
+    public var selectedDates : [NSDate] = [NSDate]()
 
     private var monthInfoActivated = false
     lazy private var monthInfo : [[Int]] = {
@@ -567,31 +567,63 @@ public class JTAppleCalendarView: UIView {
         delayRunOnMainThread(0.0) { 
             let components = self.calendar.components([.Year, .Month, .Day],  fromDate: date)
             let firstDayOfDate = self.calendar.dateFromComponents(components)
+            
             if !firstDayOfDate!.isWithinInclusiveBoundaryDates(self.startOfMonthCache, endDate: self.endOfMonthCache) {
+                // If the date is not within valid boundaries, then exit
                 return
             }
             
             let periodApart = self.calendar.components(.Month, fromDate: self.startOfMonthCache, toDate: date, options: [])
             let segmentIndex = periodApart.month
-            let sectionIndexPath =  self.pathsFromDates([date])[0]
-            let page = self.currentSectionPage
+            let allPathsFromDates = self.pathsFromDates([date])
             
-            
-            if page != segmentIndex {
-                return // Incorrect section
+            // If the date path youre searching for, doesnt exist, then return
+            if allPathsFromDates.count < 0 {
+                return
             }
-            self.calendarView.selectItemAtIndexPath(sectionIndexPath, animated: false, scrollPosition: .None)
             
-            // Handle selection
-            if self.calendarView.allowsMultipleSelection == false {
+            let sectionIndexPath = allPathsFromDates[0]
+            
+            
+            let selectTheDate = {
+                if self.selectedIndexPaths.contains(sectionIndexPath) == false { // Can contain the value already if the user selected the same date twice.
+                    self.selectedDates.append(date)
+                    self.selectedIndexPaths.append(sectionIndexPath)
+                }
+                
+                self.calendarView.selectItemAtIndexPath(sectionIndexPath, animated: false, scrollPosition: .None)
+                self.collectionView(self.calendarView, didSelectItemAtIndexPath: sectionIndexPath)
+            }
+            
+            let deSelectTheDate = { (indexPath: NSIndexPath) -> Void in
+                self.calendarView.deselectItemAtIndexPath(indexPath, animated: false)
+                self.collectionView(self.calendarView, didDeselectItemAtIndexPath: indexPath)
+            }
+            
+            // Remove old selections
+            if self.calendarView.allowsMultipleSelection == false { // If single selection is ON
                 for indexPath in self.selectedIndexPaths {
-                    self.calendarView.deselectItemAtIndexPath(indexPath, animated: false)
-                    self.collectionView(self.calendarView, didDeselectItemAtIndexPath: indexPath)
+                    if indexPath != sectionIndexPath {
+                        deSelectTheDate(indexPath)
+                    }
+                }
+
+                // Add new selections
+                // Must be added here. If added in delegate didSelectItemAtIndexPath
+                
+                selectTheDate()
+                
+            } else { // If multiple selection is on. Multiple selection behaves differently to singleselection. It behaves like a toggle.
+                
+                if self.selectedIndexPaths.contains(sectionIndexPath) { // If this cell is already selected, then deselect it
+                    deSelectTheDate(sectionIndexPath)
+                } else {
+                    // Add new selections
+                    // Must be added here. If added in delegate didSelectItemAtIndexPath
+                    selectTheDate()
                 }
             }
-            self.collectionView(self.calendarView, didSelectItemAtIndexPath: sectionIndexPath)
         }
-
     }
     
     /// Reload the date of specified date-cells on the calendar-view
@@ -850,8 +882,9 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
 
     public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if let
-            delegate = self.delegate, dateSelectedByUser = dateFromPath(indexPath),
-            selectedCell = collectionView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell {
+            delegate = self.delegate, dateSelectedByUser = dateFromPath(indexPath) {
+            
+            let selectedCell = collectionView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell
                 
             // Update model
             if selectedIndexPaths.contains(indexPath) == false { // wrapping in IF statement handles both multiple select scenarios AND singleselection scenarios
@@ -859,7 +892,8 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
                 selectedDates.append(dateSelectedByUser)
             }
             let cellState = cellStateFromIndexPath(indexPath)
-            delegate.calendar(self, didSelectDate: dateSelectedByUser, cell: selectedCell.cellView, cellState: cellState)
+            
+            delegate.calendar(self, didSelectDate: dateSelectedByUser, cell: selectedCell?.cellView, cellState: cellState)
         }
     }
 }
