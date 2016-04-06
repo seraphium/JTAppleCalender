@@ -564,7 +564,7 @@ public class JTAppleCalendarView: UIView {
     
     /// Select a date-cell if it is on screen
     /// - Parameter date: The date-cell with this date will be selected
-    public func selectDate(date: NSDate) {
+    @available(*, deprecated=2.0) public func selectDate(date: NSDate) {
         delayRunOnMainThread(0.0) { 
             let components = self.calendar.components([.Year, .Month, .Day],  fromDate: date)
             let firstDayOfDate = self.calendar.dateFromComponents(components)
@@ -624,6 +624,70 @@ public class JTAppleCalendarView: UIView {
         }
     }
     
+    /// Select a date-cell if it is on screen
+    /// - Parameter date: The date-cell with this date will be selected
+    public func selectDates(dates: [NSDate]) {
+        for date in dates {
+            delayRunOnMainThread(0.0) {
+                let components = self.calendar.components([.Year, .Month, .Day],  fromDate: date)
+                let firstDayOfDate = self.calendar.dateFromComponents(components)
+                
+                if !firstDayOfDate!.isWithinInclusiveBoundaryDates(self.startOfMonthCache, endDate: self.endOfMonthCache) {
+                    // If the date is not within valid boundaries, then exit
+                    return
+                }
+                
+                let allPathsFromDates = self.pathsFromDates([date])
+                
+                // If the date path youre searching for, doesnt exist, then return
+                if allPathsFromDates.count < 0 {
+                    return
+                }
+                
+                let sectionIndexPath = allPathsFromDates[0]
+                
+                
+                let selectTheDate = {
+                    if self.selectedIndexPaths.contains(sectionIndexPath) == false { // Can contain the value already if the user selected the same date twice.
+                        self.selectedDates.append(date)
+                        self.selectedIndexPaths.append(sectionIndexPath)
+                    }
+                    
+                    self.calendarView.selectItemAtIndexPath(sectionIndexPath, animated: false, scrollPosition: .None)
+                    self.collectionView(self.calendarView, didSelectItemAtIndexPath: sectionIndexPath)
+                }
+                
+                let deSelectTheDate = { (indexPath: NSIndexPath) -> Void in
+                    self.calendarView.deselectItemAtIndexPath(indexPath, animated: false)
+                    self.collectionView(self.calendarView, didDeselectItemAtIndexPath: indexPath)
+                }
+                
+                // Remove old selections
+                if self.calendarView.allowsMultipleSelection == false { // If single selection is ON
+                    for indexPath in self.selectedIndexPaths {
+                        if indexPath != sectionIndexPath {
+                            deSelectTheDate(indexPath)
+                        }
+                    }
+                    
+                    // Add new selections
+                    // Must be added here. If added in delegate didSelectItemAtIndexPath
+                    
+                    selectTheDate()
+                } else { // If multiple selection is on. Multiple selection behaves differently to singleselection. It behaves like a toggle.
+                    
+                    if self.selectedIndexPaths.contains(sectionIndexPath) { // If this cell is already selected, then deselect it
+                        deSelectTheDate(sectionIndexPath)
+                    } else {
+                        // Add new selections
+                        // Must be added here. If added in delegate didSelectItemAtIndexPath
+                        selectTheDate()
+                    }
+                }
+            }
+        }
+    }
+    
     /// Reload the date of specified date-cells on the calendar-view
     /// - Parameter dates: Date-cells with these specified dates will be reloaded
     public func reloadDates(dates: [NSDate]) {
@@ -635,7 +699,7 @@ public class JTAppleCalendarView: UIView {
     
     private func pathsFromDates(dates:[NSDate])-> [NSIndexPath] {
         var returnPaths: [NSIndexPath] = []
-
+        
         for date in dates {
             if date.isWithinInclusiveBoundaryDates(startOfMonthCache, endDate: endOfMonthCache) {
                 let periodApart = calendar.components(.Month, fromDate: startOfMonthCache, toDate: date, options: [])
