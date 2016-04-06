@@ -136,7 +136,7 @@ Similar to UITableView protocls, your viewController has to conform to 2 protoco
 
     func calendar(calendar : JTAppleCalendarView, canSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
     func calendar(calendar : JTAppleCalendarView, canDeselectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Bool
-    func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState) -> Void
+    func calendar(calendar : JTAppleCalendarView, didSelectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) -> Void
     func calendar(calendar : JTAppleCalendarView, didDeselectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) -> Void
     func calendar(calendar : JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) -> Void
     func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) -> Void
@@ -280,7 +280,7 @@ JTAppleCalendar is available through [CocoaPods](https://cocoapods.org/pods/JTAp
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'JTAppleCalendar', '~> 1.1'
+pod 'JTAppleCalendar', '~> 2.0'
 ```
 
 ## Author
