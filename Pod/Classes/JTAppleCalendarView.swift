@@ -574,8 +574,6 @@ public class JTAppleCalendarView: UIView {
                 return
             }
             
-            let periodApart = self.calendar.components(.Month, fromDate: self.startOfMonthCache, toDate: date, options: [])
-            let segmentIndex = periodApart.month
             let allPathsFromDates = self.pathsFromDates([date])
             
             // If the date path youre searching for, doesnt exist, then return
