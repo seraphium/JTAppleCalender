@@ -3,7 +3,6 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -25,52 +24,52 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="Ik7-d5-Fp7">
-                                <rect key="frame" x="20" y="46" width="560" height="21"/>
+                                <rect key="frame" x="20" y="46" width="560" height="20"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="SUN" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a95-i7-kdE">
-                                        <rect key="frame" x="0.0" y="0.0" width="80" height="21"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="80" height="20"/>
                                         <color key="backgroundColor" red="0.29803921568627451" green="0.58039215686274503" blue="0.76862745098039209" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="MON" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7RE-Ob-lOQ">
-                                        <rect key="frame" x="80" y="0.0" width="80" height="21"/>
+                                        <rect key="frame" x="80" y="0.0" width="80" height="20"/>
                                         <color key="backgroundColor" red="0.29803921568627451" green="0.58039215686274503" blue="0.76862745098039209" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" tag="2" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="TUE" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Odu-rD-KxJ">
-                                        <rect key="frame" x="160" y="0.0" width="80" height="21"/>
+                                        <rect key="frame" x="160" y="0.0" width="80" height="20"/>
                                         <color key="backgroundColor" red="0.29803921568627451" green="0.58039215686274503" blue="0.76862745098039209" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" tag="3" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="WED" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RXo-Gp-Hnh">
-                                        <rect key="frame" x="240" y="0.0" width="80" height="21"/>
+                                        <rect key="frame" x="240" y="0.0" width="80" height="20"/>
                                         <color key="backgroundColor" red="0.29803921568627451" green="0.58039215686274503" blue="0.76862745098039209" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" tag="4" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="THU" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WEc-7V-dYZ">
-                                        <rect key="frame" x="320" y="0.0" width="80" height="21"/>
+                                        <rect key="frame" x="320" y="0.0" width="80" height="20"/>
                                         <color key="backgroundColor" red="0.29803921568627451" green="0.58039215686274503" blue="0.76862745098039209" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" tag="5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="FRI" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pdr-yp-csf">
-                                        <rect key="frame" x="400" y="0.0" width="80" height="21"/>
+                                        <rect key="frame" x="400" y="0.0" width="80" height="20"/>
                                         <color key="backgroundColor" red="0.29803921568627451" green="0.58039215686274503" blue="0.76862745098039209" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" tag="6" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="SAT" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lQ6-Oa-Gic">
-                                        <rect key="frame" x="480" y="0.0" width="80" height="21"/>
+                                        <rect key="frame" x="480" y="0.0" width="80" height="20"/>
                                         <color key="backgroundColor" red="0.29803921568627451" green="0.58039215686274503" blue="0.76862745098039209" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -78,65 +77,76 @@
                                     </label>
                                 </subviews>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="1YD-90-lES">
-                                <rect key="frame" x="20" y="75" width="560" height="300"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="vbP-Kr-0hG">
+                                <rect key="frame" x="20" y="75" width="560" height="301"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZTy-ss-Xhd" customClass="JTAppleCalendarView" customModule="JTAppleCalendar">
-                                        <rect key="frame" x="0.0" y="0.0" width="560" height="300"/>
-                                        <color key="backgroundColor" red="0.96862745098039216" green="0.96862745098039216" blue="0.96862745098039216" alpha="1" colorSpace="calibratedRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="415" id="iMp-63-3aD"/>
-                                            <constraint firstAttribute="height" constant="315" id="qZK-u3-gMb"/>
-                                        </constraints>
-                                        <variation key="default">
-                                            <mask key="constraints">
-                                                <exclude reference="iMp-63-3aD"/>
-                                                <exclude reference="qZK-u3-gMb"/>
-                                            </mask>
-                                        </variation>
-                                    </view>
+                                    <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="1YD-90-lES">
+                                        <rect key="frame" x="0.0" y="0.0" width="560" height="301"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZTy-ss-Xhd" customClass="JTAppleCalendarView" customModule="JTAppleCalendar">
+                                                <rect key="frame" x="0.0" y="0.0" width="560" height="301"/>
+                                                <color key="backgroundColor" red="0.96862745098039216" green="0.96862745098039216" blue="0.96862745098039216" alpha="1" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="415" id="iMp-63-3aD"/>
+                                                    <constraint firstAttribute="height" constant="315" id="qZK-u3-gMb"/>
+                                                </constraints>
+                                                <variation key="default">
+                                                    <mask key="constraints">
+                                                        <exclude reference="iMp-63-3aD"/>
+                                                        <exclude reference="qZK-u3-gMb"/>
+                                                    </mask>
+                                                </variation>
+                                            </view>
+                                        </subviews>
+                                    </stackView>
                                 </subviews>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="iQI-Hq-aUc">
                                 <rect key="frame" x="20" y="450" width="157" height="150"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rWO-5s-mKQ">
-                                        <rect key="frame" x="0.0" y="0.0" width="121" height="25"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="107" height="25"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Change to 3 rows"/>
                                         <connections>
                                             <action selector="reloadCalendarView:" destination="BYZ-38-t0r" eventType="touchUpInside" id="F2w-Xs-iRQ"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="13p-cR-5Oy">
-                                        <rect key="frame" x="0.0" y="25" width="125" height="25"/>
+                                        <rect key="frame" x="0.0" y="25" width="110" height="25"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Change to 6 Rows"/>
                                         <connections>
                                             <action selector="reloadCalendarViewTo6:" destination="BYZ-38-t0r" eventType="touchUpInside" id="nvl-99-SWw"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EZB-eU-i2Z">
-                                        <rect key="frame" x="0.0" y="50" width="145" height="25"/>
-                                        <state key="normal" title="Select 10th Feb 2016"/>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EZB-eU-i2Z">
+                                        <rect key="frame" x="0.0" y="50" width="146" height="25"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                        <state key="normal" title="Select many 2016 dates"/>
                                         <connections>
                                             <action selector="select10:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ce9-dQ-iNd"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WaY-fY-0lz">
-                                        <rect key="frame" x="0.0" y="75" width="143" height="25"/>
+                                        <rect key="frame" x="0.0" y="75" width="126" height="25"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Select 11th Feb 2016"/>
                                         <connections>
                                             <action selector="select11:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2hr-AE-WhN"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4fl-ZS-PXq">
-                                        <rect key="frame" x="0.0" y="100" width="157" height="25"/>
+                                        <rect key="frame" x="0.0" y="100" width="139" height="25"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Scroll to 11th Mar 2016"/>
                                         <connections>
                                             <action selector="scrollToDate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="WYt-WI-pJk"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X5M-bv-yCY">
-                                        <rect key="frame" x="0.0" y="125" width="139" height="25"/>
+                                        <rect key="frame" x="0.0" y="125" width="123" height="25"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Print Selected dates"/>
                                         <connections>
                                             <action selector="printSelectedDates" destination="BYZ-38-t0r" eventType="touchUpInside" id="afT-Z6-QEU"/>
@@ -155,33 +165,31 @@
                                     <constraint firstAttribute="width" constant="130" id="dGC-cN-5ep"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="iQI-Hq-aUc" secondAttribute="trailing" id="0LR-wm-Rey"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="1YD-90-lES" secondAttribute="trailing" id="0Oh-hW-jOU"/>
+                            <constraint firstItem="iQI-Hq-aUc" firstAttribute="top" secondItem="vbP-Kr-0hG" secondAttribute="bottom" constant="75" id="8pO-dp-qJh"/>
+                            <constraint firstItem="vbP-Kr-0hG" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="CDe-s5-7nI"/>
                             <constraint firstItem="cFX-1e-6ck" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="GsT-zx-Yef"/>
-                            <constraint firstItem="ZTy-ss-Xhd" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.5" id="LXv-Rl-ARZ"/>
                             <constraint firstItem="Ik7-d5-Fp7" firstAttribute="top" secondItem="cFX-1e-6ck" secondAttribute="bottom" constant="1.5" id="R2g-Od-0Bh"/>
                             <constraint firstAttribute="trailingMargin" secondItem="cFX-1e-6ck" secondAttribute="trailing" id="cP1-5y-E8C"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="iQI-Hq-aUc" secondAttribute="bottom" id="d4a-NY-edR"/>
-                            <constraint firstItem="iQI-Hq-aUc" firstAttribute="top" secondItem="1YD-90-lES" secondAttribute="bottom" id="dAJ-aR-iex"/>
-                            <constraint firstItem="1YD-90-lES" firstAttribute="top" secondItem="Ik7-d5-Fp7" secondAttribute="bottom" constant="10" id="iKf-yA-hIZ"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Ik7-d5-Fp7" secondAttribute="trailing" id="ilm-o0-e6c"/>
                             <constraint firstItem="Ik7-d5-Fp7" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="jhB-zy-7YW"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Lwa-pM-Iyc" secondAttribute="trailing" id="lQL-YC-LEC"/>
-                            <constraint firstItem="1YD-90-lES" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="mkC-AB-GVU"/>
+                            <constraint firstItem="vbP-Kr-0hG" firstAttribute="top" secondItem="Ik7-d5-Fp7" secondAttribute="bottom" constant="8" id="qQQ-hd-dti"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Lwa-pM-Iyc" secondAttribute="bottom" id="tFc-xX-rnt"/>
                             <constraint firstItem="cFX-1e-6ck" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="tXR-F0-D3M"/>
+                            <constraint firstItem="vbP-Kr-0hG" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="ujy-We-s3L"/>
                             <constraint firstItem="iQI-Hq-aUc" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="uon-9e-ZBG"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="0LR-wm-Rey"/>
-                                <exclude reference="dAJ-aR-iex"/>
                             </mask>
                         </variation>
                     </view>

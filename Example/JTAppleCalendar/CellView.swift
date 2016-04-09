@@ -12,7 +12,7 @@ import JTAppleCalendar
 class CellView: JTAppleDayCellView {
     @IBInspectable var todayColor: UIColor!// = UIColor(red: 254.0/255.0, green: 73.0/255.0, blue: 64.0/255.0, alpha: 0.3)
     @IBInspectable var normalDayColor: UIColor! //UIColor(white: 0.0, alpha: 0.1)
-    @IBOutlet var selectedView: CircleView!
+    @IBOutlet var selectedView: AnimationView!
     @IBOutlet var backView: UIView!
     @IBOutlet var supplimentaryView: UIView!
     @IBOutlet var dayLabel: UILabel!
@@ -47,8 +47,6 @@ class CellView: JTAppleDayCellView {
         
         // Configure Visibility
         configureVisibility(cellState)
-        
-
     }
     
     func configureVisibility(cellState: CellState) {
@@ -77,7 +75,10 @@ class CellView: JTAppleDayCellView {
 
             if selectedView.hidden == true {
                 configueViewIntoBubbleView(cellState)
-                selectedView.animateWithBounceEffect(withCompletionHandler: nil)
+                self.userInteractionEnabled = false
+                selectedView.animateWithBounceEffect(withCompletionHandler: {
+                    self.userInteractionEnabled = true
+                })
             }
         } else {
             configueViewIntoBubbleView(cellState, animateDeselection: true)
@@ -93,7 +94,9 @@ class CellView: JTAppleDayCellView {
             if animateDeselection {
                 configureTextColor(cellState)
                 if selectedView.hidden == false {
+                    self.userInteractionEnabled = false
                     selectedView.animateWithFadeEffect(withCompletionHandler: { () -> Void in
+                        self.userInteractionEnabled = true
                         self.selectedView.hidden = true
                         self.selectedView.alpha = 1
                     })
@@ -105,7 +108,7 @@ class CellView: JTAppleDayCellView {
     }
 }
 
-class CircleView: UIView {
+class AnimationView: UIView {
 
     func animateWithFlipEffect(withCompletionHandler completionHandler:(()->Void)?) {
         AnimationClass.flipAnimation(self, completion: completionHandler)
@@ -116,7 +119,6 @@ class CircleView: UIView {
             completionHandler?()
         }
     }
-    
     func animateWithFadeEffect(withCompletionHandler completionHandler:(()->Void)?) {
         let viewAnimation = AnimationClass.FadeOutEffect()
         viewAnimation(self) { _ in

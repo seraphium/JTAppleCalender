@@ -12,8 +12,8 @@
             <rect key="frame" x="0.0" y="0.0" width="181" height="144"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8OS-Qv-sCR">
-                    <rect key="frame" x="0.0" y="0.0" width="238" height="176"/>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8OS-Qv-sCR">
+                    <rect key="frame" x="0.0" y="0.0" width="181" height="144"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="8OS-Qv-sCR" secondAttribute="height" multiplier="1:1" id="p1J-rn-3Hx"/>
@@ -29,15 +29,15 @@
                         </mask>
                     </variation>
                 </view>
-                <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oW7-mg-GKQ" userLabel="BlackTopBorder">
-                    <rect key="frame" x="0.0" y="0.0" width="238" height="1"/>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oW7-mg-GKQ" userLabel="BlackTopBorder">
+                    <rect key="frame" x="0.0" y="0.0" width="181" height="1"/>
                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="1" id="NEN-HJ-EwM"/>
                     </constraints>
                 </view>
-                <view hidden="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EbV-Fp-hR6" customClass="CircleView" customModule="JTAppleCalendar_Example" customModuleProvider="target">
-                    <rect key="frame" x="57" y="27" width="124" height="123"/>
+                <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EbV-Fp-hR6" customClass="AnimationView" customModule="JTAppleCalendar_Example" customModuleProvider="target">
+                    <rect key="frame" x="40" y="21" width="101" height="101"/>
                     <color key="backgroundColor" red="0.91764705879999997" green="0.63529411759999999" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="20" id="8bC-to-itB"/>
@@ -51,13 +51,13 @@
                     </variation>
                 </view>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A7s-8j-sxm">
-                    <rect key="frame" x="85" y="60.5" width="11.5" height="24"/>
+                    <rect key="frame" x="85" y="60" width="11.5" height="24"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="X" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4sv-pv-TgR">
-                    <rect key="frame" x="114" y="79" width="9.5" height="17.5"/>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="X" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4sv-pv-TgR">
+                    <rect key="frame" x="86" y="63.5" width="9.5" height="17.5"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
                     <color key="textColor" red="1" green="0.1173652609" blue="0.17684171900000001" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>

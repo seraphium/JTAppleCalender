@@ -47,13 +47,22 @@ class ViewController: UIViewController {
     }
     
     @IBAction func select10(sender: AnyObject?) {
-        let date = formatter.dateFromString("2016 02 10")
-        self.calendarView.selectDate(date!)
+        calendarView.allowsMultipleSelection = true
+        var dates: [NSDate] = []
+        
+        dates.append(formatter.dateFromString("2016 02 03")!)
+        dates.append(formatter.dateFromString("2016 02 05")!)
+        dates.append(formatter.dateFromString("2016 02 07")!)
+        dates.append(formatter.dateFromString("2020 02 16")!) // --> This date will never be selected as it is outsde bounds
+                                                              // --> This is what happens when you select an invalid date
+                                                              // --> It is simply not selected
+        calendarView.selectDates(dates, triggerSelectionDelegate: false)
     }
     
     @IBAction func select11(sender: AnyObject?) {
+        calendarView.allowsMultipleSelection = false
         let date = formatter.dateFromString("2016 02 11")
-        self.calendarView.selectDate(date!)
+        self.calendarView.selectDates([date!])
     }
     
     @IBAction func scrollToDate(sender: AnyObject?) {
@@ -62,7 +71,10 @@ class ViewController: UIViewController {
     }
     
     @IBAction func printSelectedDates() {
-        print(calendarView.selectedDates)
+        print("Selected dates --->")
+        for date in calendarView.selectedDates {
+            print(formatter.stringFromDate(date))
+        }
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -107,10 +119,13 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
 
     func calendar(calendar: JTAppleCalendarView, didDeselectDate date: NSDate, cell: JTAppleDayCellView?, cellState: CellState) {
         (cell as? CellView)?.cellSelectionChanged(cellState)
+        printSelectedDates()
     }
     
     func calendar(calendar: JTAppleCalendarView, didSelectDate date: NSDate, cell: JTAppleDayCellView?, cellState: CellState) {
         (cell as? CellView)?.cellSelectionChanged(cellState)
+        printSelectedDates()
+        
     }
     
     func calendar(calendar: JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {
