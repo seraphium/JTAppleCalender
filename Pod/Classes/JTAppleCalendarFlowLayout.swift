@@ -23,7 +23,6 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
     
     override init() {
         super.init()
-        self.scrollDirection = .Horizontal
         self.minimumInteritemSpacing = 0
         self.minimumLineSpacing = 0
     }

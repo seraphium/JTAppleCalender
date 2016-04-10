@@ -133,26 +133,16 @@ public class JTAppleCalendarView: UIView {
         didSet {
             if direction == .Horizontal {
                 let layout = JTAppleCalendarHorizontalFlowLayout()
-                layout.minimumInteritemSpacing = 0
-                layout.minimumLineSpacing = 0
                 layout.scrollDirection = direction
                 calendarView.collectionViewLayout = layout
             } else {
                 let layout = JTAppleCalendarVerticalFlowLayout()
-                layout.scrollDirection = self.direction;
-                layout.minimumInteritemSpacing = 0
-                layout.minimumLineSpacing = 0
                 layout.scrollDirection = direction
                 calendarView.collectionViewLayout = layout
             }
             
             updateLayoutItemSize()
             self.calendarView.reloadData()
-            
-//            if let layout = self.calendarView.collectionViewLayout as? JTAppleCalendarFlowLayout {
-//                layout.scrollDirection = direction
-//                self.calendarView.reloadData()
-//            }
         }
     }
     /// Enables/Disables multiple selection on JTAppleCalendar
