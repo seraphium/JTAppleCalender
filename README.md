@@ -257,7 +257,7 @@ The following structure was returned when a cell is about to be displayed.
     public func scrollToNextSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil) 
     public func scrollToPreviousSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
     public func scrollToDate(date: NSDate, animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
-    public func selectDate(date: NSDate)
+    public func selectDates(dates: [NSDate], triggerSelectionDelegate: Bool = true)
 ```
 
 #### Properties you can configure
