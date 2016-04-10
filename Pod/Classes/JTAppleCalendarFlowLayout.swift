@@ -5,12 +5,32 @@
 //  Created by Jay Thomas on 2016-03-01.
 //  Copyright © 2016 OS-Tech. All rights reserved.
 //
-
-/// The JTAppleCalendarFlowLayout class is a concrete layout object that organizes day-cells into a grid
-public class JTAppleCalendarFlowLayout: UICollectionViewFlowLayout {
+public class JTAppleCalendarBaseFlowLayout: UICollectionViewFlowLayout {
     var pathForFocusItem: NSIndexPath = NSIndexPath(forItem: 0, inSection: 0)
+    /// Returns the content offset to use after an animation layout update or change.
+    /// - Parameter proposedContentOffset: The proposed point for the upper-left corner of the visible content
+    /// - returns: The content offset that you want to use instead
+    public override func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint {
+        let layoutAttrs = layoutAttributesForItemAtIndexPath(pathForFocusItem)
+        return CGPointMake(layoutAttrs!.frame.origin.x - self.collectionView!.contentInset.left, layoutAttrs!.frame.origin.y-self.collectionView!.contentInset.top);
+    }
+
+}
+public class JTAppleCalendarVerticalFlowLayout: JTAppleCalendarBaseFlowLayout {
+}
+/// The JTAppleCalendarFlowLayout class is a concrete layout object that organizes day-cells into a grid
+public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout {
     
+    override init() {
+        super.init()
+        self.scrollDirection = .Horizontal
+        self.minimumInteritemSpacing = 0
+        self.minimumLineSpacing = 0
+    }
     
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
     override public func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         
         return super.layoutAttributesForElementsInRect(rect)?.map {
@@ -19,20 +39,8 @@ public class JTAppleCalendarFlowLayout: UICollectionViewFlowLayout {
             self.applyLayoutAttributes(attrscp)
             return attrscp
         }
-        
     }
     
-    /// Returns the content offset to use after an animation layout update or change.
-    /// - Parameter proposedContentOffset: The proposed point for the upper-left corner of the visible content
-    /// - returns: The content offset that you want to use instead
-    public override func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint {
-        let layoutAttrs = layoutAttributesForItemAtIndexPath(pathForFocusItem)
-        return CGPointMake(layoutAttrs!.frame.origin.x - self.collectionView!.contentInset.left, layoutAttrs!.frame.origin.y-self.collectionView!.contentInset.top);
-    }
-    
-    /// Returns the layout attribute for the item at the specified index path
-    /// - Parameter indexPath: The index path of the item
-    /// - returns: A layout attributes object containing the informtion to apply to the item's cell
     override  public func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
         
         if let attrs = super.layoutAttributesForItemAtIndexPath(indexPath) {
@@ -62,8 +70,6 @@ public class JTAppleCalendarFlowLayout: UICollectionViewFlowLayout {
                 yCellOffset += offset
             }
             attributes.frame = CGRectMake(xCellOffset, yCellOffset, self.itemSize.width, self.itemSize.height)
-        }
-        
+        }   
     }
-    
 }

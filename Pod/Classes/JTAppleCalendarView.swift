@@ -131,10 +131,28 @@ public class JTAppleCalendarView: UIView {
     /// The scroll direction of the sections in JTAppleCalendar.
     public var direction : UICollectionViewScrollDirection = .Horizontal {
         didSet {
-            if let layout = self.calendarView.collectionViewLayout as? JTAppleCalendarFlowLayout {
+            if direction == .Horizontal {
+                let layout = JTAppleCalendarHorizontalFlowLayout()
+                layout.minimumInteritemSpacing = 0
+                layout.minimumLineSpacing = 0
                 layout.scrollDirection = direction
-                self.calendarView.reloadData()
+                calendarView.collectionViewLayout = layout
+            } else {
+                let layout = JTAppleCalendarVerticalFlowLayout()
+                layout.scrollDirection = self.direction;
+                layout.minimumInteritemSpacing = 0
+                layout.minimumLineSpacing = 0
+                layout.scrollDirection = direction
+                calendarView.collectionViewLayout = layout
             }
+            
+            updateLayoutItemSize()
+            self.calendarView.reloadData()
+            
+//            if let layout = self.calendarView.collectionViewLayout as? JTAppleCalendarFlowLayout {
+//                layout.scrollDirection = direction
+//                self.calendarView.reloadData()
+//            }
         }
     }
     /// Enables/Disables multiple selection on JTAppleCalendar
@@ -269,7 +287,7 @@ public class JTAppleCalendarView: UIView {
     }
     
     lazy private var calendarView : UICollectionView = {
-        let layout = JTAppleCalendarFlowLayout()
+        let layout = JTAppleCalendarHorizontalFlowLayout()
         layout.scrollDirection = self.direction;
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
@@ -285,17 +303,20 @@ public class JTAppleCalendarView: UIView {
         return cv
     }()
     
+    private func updateLayoutItemSize () {
+        let layout = self.calendarView.collectionViewLayout as! JTAppleCalendarBaseFlowLayout
+        layout.itemSize = CGSizeMake(
+            self.calendarView.frame.size.width / CGFloat(MAX_NUMBER_OF_DAYS_IN_WEEK),
+            (self.calendarView.frame.size.height - layout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth))
+        self.calendarView.collectionViewLayout = layout
+    }
+    
     /// The frame rectangle which defines the view's location and size in its superview coordinate system.
     override public var frame: CGRect {
         didSet {
             self.calendarView.frame = CGRect(x:0.0, y:bufferTop, width: self.frame.size.width, height:self.frame.size.height - bufferBottom)
-            self.calendarView.collectionViewLayout = self.calendarView.collectionViewLayout as! JTAppleCalendarFlowLayout // Needed?
-            
-            let layout = self.calendarView.collectionViewLayout as! UICollectionViewFlowLayout
-            layout.itemSize = CGSizeMake(
-                self.calendarView.frame.size.width / CGFloat(MAX_NUMBER_OF_DAYS_IN_WEEK),
-                (self.calendarView.frame.size.height - layout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth))
-            calendarView.collectionViewLayout = layout
+//            self.calendarView.collectionViewLayout = self.calendarView.collectionViewLayout as! JTAppleCalendarBaseFlowLayout // Needed?
+            updateLayoutItemSize()
         }
     }
 
@@ -713,7 +734,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
         let section = currentSectionPage
         
         // When ever the month/section is switched, let the flowlayout know which page it is on. This is needed in the event user switches orientatoin, we can use the index to snap back to correct position
-        (calendarView.collectionViewLayout as! JTAppleCalendarFlowLayout).pathForFocusItem = NSIndexPath(forItem: 0, inSection: section)
+        (calendarView.collectionViewLayout as! JTAppleCalendarBaseFlowLayout).pathForFocusItem = NSIndexPath(forItem: 0, inSection: section)
         
         if let currentSegmentDates = currentCalendarSegment() {
             self.delegate?.calendar(self, didScrollToDateSegmentStartingWith: currentSegmentDates.startDate, endingWithDate: currentSegmentDates.endDate)
