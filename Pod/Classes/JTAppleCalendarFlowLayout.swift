@@ -10,6 +10,8 @@
 protocol JTAppleCalendarLayoutProtocol: class {
     func numberOfRows() -> Int
     func numberOfColumns() -> Int
+    func numberOfsectionsPermonth() -> Int
+    func numberOfSections() -> Int
 }
 
 public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout {
@@ -56,16 +58,25 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         // Determine how many columns needs to be displayed
         let requestedWidth = rect.width
         let visibleWidth = self.collectionView!.bounds.width
-        let requestedColumns = Int(requestedWidth / itemSize.width) + 1
+        let requestedColumns = Int(requestedWidth / itemSize.width) + 2
         let startColumn = Int(rect.origin.x / itemSize.width)
-        let endColumn = startColumn + requestedColumns
+        var endColumn = startColumn + requestedColumns
+        
         
         print("")
+        print("requestedWidth: \(requestedWidth) itemSize: \(itemSize) = \(requestedWidth / itemSize.width)")
         print("requestedColumns: \(requestedColumns)")
+        print("range: \(endColumn - startColumn)")
         print("startColumn: \(startColumn)")
         print("endColumn: \(endColumn)")
-        print("range: \(endColumn - startColumn)")
         print("")
+        
+        let maxColumns = delegate!.numberOfSections() * delegate!.numberOfsectionsPermonth() * 7
+        if endColumn >= maxColumns{
+            // range for this loop loads an extra column so that it will not flicker when a user scrolls.
+            // however you will get outOfBounds error if reached the end. Do check here
+            endColumn = maxColumns
+        }
         
 
 
@@ -76,12 +87,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         var attributes: [UICollectionViewLayoutAttributes] = []
         
         for index in 0..<numberOfRows {
-            for columnNumber in startColumn...endColumn {
-                if columnNumber == endColumn {
-                    // range for this loop loads an extra column so that it will not flicker when a user scrolls.
-                    // however you will get outOfBounds error if reached the end. Do check here
-                    continue
-                }
+            for columnNumber in startColumn..<endColumn {
                 let section = columnNumber / numberOfColumns
                 let sectionIndex = (columnNumber % numberOfColumns) + (index * numberOfColumns)
                 let indexPath = NSIndexPath(forItem: sectionIndex, inSection: section)

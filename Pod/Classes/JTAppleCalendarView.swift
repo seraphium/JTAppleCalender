@@ -131,17 +131,9 @@ public class JTAppleCalendarView: UIView {
     /// The scroll direction of the sections in JTAppleCalendar.
     public var direction : UICollectionViewScrollDirection = .Horizontal {
         didSet {
-            if direction == .Horizontal {
-                let layout = JTAppleCalendarHorizontalFlowLayout(withDelegate: self)
-                layout.scrollDirection = direction
-                calendarView.collectionViewLayout = layout
-            } else {
-                let layout = JTAppleCalendarVerticalFlowLayout()
-                layout.scrollDirection = direction
-                calendarView.collectionViewLayout = layout
-            }
-            
-            updateLayoutItemSize()
+            let layout = generateNewLayout()
+            calendarView.collectionViewLayout = layout
+            updateLayoutItemSize(layout)
             self.calendarView.reloadData()
         }
     }
@@ -278,7 +270,7 @@ public class JTAppleCalendarView: UIView {
     
     lazy private var calendarView : UICollectionView = {
         let layout = JTAppleCalendarHorizontalFlowLayout(withDelegate: self)
-        layout.scrollDirection = self.direction;
+        layout.scrollDirection = self.direction
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         
@@ -293,12 +285,22 @@ public class JTAppleCalendarView: UIView {
         return cv
     }()
     
-    private func updateLayoutItemSize () {
-        let layout = self.calendarView.collectionViewLayout as! JTAppleCalendarBaseFlowLayout
-        layout.itemSize = CGSizeMake(
-            self.calendarView.frame.size.width / CGFloat(MAX_NUMBER_OF_DAYS_IN_WEEK),
-            (self.calendarView.frame.size.height - layout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth))
-        self.calendarView.collectionViewLayout = layout
+    private func updateLayoutItemSize (layout: UICollectionViewLayout) {
+//        let layout = self.calendarView.collectionViewLayout as! JTAppleCalendarBaseFlowLayout
+        if direction == .Horizontal {
+            let theLayout = layout as! JTAppleCalendarHorizontalFlowLayout
+            theLayout.itemSize = CGSizeMake(
+                self.calendarView.frame.size.width / CGFloat(MAX_NUMBER_OF_DAYS_IN_WEEK),
+                (self.calendarView.frame.size.height - theLayout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth))
+            self.calendarView.collectionViewLayout = theLayout
+        } else {
+            let theLayout = layout as! JTAppleCalendarVerticalFlowLayout
+            theLayout.itemSize = CGSizeMake(
+                self.calendarView.frame.size.width / CGFloat(MAX_NUMBER_OF_DAYS_IN_WEEK),
+                (self.calendarView.frame.size.height - theLayout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth))
+            self.calendarView.collectionViewLayout = theLayout
+
+        }
     }
     
     /// The frame rectangle which defines the view's location and size in its superview coordinate system.
@@ -306,7 +308,7 @@ public class JTAppleCalendarView: UIView {
         didSet {
             self.calendarView.frame = CGRect(x:0.0, y:bufferTop, width: self.frame.size.width, height:self.frame.size.height - bufferBottom)
 //            self.calendarView.collectionViewLayout = self.calendarView.collectionViewLayout as! JTAppleCalendarBaseFlowLayout // Needed?
-            updateLayoutItemSize()
+            updateLayoutItemSize(self.calendarView.collectionViewLayout)
         }
     }
 
@@ -375,8 +377,14 @@ public class JTAppleCalendarView: UIView {
         monthInfo = setupMonthInfoDataForStartAndEndDate()
         monthInfoActivated = true
         
-        self.calendarView.reloadData()
         
+        self.calendarView.reloadData()
+        self.calendarView.collectionViewLayout.invalidateLayout()
+        let layout = generateNewLayout()
+        updateLayoutItemSize(layout)
+        self.calendarView.setCollectionViewLayout(layout, animated: true)
+        
+
         guard let dateToScrollTo = scrollToDatePathOnRowChange else {
             // If the date is invalid just scroll to the the first item on the view
             let position: UICollectionViewScrollPosition = self.direction == .Horizontal ? .Left : .Top
@@ -384,11 +392,23 @@ public class JTAppleCalendarView: UIView {
             return
         }
         
-//        delayRunOnMainThread(1.0, closure: { () -> () in
+        delayRunOnMainThread(0.0, closure: { () -> () in
             self.scrollToDate(dateToScrollTo)
-//        })
+        })
+        
     }
     
+    func generateNewLayout() -> UICollectionViewLayout {
+        if direction == .Horizontal {
+            let layout = JTAppleCalendarHorizontalFlowLayout(withDelegate: self)
+            layout.scrollDirection = direction
+            return layout
+        } else {
+            let layout = JTAppleCalendarVerticalFlowLayout()
+            layout.scrollDirection = direction
+            return layout
+        }
+    }
     private func setupMonthInfoDataForStartAndEndDate()-> [[Int]] {
 
         var retval: [[Int]] = []
@@ -932,7 +952,18 @@ extension JTAppleCalendarView: JTAppleCalendarLayoutProtocol {
     
     func numberOfColumns() -> Int {
         return MAX_NUMBER_OF_DAYS_IN_WEEK
+        
     }
+    
+    func numberOfsectionsPermonth() -> Int {
+        return numberOfSectionsPerMonth
+    }
+    
+    func numberOfSections() -> Int {
+        return numberOfMonthSections
+    }
+    
+
 }
 
 private extension NSDate {
