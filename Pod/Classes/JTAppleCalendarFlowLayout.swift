@@ -76,7 +76,12 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         var attributes: [UICollectionViewLayoutAttributes] = []
         
         for index in 0..<numberOfRows {
-            for columnNumber in startColumn..<endColumn {
+            for columnNumber in startColumn...endColumn {
+                if columnNumber == endColumn {
+                    // range for this loop loads an extra column so that it will not flicker when a user scrolls.
+                    // however you will get outOfBounds error if reached the end. Do check here
+                    continue
+                }
                 let section = columnNumber / numberOfColumns
                 let sectionIndex = (columnNumber % numberOfColumns) + (index * numberOfColumns)
                 let indexPath = NSIndexPath(forItem: sectionIndex, inSection: section)
