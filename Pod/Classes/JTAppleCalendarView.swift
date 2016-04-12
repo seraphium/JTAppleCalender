@@ -132,7 +132,7 @@ public class JTAppleCalendarView: UIView {
     public var direction : UICollectionViewScrollDirection = .Horizontal {
         didSet {
             if direction == .Horizontal {
-                let layout = JTAppleCalendarHorizontalFlowLayout()
+                let layout = JTAppleCalendarHorizontalFlowLayout(withDelegate: self)
                 layout.scrollDirection = direction
                 calendarView.collectionViewLayout = layout
             } else {
@@ -277,7 +277,7 @@ public class JTAppleCalendarView: UIView {
     }
     
     lazy private var calendarView : UICollectionView = {
-        let layout = JTAppleCalendarHorizontalFlowLayout()
+        let layout = JTAppleCalendarHorizontalFlowLayout(withDelegate: self)
         layout.scrollDirection = self.direction;
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
@@ -376,16 +376,17 @@ public class JTAppleCalendarView: UIView {
         monthInfoActivated = true
         
         self.calendarView.reloadData()
-        let position: UICollectionViewScrollPosition = self.direction == .Horizontal ? .Left : .Top
+        
         guard let dateToScrollTo = scrollToDatePathOnRowChange else {
             // If the date is invalid just scroll to the the first item on the view
+            let position: UICollectionViewScrollPosition = self.direction == .Horizontal ? .Left : .Top
             calendarView.scrollToItemAtIndexPath(NSIndexPath(forItem: 0, inSection: 0), atScrollPosition: position, animated: animationsEnabled)
             return
         }
         
-        delayRunOnMainThread(0.1, closure: { () -> () in
+//        delayRunOnMainThread(1.0, closure: { () -> () in
             self.scrollToDate(dateToScrollTo)
-        })
+//        })
     }
     
     private func setupMonthInfoDataForStartAndEndDate()-> [[Int]] {
@@ -922,6 +923,15 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
             let cellState = cellStateFromIndexPath(indexPath)
             delegate.calendar(self, didSelectDate: dateSelectedByUser, cell: selectedCell?.cellView, cellState: cellState)
         }
+    }
+}
+extension JTAppleCalendarView: JTAppleCalendarLayoutProtocol {
+    func numberOfRows() -> Int {
+        return numberOfRowsPerMonth
+    }
+    
+    func numberOfColumns() -> Int {
+        return MAX_NUMBER_OF_DAYS_IN_WEEK
     }
 }
 

@@ -78,13 +78,13 @@
                                 </subviews>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="vbP-Kr-0hG">
-                                <rect key="frame" x="20" y="75" width="560" height="301"/>
+                                <rect key="frame" x="20" y="75" width="600" height="301"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="1YD-90-lES">
-                                        <rect key="frame" x="0.0" y="0.0" width="560" height="301"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="301"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZTy-ss-Xhd" customClass="JTAppleCalendarView" customModule="JTAppleCalendar">
-                                                <rect key="frame" x="0.0" y="0.0" width="560" height="301"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="600" height="301"/>
                                                 <color key="backgroundColor" red="0.96862745098039216" green="0.96862745098039216" blue="0.96862745098039216" alpha="1" colorSpace="calibratedRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="415" id="iMp-63-3aD"/>
@@ -120,7 +120,7 @@
                                             <action selector="reloadCalendarViewTo6:" destination="BYZ-38-t0r" eventType="touchUpInside" id="nvl-99-SWw"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EZB-eU-i2Z">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EZB-eU-i2Z">
                                         <rect key="frame" x="0.0" y="50" width="146" height="25"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Select many 2016 dates"/>
@@ -175,7 +175,9 @@
                             <constraint firstItem="iQI-Hq-aUc" firstAttribute="top" secondItem="vbP-Kr-0hG" secondAttribute="bottom" constant="75" id="8pO-dp-qJh"/>
                             <constraint firstItem="vbP-Kr-0hG" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="CDe-s5-7nI"/>
                             <constraint firstItem="cFX-1e-6ck" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="GsT-zx-Yef"/>
+                            <constraint firstAttribute="trailing" secondItem="vbP-Kr-0hG" secondAttribute="trailing" id="M3t-DW-rgc"/>
                             <constraint firstItem="Ik7-d5-Fp7" firstAttribute="top" secondItem="cFX-1e-6ck" secondAttribute="bottom" constant="1.5" id="R2g-Od-0Bh"/>
+                            <constraint firstItem="vbP-Kr-0hG" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Xq2-4W-f7d"/>
                             <constraint firstAttribute="trailingMargin" secondItem="cFX-1e-6ck" secondAttribute="trailing" id="cP1-5y-E8C"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="iQI-Hq-aUc" secondAttribute="bottom" id="d4a-NY-edR"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Ik7-d5-Fp7" secondAttribute="trailing" id="ilm-o0-e6c"/>
@@ -189,6 +191,8 @@
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
+                                <exclude reference="CDe-s5-7nI"/>
+                                <exclude reference="ujy-We-s3L"/>
                                 <exclude reference="0LR-wm-Rey"/>
                             </mask>
                         </variation>
