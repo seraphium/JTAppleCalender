@@ -77,7 +77,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
 //        print("endColumn: \(endColumn)")
         
         let maxColumns = delegate!.numberOfSections() * delegate!.numberOfsectionsPermonth() * 7
-        if endColumn >= maxColumns{
+        if endColumn >= maxColumns {
             // range for this loop loads an extra column so that it will not flicker when a user scrolls.
             // however you will get outOfBounds error if reached the end. Do check here
             endColumn = maxColumns
@@ -129,7 +129,8 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
     
     public override func collectionViewContentSize() -> CGSize {
         var size = super.collectionViewContentSize()
-        size.width = self.collectionView!.bounds.size.width * CGFloat(delegate!.numberOfSections())
+        
+        size.width = self.collectionView!.bounds.size.width * CGFloat(delegate!.numberOfSections()) * CGFloat(delegate!.numberOfsectionsPermonth())
         return size
     }
     

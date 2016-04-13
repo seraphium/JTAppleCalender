@@ -370,14 +370,15 @@ public class JTAppleCalendarView: UIView {
         monthInfo = setupMonthInfoDataForStartAndEndDate()
         monthInfoActivated = true
         
-        
-        self.calendarView.reloadData()
-//        self.calendarView.collectionViewLayout.invalidateLayout()
         let layout = calendarView.collectionViewLayout
         updateLayoutItemSize(layout as! JTAppleCalendarLayoutProtocol)
         self.calendarView.setCollectionViewLayout(layout, animated: true)
+        
+        self.calendarView.reloadData()
+        
         layoutNeedsUpdating = false
-
+        
+        
         guard let dateToScrollTo = scrollToDatePathOnRowChange else {
             // If the date is invalid just scroll to the the first item on the view
             let position: UICollectionViewScrollPosition = self.direction == .Horizontal ? .Left : .Top
