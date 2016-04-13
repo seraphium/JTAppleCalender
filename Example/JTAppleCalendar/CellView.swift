@@ -87,9 +87,14 @@ class CellView: JTAppleDayCellView {
     
     private func configueViewIntoBubbleView(cellState: CellState, animateDeselection: Bool = false) {
         if cellState.isSelected {
-            selectedView.layer.cornerRadius =  selectedView.frame.width  / 2
+
+            delayRunOnMainThread(0.0, closure: { 
+                self.selectedView.layer.cornerRadius =  self.selectedView.frame.width  / 2
+                self.selectedView.hidden = false
+            })
+
             configureTextColor(cellState)
-            selectedView.hidden = false
+            
         } else {
             if animateDeselection {
                 configureTextColor(cellState)
@@ -105,6 +110,15 @@ class CellView: JTAppleDayCellView {
                 selectedView.hidden = true
             }
         }
+    }
+    
+    func delayRunOnMainThread(delay:Double, closure:()->()) {
+        dispatch_after(
+            dispatch_time(
+                DISPATCH_TIME_NOW,
+                Int64(delay * Double(NSEC_PER_SEC))
+            ),
+            dispatch_get_main_queue(), closure)
     }
 }
 

@@ -37,15 +37,13 @@ class ViewController: UIViewController {
         // The following default code can be removed since they are already the default.
         // They are only included here so that you can know what properties can be configured
         calendarView.direction = .Horizontal                       // default is horizontal
-        calendarView.numberOfRowsPerMonth = 3                      // default is 6
+        calendarView.numberOfRowsPerMonth = 6                      // default is 6
         calendarView.cellInset = CGPoint(x: 0, y: 0)               // default is (3,3)
         calendarView.allowsMultipleSelection = false               // default is false
         calendarView.bufferTop = 0                                 // default is 0. - still work in progress
         calendarView.bufferBottom = 0                              // default is 0. - still work in progress
         calendarView.firstDayOfWeek = .Sunday                      // default is Sunday
         calendarView.reloadData()
-        
-        select10(nil)
     }
     
     @IBAction func select10(sender: AnyObject?) {
