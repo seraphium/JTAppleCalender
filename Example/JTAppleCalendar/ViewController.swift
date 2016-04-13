@@ -140,7 +140,3 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
         }
     }
 }
-
-
-
-

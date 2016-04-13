@@ -9,7 +9,7 @@ Inspiration for this control was made possible by Michael @ Karmadust. Want to k
 [![CI Status](http://img.shields.io/travis/patchthecode/JTAppleCalendar.svg?style=flat)](https://travis-ci.org/patchthecode/JTAppleCalendar) [![Version](https://img.shields.io/cocoapods/v/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![License](https://img.shields.io/cocoapods/l/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![Platform](https://img.shields.io/cocoapods/p/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar)
 
 ### **About Screenshots**
-Much like a UITableView, because you can design this calendar to look however you want, screenshots will not be an accurate depiction of what this control looks like and are therefore not included here. A sample iOS application however is included in this project's [Github Repository](https://github.com/patchthecode/JTAppleCalendar) to give you an idea of what you can do.
+Much like a UITableView, because you can design this calendar to look however you want, screenshots will not be an accurate depiction of what this control looks like and are therefore not included here. A sample iOS application however is included in this project's [Github Repository](https://github.com/patchthecode/JTAppleCalendar) to give you an idea of what you can do. Have you used this control to create an awesome calendar or want to see what others have done? [Click this link here.](https://github.com/patchthecode/JTAppleCalendar/issues/2) Get some inspiration.
 
 * Downloaded it ?
 * Tried it ?
