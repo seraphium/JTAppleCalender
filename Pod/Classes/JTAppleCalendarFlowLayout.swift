@@ -65,7 +65,6 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
     override public func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         // Determine how many columns needs to be displayed
         let requestedWidth = rect.width
-        let visibleWidth = self.collectionView!.bounds.width
         let requestedColumns = Int(requestedWidth / itemSize.width) + 2
         var startColumn = Int(rect.origin.x / itemSize.width)
         var endColumn = startColumn + requestedColumns
@@ -121,7 +120,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             let stride = collectionView.frame.size.width
             let offset = CGFloat(attributes.indexPath.section) * stride
             var xCellOffset : CGFloat = CGFloat(attributes.indexPath.item % 7) * self.itemSize.width
-            var yCellOffset : CGFloat = CGFloat(attributes.indexPath.item / 7) * self.itemSize.height
+            let yCellOffset : CGFloat = CGFloat(attributes.indexPath.item / 7) * self.itemSize.height
             xCellOffset += offset
             attributes.frame = CGRectMake(xCellOffset, yCellOffset, self.itemSize.width, self.itemSize.height)
         }
