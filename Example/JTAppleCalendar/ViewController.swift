@@ -60,7 +60,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func select11(sender: AnyObject?) {
-//        calendarView.allowsMultipleSelection = false
+        calendarView.allowsMultipleSelection = false
         let date = formatter.dateFromString("2016 02 11")
         self.calendarView.selectDates([date!])
     }

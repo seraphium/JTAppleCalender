@@ -340,7 +340,7 @@ public class JTAppleCalendarView: UIView {
         cellViewXibName = name
     }
     
-        
+    
     /// Reloads the data on the calendar view
     public func reloadData() {
         if layoutNeedsUpdating {
