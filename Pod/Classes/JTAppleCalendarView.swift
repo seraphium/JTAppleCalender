@@ -351,7 +351,6 @@ public class JTAppleCalendarView: UIView {
     public func reloadData() {
         if layoutNeedsUpdating {
             changeNumberOfRowsPerMonthTo(numberOfRowsPerMonth, withFocusDate: nil)
-            layoutNeedsUpdating = false
         } else {
             self.calendarView.reloadData()
         }
@@ -383,7 +382,7 @@ public class JTAppleCalendarView: UIView {
         let layout = generateNewLayout()
         updateLayoutItemSize(layout)
         self.calendarView.setCollectionViewLayout(layout, animated: true)
-        
+        layoutNeedsUpdating = false
 
         guard let dateToScrollTo = scrollToDatePathOnRowChange else {
             // If the date is invalid just scroll to the the first item on the view
@@ -395,7 +394,6 @@ public class JTAppleCalendarView: UIView {
         delayRunOnMainThread(0.0, closure: { () -> () in
             self.scrollToDate(dateToScrollTo)
         })
-        
     }
     
     func generateNewLayout() -> UICollectionViewLayout {
