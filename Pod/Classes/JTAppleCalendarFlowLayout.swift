@@ -8,13 +8,13 @@
 
 
 protocol JTAppleCalendarLayoutProtocol: class {
-    func numberOfRows() -> Int
-    func numberOfColumns() -> Int
-    func numberOfsectionsPermonth() -> Int
-    func numberOfSections() -> Int
+    var itemSize: CGSize {get set}
+    var headerReferenceSize: CGSize {get set}
+    var pathForFocusItem: NSIndexPath {get set}
+    func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint
 }
 
-public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout {
+public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalendarLayoutProtocol {
     var itemSize: CGSize = CGSizeZero
     var headerReferenceSize: CGSize = CGSizeZero
     var pathForFocusItem: NSIndexPath = NSIndexPath(forItem: 0, inSection: 0)
@@ -25,9 +25,17 @@ public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout {
         let layoutAttrs = layoutAttributesForItemAtIndexPath(pathForFocusItem)
         return CGPointMake(layoutAttrs!.frame.origin.x - self.collectionView!.contentInset.left, layoutAttrs!.frame.origin.y-self.collectionView!.contentInset.top);
     }
-    
 }
-public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout {
+
+public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAppleCalendarLayoutProtocol {
+    var pathForFocusItem: NSIndexPath = NSIndexPath(forItem: 0, inSection: 0)
+    /// Returns the content offset to use after an animation layout update or change.
+    /// - Parameter proposedContentOffset: The proposed point for the upper-left corner of the visible content
+    /// - returns: The content offset that you want to use instead
+    public override func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint {
+        let layoutAttrs = layoutAttributesForItemAtIndexPath(pathForFocusItem)
+        return CGPointMake(layoutAttrs!.frame.origin.x - self.collectionView!.contentInset.left, layoutAttrs!.frame.origin.y-self.collectionView!.contentInset.top);
+    }
 }
 /// The JTAppleCalendarFlowLayout class is a concrete layout object that organizes day-cells into a grid
 public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout {
@@ -37,9 +45,9 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
     var minimumLineSpacing: CGFloat = 0
     var scrollDirection: UICollectionViewScrollDirection = .Horizontal
     
-    weak var delegate: JTAppleCalendarLayoutProtocol?
+    weak var delegate: JTAppleCalendarDelegateProtocol?
     
-    init(withDelegate delegate: JTAppleCalendarLayoutProtocol) {
+    init(withDelegate delegate: JTAppleCalendarDelegateProtocol) {
         super.init()
         self.delegate = delegate
         self.minimumInteritemSpacing = 0
@@ -54,6 +62,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         numberOfRows = self.delegate!.numberOfRows()
         numberOfColumns = self.delegate!.numberOfColumns()
     }
+    
     override public func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         // Determine how many columns needs to be displayed
         let requestedWidth = rect.width
@@ -62,14 +71,11 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         let startColumn = Int(rect.origin.x / itemSize.width)
         var endColumn = startColumn + requestedColumns
         
-        
-        print("")
-        print("requestedWidth: \(requestedWidth) itemSize: \(itemSize) = \(requestedWidth / itemSize.width)")
-        print("requestedColumns: \(requestedColumns)")
-        print("range: \(endColumn - startColumn)")
-        print("startColumn: \(startColumn)")
-        print("endColumn: \(endColumn)")
-        print("")
+//        print("requestedWidth: \(requestedWidth) itemSize: \(itemSize) = \(requestedWidth / itemSize.width)")
+//        print("requestedColumns: \(requestedColumns)")
+//        print("range: \(endColumn - startColumn)")
+//        print("startColumn: \(startColumn)")
+//        print("endColumn: \(endColumn)")
         
         let maxColumns = delegate!.numberOfSections() * delegate!.numberOfsectionsPermonth() * 7
         if endColumn >= maxColumns{

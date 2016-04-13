@@ -46,6 +46,13 @@ public enum DaysOfWeek: Int {
     case Sunday = 7, Monday = 6, Tuesday = 5, Wednesday = 4, Thursday = 10, Friday = 9, Saturday = 8
 }
 
+protocol JTAppleCalendarDelegateProtocol: class {
+    func numberOfRows() -> Int
+    func numberOfColumns() -> Int
+    func numberOfsectionsPermonth() -> Int
+    func numberOfSections() -> Int
+}
+
 /// The JTAppleCalendarViewDataSource protocol is adopted by an object that mediates the application’s data model for a JTAppleCalendarViewDataSource object. The data source provides the calendar-view object with the information it needs to construct and modify it self
 public protocol JTAppleCalendarViewDataSource {
     /// Asks the data source to return the start and end boundary dates as well as the calendar to use. You should properly configure your calendar at this point.
@@ -133,8 +140,7 @@ public class JTAppleCalendarView: UIView {
         didSet {
             let layout = generateNewLayout()
             calendarView.collectionViewLayout = layout
-            updateLayoutItemSize(layout)
-            self.calendarView.reloadData()
+            configureChangeOfRows()
         }
     }
     /// Enables/Disables multiple selection on JTAppleCalendar
@@ -285,30 +291,19 @@ public class JTAppleCalendarView: UIView {
         return cv
     }()
     
-    private func updateLayoutItemSize (layout: UICollectionViewLayout) {
-//        let layout = self.calendarView.collectionViewLayout as! JTAppleCalendarBaseFlowLayout
-        if direction == .Horizontal {
-            let theLayout = layout as! JTAppleCalendarHorizontalFlowLayout
-            theLayout.itemSize = CGSizeMake(
-                self.calendarView.frame.size.width / CGFloat(MAX_NUMBER_OF_DAYS_IN_WEEK),
-                (self.calendarView.frame.size.height - theLayout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth))
-            self.calendarView.collectionViewLayout = theLayout
-        } else {
-            let theLayout = layout as! JTAppleCalendarVerticalFlowLayout
-            theLayout.itemSize = CGSizeMake(
-                self.calendarView.frame.size.width / CGFloat(MAX_NUMBER_OF_DAYS_IN_WEEK),
-                (self.calendarView.frame.size.height - theLayout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth))
-            self.calendarView.collectionViewLayout = theLayout
-
-        }
+    private func updateLayoutItemSize (layout: JTAppleCalendarLayoutProtocol) {
+        layout.itemSize = CGSizeMake(
+            self.calendarView.frame.size.width / CGFloat(MAX_NUMBER_OF_DAYS_IN_WEEK),
+            (self.calendarView.frame.size.height - layout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth)
+        )
+        self.calendarView.collectionViewLayout = layout as! UICollectionViewLayout
     }
     
     /// The frame rectangle which defines the view's location and size in its superview coordinate system.
     override public var frame: CGRect {
         didSet {
             self.calendarView.frame = CGRect(x:0.0, y:bufferTop, width: self.frame.size.width, height:self.frame.size.height - bufferBottom)
-//            self.calendarView.collectionViewLayout = self.calendarView.collectionViewLayout as! JTAppleCalendarBaseFlowLayout // Needed?
-            updateLayoutItemSize(self.calendarView.collectionViewLayout)
+            updateLayoutItemSize(self.calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol)
         }
     }
 
@@ -378,9 +373,9 @@ public class JTAppleCalendarView: UIView {
         
         
         self.calendarView.reloadData()
-        self.calendarView.collectionViewLayout.invalidateLayout()
-        let layout = generateNewLayout()
-        updateLayoutItemSize(layout)
+//        self.calendarView.collectionViewLayout.invalidateLayout()
+        let layout = calendarView.collectionViewLayout
+        updateLayoutItemSize(layout as! JTAppleCalendarLayoutProtocol)
         self.calendarView.setCollectionViewLayout(layout, animated: true)
         layoutNeedsUpdating = false
 
@@ -404,6 +399,8 @@ public class JTAppleCalendarView: UIView {
         } else {
             let layout = JTAppleCalendarVerticalFlowLayout()
             layout.scrollDirection = direction
+            layout.minimumInteritemSpacing = 0
+            layout.minimumLineSpacing = 0
             return layout
         }
     }
@@ -593,6 +590,8 @@ public class JTAppleCalendarView: UIView {
     /// - Parameter triggerDidSelectDelegate: Triggers the delegate function only if the value is set to true. Sometimes it is necessary to setup some dates without triggereing the delegate e.g. For instance, when youre initally setting up data in your viewDidLoad
     public func selectDates(dates: [NSDate], triggerSelectionDelegate: Bool = true) {
         delayRunOnMainThread(0.0) {
+            
+            var allIndexPathsToReload: [NSIndexPath] = []
             for date in dates {
                 let components = self.calendar.components([.Year, .Month, .Day],  fromDate: date)
                 let firstDayOfDate = self.calendar.dateFromComponents(components)
@@ -602,14 +601,15 @@ public class JTAppleCalendarView: UIView {
                     continue
                 }
                 
-                let allPathsFromDates = self.pathsFromDates([date])
+                let pathFromDates = self.pathsFromDates([date])
                 
                 // If the date path youre searching for, doesnt exist, then return
-                if allPathsFromDates.count < 0 {
+                if pathFromDates.count < 0 {
                     continue
                 }
                 
-                let sectionIndexPath = allPathsFromDates[0]
+                let sectionIndexPath = pathFromDates[0]
+                allIndexPathsToReload.append(sectionIndexPath)
                 let selectTheDate = {
                     if self.selectedIndexPaths.contains(sectionIndexPath) == false { // Can contain the value already if the user selected the same date twice.
                         self.selectedDates.append(date)
@@ -658,9 +658,12 @@ public class JTAppleCalendarView: UIView {
                         selectTheDate()
                     }
                 }
+                
+                
             }
             if triggerSelectionDelegate == false {
-                self.reloadData()
+                self.calendarView.reloadItemsAtIndexPaths(allIndexPathsToReload)
+//                self.reloadData()
             }
         }
     }
@@ -743,7 +746,8 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
         let section = currentSectionPage
         
         // When ever the month/section is switched, let the flowlayout know which page it is on. This is needed in the event user switches orientatoin, we can use the index to snap back to correct position
-        (calendarView.collectionViewLayout as! JTAppleCalendarBaseFlowLayout).pathForFocusItem = NSIndexPath(forItem: 0, inSection: section)
+        
+        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pathForFocusItem = NSIndexPath(forItem: 0, inSection: section)
         
         if let currentSegmentDates = currentCalendarSegment() {
             self.delegate?.calendar(self, didScrollToDateSegmentStartingWith: currentSegmentDates.startDate, endingWithDate: currentSegmentDates.endDate)
@@ -943,7 +947,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         }
     }
 }
-extension JTAppleCalendarView: JTAppleCalendarLayoutProtocol {
+extension JTAppleCalendarView: JTAppleCalendarDelegateProtocol {
     func numberOfRows() -> Int {
         return numberOfRowsPerMonth
     }
