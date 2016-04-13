@@ -228,7 +228,7 @@ Your cell now has the ability to display text and color based on which day of th
 ---
 
 Create all the other views on your xib that you need. Dots view, customWhatEverView etc. Then create the functionality of it just like you did in the example above.
-If you're really out of ideas, using the same procedure above, why try to create a background circular shaped SelectedView to appear when ever you tap on a date cell? You can also download the example project on Github and see the possibilities. 
+If you're really out of ideas, using the same procedure above, why not try to create a background circular shaped SelectedView to appear when ever you tap on a date cell? You can also download the example project on Github and see the possibilities. 
 
 
 #### Other properties/functions/structs to help configure your calendar
