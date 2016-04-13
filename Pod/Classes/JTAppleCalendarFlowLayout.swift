@@ -6,7 +6,6 @@
 //  Copyright © 2016 OS-Tech. All rights reserved.
 //
 
-
 protocol JTAppleCalendarLayoutProtocol: class {
     var itemSize: CGSize {get set}
     var headerReferenceSize: CGSize {get set}
@@ -68,7 +67,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         let requestedWidth = rect.width
         let visibleWidth = self.collectionView!.bounds.width
         let requestedColumns = Int(requestedWidth / itemSize.width) + 2
-        let startColumn = Int(rect.origin.x / itemSize.width)
+        var startColumn = Int(rect.origin.x / itemSize.width)
         var endColumn = startColumn + requestedColumns
         
 //        print("requestedWidth: \(requestedWidth) itemSize: \(itemSize) = \(requestedWidth / itemSize.width)")
@@ -84,10 +83,12 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             endColumn = maxColumns
         }
         
-
+        if startColumn >= endColumn {
+            startColumn = endColumn - 1
+        }
 
         if startColumn < 0 { // If the user scrolls beyond the left end boundary
-            return nil
+            startColumn = 0
         }
 
         var attributes: [UICollectionViewLayoutAttributes] = []
@@ -102,21 +103,6 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
                 }
             }
         }
-        
-        let x = attributes.sort { (firstVal: UICollectionViewLayoutAttributes, secondVal: UICollectionViewLayoutAttributes) -> Bool in
-            if firstVal.indexPath.section < secondVal.indexPath.section {
-                return true
-            }
-            
-            if firstVal.indexPath.section == secondVal.indexPath.section {
-                if firstVal.indexPath.item < secondVal.indexPath.item {
-                    return true
-                }
-            }
-            
-            return false
-        }
-        
         return attributes
     }
     
@@ -143,9 +129,8 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
     
     public override func collectionViewContentSize() -> CGSize {
         var size = super.collectionViewContentSize()
-        // make sure it's wide enough to cover all the objects
-        size.width = self.collectionView!.bounds.size.width * CGFloat(collectionView!.numberOfSections())
-        return size;
+        size.width = self.collectionView!.bounds.size.width * CGFloat(delegate!.numberOfSections())
+        return size
     }
     
     func adjustedIndex(index: Int, rows: Int, columns: Int) -> Int{

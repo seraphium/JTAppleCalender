@@ -303,6 +303,7 @@ public class JTAppleCalendarView: UIView {
     override public var frame: CGRect {
         didSet {
             self.calendarView.frame = CGRect(x:0.0, y:bufferTop, width: self.frame.size.width, height:self.frame.size.height - bufferBottom)
+            calendarView.collectionViewLayout.invalidateLayout()
             updateLayoutItemSize(self.calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol)
         }
     }
@@ -339,9 +340,7 @@ public class JTAppleCalendarView: UIView {
         cellViewXibName = name
     }
     
-    
-    // MARK: functions
-    
+        
     /// Reloads the data on the calendar view
     public func reloadData() {
         if layoutNeedsUpdating {
