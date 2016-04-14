@@ -274,6 +274,13 @@ public class JTAppleCalendarView: UIView {
         set {internalCellInset = newValue}
     }
     
+    /// Enable or disable swipe scrolling of the calendar with this variable
+    public var scrollEnabled: Bool = true {
+        didSet {
+            calendarView.scrollEnabled = scrollEnabled
+        }
+    }
+    
     lazy private var calendarView : UICollectionView = {
         let layout = JTAppleCalendarHorizontalFlowLayout(withDelegate: self)
         layout.scrollDirection = self.direction
@@ -302,7 +309,7 @@ public class JTAppleCalendarView: UIView {
     /// The frame rectangle which defines the view's location and size in its superview coordinate system.
     override public var frame: CGRect {
         didSet {
-            self.calendarView.frame = CGRect(x:0.0, y:bufferTop, width: self.frame.size.width, height:self.frame.size.height - bufferBottom)
+            calendarView.frame = CGRect(x:0.0, y:bufferTop, width: self.frame.size.width, height:self.frame.size.height - bufferBottom)
             calendarView.collectionViewLayout.invalidateLayout()
             updateLayoutItemSize(self.calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol)
         }
