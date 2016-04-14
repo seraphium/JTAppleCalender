@@ -43,7 +43,7 @@ class ViewController: UIViewController {
         calendarView.bufferTop = 0                                 // default is 0. - still work in progress
         calendarView.bufferBottom = 0                              // default is 0. - still work in progress
         calendarView.firstDayOfWeek = .Sunday                      // default is Sunday
-        calendarView.scrollEnabled = false                         // default is true
+        calendarView.scrollEnabled = true                         // default is true
         calendarView.reloadData()
     }
     

@@ -9,7 +9,7 @@ Inspiration for this control was made possible by Michael @ Karmadust. Want to k
 [![CI Status](http://img.shields.io/travis/patchthecode/JTAppleCalendar.svg?style=flat)](https://travis-ci.org/patchthecode/JTAppleCalendar) [![Version](https://img.shields.io/cocoapods/v/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![License](https://img.shields.io/cocoapods/l/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![Platform](https://img.shields.io/cocoapods/p/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar)
 
 ### **About Screenshots**
-Much like a UITableView, because you can design this calendar to look however you want, screenshots will not be an accurate depiction of what this control looks like and are therefore not included here. A sample iOS application however is included in this project's [Github Repository](https://github.com/patchthecode/JTAppleCalendar) to give you an idea of what you can do. Have you used this control to create an awesome calendar or want to see what others have done? [Click this link here.](https://github.com/patchthecode/JTAppleCalendar/issues/2) Get some inspiration.
+Much like a UITableView, because you can design this calendar to look however you want, screenshots will not be an accurate depiction of what this control looks like. You can get inspiration from what people have developed using this control and also post you own images to inspire others [at this link.](https://github.com/patchthecode/JTAppleCalendar/issues/2). A sample iOS application is also included in this project's [Github Repository](https://github.com/patchthecode/JTAppleCalendar) to give you an idea of what you can do.
 
 * Downloaded it ?
 * Tried it ?
@@ -24,7 +24,8 @@ Much like a UITableView, because you can design this calendar to look however yo
 - [x] Custom calendar view - make your calendar look however you want, with what ever functionality you want
 - [x] First Day of week - pick anyday to be first day of the week
 - [x] Horizontal or vertical mode
-- [x] Ability to add custom functionality easily - change the color of weekends, customize days according to data in your data-source. You want it, you build it
+- [x] Ability to scroll to any month by simply using the date
+- [x] Ability to design your calendar [however you want.](https://github.com/patchthecode/JTAppleCalendar/issues/2) You want it, you build it
 - [x] [Complete Documentation](http://cocoadocs.org/docsets/JTAppleCalendar)
 
 
