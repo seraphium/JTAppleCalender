@@ -350,10 +350,28 @@ public class JTAppleCalendarView: UIView {
     
     /// Reloads the data on the calendar view
     public func reloadData() {
+        reloadDataSource() // Reload the datasource
         if layoutNeedsUpdating {
             changeNumberOfRowsPerMonthTo(numberOfRowsPerMonth, withFocusDate: nil)
         } else {
             self.calendarView.reloadData()
+        }
+    }
+    
+    private func reloadDataSource() {
+        if let dateBoundary = dataSource?.configureCalendar(self) {
+            // Jt101 do a check in each lazy var to see if user has bad star/end dates
+            
+            if // Any of the datasource variables are different then the datasource needs updating
+                startDateCache != dateBoundary.startDate ||
+                    endDateCache != dateBoundary.endDate ||
+                    calendar != dateBoundary.calendar {
+                
+                startDateCache = dateBoundary.startDate
+                endDateCache = dateBoundary.endDate
+                calendar = dateBoundary.calendar
+                layoutNeedsUpdating = true
+            }
         }
     }
     
@@ -734,6 +752,11 @@ public class JTAppleCalendarView: UIView {
         }
         return nil
     }
+    
+    // MARK: Helper functions
+    func cellWasNotDisabledByTheUser(cell: JTAppleDayCell) -> Bool {
+        return cell.cellView.hidden == false && cell.cellView.userInteractionEnabled == true
+    }
 
 }
 
@@ -898,7 +921,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
             dateUserSelected = dateFromPath(indexPath),
             delegate = self.delegate,
             cell = collectionView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell {
-                if cell.cellView.hidden == false && cell.cellView.userInteractionEnabled == true{
+                if cellWasNotDisabledByTheUser(cell) {
                     let cellState = cellStateFromIndexPath(indexPath)
                     delegate.calendar(self, canSelectDate: dateUserSelected, cell: cell.cellView, cellState: cellState)
                     return true
