@@ -13,7 +13,6 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## [2.1.1](https://github.com/patchthecode/JTAppleCalendar/releases/tag/2.1.1)
-
 - Crash on using NSDate() without a formatter for date ranges [Issue 11](https://github.com/patchthecode/JTAppleCalendar/issues/11)
 - Updated by [JayT](https://github.com/patchthecode).
 
