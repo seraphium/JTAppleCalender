@@ -9,7 +9,7 @@ Inspiration for this control was made possible by Michael @ Karmadust. Want to k
 [![CI Status](http://img.shields.io/travis/patchthecode/JTAppleCalendar.svg?style=flat)](https://travis-ci.org/patchthecode/JTAppleCalendar) [![Version](https://img.shields.io/cocoapods/v/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![License](https://img.shields.io/cocoapods/l/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![Platform](https://img.shields.io/cocoapods/p/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar)
 
 ### **About Screenshots**
-Much like a UITableView, because you can design this calendar to look however you want, screenshots will not be an accurate depiction of what this control looks like. You can get inspiration from what people have developed using this control and also post you own images to inspire others [at this link.](https://github.com/patchthecode/JTAppleCalendar/issues/2). A sample iOS application is also included in this project's [Github Repository](https://github.com/patchthecode/JTAppleCalendar) to give you an idea of what you can do.
+Much like a UITableView, because you can design this calendar to look however you want, screenshots will not be an accurate depiction of what this control looks like, but you can check out what people have developed with this control and also post you own images [at this link.](https://github.com/patchthecode/JTAppleCalendar/issues/2). A sample iOS application is also included in this project's [Github Repository](https://github.com/patchthecode/JTAppleCalendar) to give you an idea of what you can do.
 
 * Downloaded it ?
 * Tried it ?
@@ -39,10 +39,9 @@ Much like a UITableView, because you can design this calendar to look however yo
 
 ### **Communication on Github**
 ---
-* Found a bug? open an issue
-* Got a cool feature request? open an issue.
-* Need a question answered? open an issue
-* You can also open an issue if you think something should behave differently 
+* Found a bug? [open an issue](https://github.com/patchthecode/JTAppleCalendar/issues)
+* Got a cool feature request? [open an issue](https://github.com/patchthecode/JTAppleCalendar/issues)
+* Need a question answered? [open an issue](https://github.com/patchthecode/JTAppleCalendar/issues) 
 
 
 ### **Installation using CocoaPods**
@@ -284,7 +283,7 @@ JTAppleCalendar is available through [CocoaPods](https://cocoapods.org/pods/JTAp
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'JTAppleCalendar', '~> 2.1.0'
+pod 'JTAppleCalendar', '~> 2.1.1'
 ```
 
 ## Author

@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `JTAppleCalendar` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 2.x Releases
-- `2.1.0` Releases - [2.1.0](#210)
+- `2.1.0` Releases - [2.1.0](#210)|[2.1.1](#211)
 - `2.0.0` Releases - [2.0.0](#200)|[2.0.1](#201)|[2.0.2](#202)|[2.0.3](#203)
 
 #### 1.x Releases
@@ -11,6 +11,12 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100)
 
 ---
+
+## [2.1.1](https://github.com/patchthecode/JTAppleCalendar/releases/tag/2.1.1)
+
+- Crash on using NSDate() without a formatter for date ranges [Issue 11](https://github.com/patchthecode/JTAppleCalendar/issues/11)
+- Updated by [JayT](https://github.com/patchthecode).
+
 ## [2.1.0](https://github.com/patchthecode/JTAppleCalendar/releases/tag/2.1.0)
 - Calendar paging is now an option
 - Scroll to date method will now scroll to a date if paging is set to off. [Issue 10](https://github.com/patchthecode/JTAppleCalendar/issues/10)
