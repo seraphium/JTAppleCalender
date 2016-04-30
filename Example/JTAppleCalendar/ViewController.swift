@@ -101,18 +101,12 @@ class ViewController: UIViewController {
 // MARK : JTAppleCalendarDelegate
 extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDelegate {
     func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar) {
-        let startDateComponents = NSDateComponents()
-        startDateComponents.month = -2
-        let today = formatter.dateFromString("2016 04 05")!
-        let firstDate = NSCalendar.currentCalendar().dateByAddingComponents(startDateComponents, toDate: today, options: NSCalendarOptions())
         
-        let endDateComponents = NSDateComponents()
-        endDateComponents.month = 1
-        let secondDate = NSCalendar.currentCalendar().dateByAddingComponents(endDateComponents, toDate: today, options: NSCalendarOptions())
-
+        let firstDate = formatter.dateFromString("2016 01 05")
+        let secondDate = NSDate()
         let aCalendar = NSCalendar.currentCalendar() // Properly configure your calendar to your time zone here
 
-        return (startDate: firstDate!, endDate: secondDate!, calendar: aCalendar)
+        return (startDate: firstDate!, endDate: secondDate, calendar: aCalendar)
     }
 
     func calendar(calendar: JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date: NSDate, cellState: CellState) {
@@ -127,7 +121,6 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
     func calendar(calendar: JTAppleCalendarView, didSelectDate date: NSDate, cell: JTAppleDayCellView?, cellState: CellState) {
         (cell as? CellView)?.cellSelectionChanged(cellState)
         printSelectedDates()
-        
     }
     
     func calendar(calendar: JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {
