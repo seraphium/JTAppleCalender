@@ -110,9 +110,9 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
         endDateComponents.month = 1
         let secondDate = NSCalendar.currentCalendar().dateByAddingComponents(endDateComponents, toDate: today, options: NSCalendarOptions())
 
-        let calendar = NSCalendar.currentCalendar()
+        let aCalendar = NSCalendar.currentCalendar() // Properly configure your calendar to your time zone here
 
-        return (startDate: firstDate!, endDate: secondDate!, calendar: calendar)
+        return (startDate: firstDate!, endDate: secondDate!, calendar: aCalendar)
     }
 
     func calendar(calendar: JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date: NSDate, cellState: CellState) {
