@@ -42,6 +42,11 @@ public struct CellState {
     public let text: String
     /// returns the a description of which month owns the date
     public let dateBelongsTo: DateOwner
+    /// returns the date
+    public let date: NSDate
+    /// returns the day
+    public let day: DaysOfWeek
+    
 }
 
 /// Days of the week. By setting you calandar's first day of week, you can change which day is the first for the week. Sunday is by default.
@@ -179,7 +184,7 @@ public class JTAppleCalendarView: UIView {
     }
     /// The object that acts as the delegate of the calendar view.
     public var delegate : JTAppleCalendarViewDelegate?
-    
+    private var dateComponents = NSDateComponents()
     private var scrollToDatePathOnRowChange: NSDate?
     private var delayedExecutionClosure: (()->Void)?
     private var currentSectionPage: Int {
@@ -853,7 +858,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
 }
 
 extension JTAppleCalendarView {
-    private func cellStateFromIndexPath(indexPath: NSIndexPath)->CellState {
+    private func cellStateFromIndexPath(indexPath: NSIndexPath, withDate date: NSDate)->CellState {
         
         let itemIndex = indexPath.item
         let itemSection = indexPath.section
@@ -864,45 +869,49 @@ extension JTAppleCalendarView {
         let nDays = currentMonthInfo[NUMBER_OF_DAYS_INDEX]
         let offSet = currentMonthInfo[OFFSET_CALC]
         
-        var cellText: String = ""
+        
         var dateBelongsTo: CellState.DateOwner  = .ThisMonth
         
+        let componentDay = calendar!.component(.Day, fromDate: date)
+        let componentWeekDay = calendar!.component(.Weekday, fromDate: date)
+        let cellText = String(componentDay)
         
         if itemIndex >= fdIndex && itemIndex < fdIndex + nDays {
-            let cellDate = (numberOfRowsPerMonth * MAX_NUMBER_OF_DAYS_IN_WEEK * (itemSection % numberOfSectionsPerMonth)) + itemIndex - fdIndex - offSet + 1
-            cellText = String(cellDate)
             dateBelongsTo = .ThisMonth
-        } else if
-            itemIndex < fdIndex  &&
-                itemSection - 1 > -1  { // Prior month is available
-            let startOfMonthSection = startMonthSectionForSection(itemSection - 1)
-            let cellDate = (numberOfRowsPerMonth * MAX_NUMBER_OF_DAYS_IN_WEEK * (itemSection % numberOfSectionsPerMonth)) + itemIndex - offSet + 1
-            let dateToAdd = monthInfo[startOfMonthSection][TOTAL_DAYS_IN_MONTH]
-            let dateInt = cellDate + dateToAdd - monthInfo[itemSection][FIRST_DAY_INDEX]
-            cellText = String(dateInt)
+        } else if itemIndex < fdIndex  && itemSection - 1 > -1  { // Prior month is available
             dateBelongsTo = .PreviousMonthWithinBoundary
-            
-        } else  if itemIndex >= fdIndex + nDays && itemSection + 1 < monthInfo.count { // Following months
-            let startOfMonthSection = startMonthSectionForSection(itemSection)
-            let cellDate = (numberOfRowsPerMonth * MAX_NUMBER_OF_DAYS_IN_WEEK * (itemSection % numberOfSectionsPerMonth)) + itemIndex - offSet + 1
-            let dateToSubtract = monthInfo[startOfMonthSection][TOTAL_DAYS_IN_MONTH]
-            let dateInt = cellDate - dateToSubtract - monthInfo[itemSection][FIRST_DAY_INDEX]
-            cellText = String(dateInt)
+        } else if itemIndex >= fdIndex + nDays && itemSection + 1 < monthInfo.count { // Following months
             dateBelongsTo = .FollowingMonthWithinBoundary
         } else if itemIndex < fdIndex { // Pre from the start
-            let cellDate = monthInfo[0][DATE_BOUNDRY] - monthInfo[0][FIRST_DAY_INDEX] + itemIndex + 1
-            cellText = String(cellDate )
             dateBelongsTo = .PreviousMonthOutsideBoundary
         } else { // Post from the end
-            let c = calendar!.component(.Day, fromDate: dateFromPath(indexPath)!)
-            cellText = String(c)
             dateBelongsTo = .FollowingMonthOutsideBoundary
+        }
+        
+        let dayOfWeek: DaysOfWeek
+        switch componentWeekDay {
+        case 1:
+            dayOfWeek = .Sunday
+        case 2:
+            dayOfWeek = .Monday
+        case 3:
+            dayOfWeek = .Tuesday
+        case 4:
+            dayOfWeek = .Wednesday
+        case 5:
+            dayOfWeek = .Thursday
+        case 6:
+            dayOfWeek = .Friday
+        default:
+            dayOfWeek = .Saturday
         }
         
         let cellState = CellState(
             isSelected: selectedIndexPaths.contains(indexPath),
             text: cellText,
-            dateBelongsTo: dateBelongsTo
+            dateBelongsTo: dateBelongsTo,
+            date: date,
+            day: dayOfWeek   
         )
         
         return cellState
@@ -925,12 +934,12 @@ extension JTAppleCalendarView {
         let fdIndex = currentMonthInfo[FIRST_DAY_INDEX]
         let offSet = currentMonthInfo[OFFSET_CALC]
         let cellDate = (numberOfRowsPerMonth * MAX_NUMBER_OF_DAYS_IN_WEEK * (itemSection % numberOfSectionsPerMonth)) + itemIndex - fdIndex - offSet + 1
-        let offsetComponents = NSDateComponents()
+//        let offsetComponents = NSDateComponents()
         
-        offsetComponents.month = monthIndexWeAreOn
-        offsetComponents.weekday = cellDate - 1
+        dateComponents.month = monthIndexWeAreOn
+        dateComponents.weekday = cellDate - 1
         
-        return validCachedCalendar.dateByAddingComponents(offsetComponents, toDate: startOfMonthCache, options: [])
+        return validCachedCalendar.dateByAddingComponents(dateComponents, toDate: startOfMonthCache, options: [])
     }
     
     private func delayRunOnMainThread(delay:Double, closure:()->()) {
@@ -962,9 +971,9 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         }
         
         let dayCell = collectionView.dequeueReusableCellWithReuseIdentifier(cellReuseIdentifier, forIndexPath: indexPath) as! JTAppleDayCell
-        let cellState = cellStateFromIndexPath(indexPath)
-        
         let date = dateFromPath(indexPath)!
+        let cellState = cellStateFromIndexPath(indexPath, withDate: date)
+        
         delegate?.calendar(self, isAboutToDisplayCell: dayCell.cellView, date: date, cellState: cellState)
         
         return dayCell
@@ -993,7 +1002,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
             delegate = self.delegate,
             cell = collectionView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell {
             if cellWasNotDisabledByTheUser(cell) {
-                let cellState = cellStateFromIndexPath(indexPath)
+                let cellState = cellStateFromIndexPath(indexPath, withDate: dateUserSelected)
                 delegate.calendar(self, canSelectDate: dateUserSelected, cell: cell.cellView, cellState: cellState)
                 return true
             }
@@ -1005,7 +1014,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
     public func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
         if let
             delegate = self.delegate,
-            dateSelectedByUser = dateFromPath(indexPath) {
+            dateDeSelectedByUser = dateFromPath(indexPath) {
             
             // Update model
             if let index = selectedIndexPaths.indexOf(indexPath) {
@@ -1014,18 +1023,18 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
             }
             
             let selectedCell = collectionView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell // Cell may be nil if user switches month sections
-            let cellState = cellStateFromIndexPath(indexPath) // Although the cell may be nil, we still want to return the cellstate
-            delegate.calendar(self, didDeselectDate: dateSelectedByUser, cell: selectedCell?.cellView, cellState: cellState)
+            let cellState = cellStateFromIndexPath(indexPath, withDate: dateDeSelectedByUser) // Although the cell may be nil, we still want to return the cellstate
+            delegate.calendar(self, didDeselectDate: dateDeSelectedByUser, cell: selectedCell?.cellView, cellState: cellState)
         }
     }
     /// Asks the delegate if the specified item should be deselected. true if the item should be deselected or false if it should not.
     public func collectionView(collectionView: UICollectionView, shouldDeselectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
         if let
-            dateUserSelected = dateFromPath(indexPath),
+            dateDeSelectedByUser = dateFromPath(indexPath),
             delegate = self.delegate,
             cell = collectionView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell {
-            let cellState = cellStateFromIndexPath(indexPath)
-            delegate.calendar(self, canDeselectDate: dateUserSelected, cell: cell.cellView, cellState:  cellState)
+            let cellState = cellStateFromIndexPath(indexPath, withDate: dateDeSelectedByUser)
+            delegate.calendar(self, canDeselectDate: dateDeSelectedByUser, cell: cell.cellView, cellState:  cellState)
             return true
         }
         return false
@@ -1043,7 +1052,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
             }
             
             let selectedCell = collectionView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell
-            let cellState = cellStateFromIndexPath(indexPath)
+            let cellState = cellStateFromIndexPath(indexPath, withDate: dateSelectedByUser)
             delegate.calendar(self, didSelectDate: dateSelectedByUser, cell: selectedCell?.cellView, cellState: cellState)
         }
     }
