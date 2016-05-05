@@ -31,12 +31,16 @@ let DATE_BOUNDRY = 4
 ///
 /// You can use these cell states to configure how you want your date cells to look. Eg. you can have the colors belonging to the month be in color black, while the colors of previous months be in color gray.
 public struct CellState {
+    /// Describes which month owns the date
     public enum DateOwner: Int {
-        /// Describes the state of a date-cell
+        /// Describes which month owns the date
         case ThisMonth = 0, PreviousMonthWithinBoundary, PreviousMonthOutsideBoundary, FollowingMonthWithinBoundary, FollowingMonthOutsideBoundary
     }
+    /// returns true if a cell is selected
     public let isSelected: Bool
+    /// returns the date as a string
     public let text: String
+    /// returns the a description of which month owns the date
     public let dateBelongsTo: DateOwner
 }
 
@@ -118,6 +122,7 @@ public protocol JTAppleCalendarViewDelegate {
     ///     - cellState: The month the date-cell belongs to.
     func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) -> Void
 }
+/// Default delegate functions
 public extension JTAppleCalendarViewDelegate {
     func calendar(calendar : JTAppleCalendarView, canSelectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState)->Bool {return true}
     func calendar(calendar : JTAppleCalendarView, canDeselectDate date : NSDate, cell: JTAppleDayCellView, cellState: CellState)->Bool {return true}
@@ -256,6 +261,7 @@ public class JTAppleCalendarView: UIView {
     
     
     private(set) var selectedIndexPaths : [NSIndexPath] = [NSIndexPath]()
+    /// Returns all selected dates
     public var selectedDates : [NSDate] = [NSDate]()
     
     lazy private var monthInfo : [[Int]] = {
@@ -289,6 +295,9 @@ public class JTAppleCalendarView: UIView {
             calendarView.scrollEnabled = scrollEnabled
         }
     }
+    
+    /// This is only applicable when calendar view paging is not enabled. Use this variable to decelerate the scroll movement to make it more 'sticky' or more fluid scrolling
+    public var scrollResistance: CGFloat = 0.75
     
     lazy private var calendarView : UICollectionView = {
         let layout = JTAppleCalendarHorizontalFlowLayout(withDelegate: self)
@@ -328,7 +337,7 @@ public class JTAppleCalendarView: UIView {
         super.init(frame : CGRectMake(0.0, 0.0, 200.0, 200.0))
         self.initialSetup()
     }
-    
+    /// Returns an object initialized from data in a given unarchiver. self, initialized using the data in decoder.
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
@@ -772,7 +781,54 @@ public class JTAppleCalendarView: UIView {
 }
 
 // MARK: scrollViewDelegates
+
 extension JTAppleCalendarView: UIScrollViewDelegate {
+    /// Tells the delegate when the user finishes scrolling the content.
+    public func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if pagingEnabled {
+            return
+        }
+
+        let cellDragInterval: CGFloat = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.width
+        
+        var contentOffset: CGFloat = 0,
+            theTargetContentOffset: CGFloat = 0,
+            directionVelocity: CGFloat = 0,
+            contentInset: CGFloat = 0
+        
+        if direction == .Horizontal {
+            contentOffset = scrollView.contentOffset.x
+            theTargetContentOffset = targetContentOffset.memory.x
+            directionVelocity = velocity.x
+            contentInset = calendarView.contentInset.left
+        } else {
+            contentOffset = scrollView.contentOffset.y
+            theTargetContentOffset = targetContentOffset.memory.y
+            directionVelocity = velocity.y
+            contentInset = calendarView.contentInset.top
+        }
+        
+        var nextIndex: CGFloat = 0
+        var diff = abs(theTargetContentOffset - contentOffset)
+
+        
+        if (directionVelocity == 0) {
+            calendarView.collectionViewLayout.collectionViewContentSize().width
+            nextIndex = round(theTargetContentOffset / cellDragInterval)
+            targetContentOffset.memory = CGPointMake(0, nextIndex * cellDragInterval)
+        } else if (directionVelocity > 0) {
+            nextIndex = ceil((theTargetContentOffset - (diff * scrollResistance)) / cellDragInterval)
+        } else {
+            nextIndex = floor((theTargetContentOffset + (diff * scrollResistance)) / cellDragInterval)
+        }
+        
+        if direction == .Horizontal {
+            targetContentOffset.memory = CGPointMake(max(nextIndex * cellDragInterval, contentInset), 0)
+        } else {
+            targetContentOffset.memory = CGPointMake(0, max(nextIndex * cellDragInterval, contentInset))
+        }
+    }
+    
     /// Tells the delegate when a scrolling animation in the scroll view concludes.
     public func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
         scrollViewDidEndDecelerating(scrollView)
@@ -913,7 +969,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         
         return dayCell
     }
-    
+    /// Asks your data source object for the number of sections in the collection view. The number of sections in collectionView.
     public func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         if !xibFileValid() {
             return 0
@@ -925,10 +981,11 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         return monthInfo.count
     }
     
+    /// Asks your data source object for the number of items in the specified section. The number of rows in section.
     public func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return  MAX_NUMBER_OF_DAYS_IN_WEEK * numberOfRowsPerMonth
     }
-    
+    /// Asks the delegate if the specified item should be selected. true if the item should be selected or false if it should not.
     public func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
         
         if let
@@ -944,7 +1001,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         
         return false // if date is out of scope
     }
-    
+    /// Tells the delegate that the item at the specified path was deselected. The collection view calls this method when the user successfully deselects an item in the collection view. It does not call this method when you programmatically deselect items.
     public func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
         if let
             delegate = self.delegate,
@@ -961,7 +1018,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
             delegate.calendar(self, didDeselectDate: dateSelectedByUser, cell: selectedCell?.cellView, cellState: cellState)
         }
     }
-    
+    /// Asks the delegate if the specified item should be deselected. true if the item should be deselected or false if it should not.
     public func collectionView(collectionView: UICollectionView, shouldDeselectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
         if let
             dateUserSelected = dateFromPath(indexPath),
@@ -973,7 +1030,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         }
         return false
     }
-    
+    /// Tells the delegate that the item at the specified index path was selected. The collection view calls this method when the user successfully selects an item in the collection view. It does not call this method when you programmatically set the selection.
     public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if let
             delegate = self.delegate,
@@ -1011,11 +1068,11 @@ extension JTAppleCalendarView: JTAppleCalendarDelegateProtocol {
     }
 }
 
-
+/// NSDates can be compared with the == and != operators
 public func ==(lhs: NSDate, rhs: NSDate) -> Bool {
     return lhs === rhs || lhs.compare(rhs) == .OrderedSame
 }
-
+/// NSDates can be compared with the > and < operators
 public func <(lhs: NSDate, rhs: NSDate) -> Bool {
     return lhs.compare(rhs) == .OrderedAscending
 }
