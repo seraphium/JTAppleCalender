@@ -45,6 +45,7 @@ class ViewController: UIViewController {
         calendarView.firstDayOfWeek = .Sunday                      // default is Sunday
         calendarView.scrollEnabled = true                          // default is true
         calendarView.pagingEnabled = true                          // default is true
+        calendarView.scrollResistance = 0.75                       // default is 0.75 - this is only applicable when paging is not enabled
         calendarView.reloadData()
     }
     
