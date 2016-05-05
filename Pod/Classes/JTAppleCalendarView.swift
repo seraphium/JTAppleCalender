@@ -789,23 +789,24 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
             return
         }
 
-        let cellDragInterval: CGFloat = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.width
-        
         var contentOffset: CGFloat = 0,
             theTargetContentOffset: CGFloat = 0,
             directionVelocity: CGFloat = 0,
-            contentInset: CGFloat = 0
+            contentInset: CGFloat = 0,
+            cellDragInterval: CGFloat = 0
         
         if direction == .Horizontal {
             contentOffset = scrollView.contentOffset.x
             theTargetContentOffset = targetContentOffset.memory.x
             directionVelocity = velocity.x
             contentInset = calendarView.contentInset.left
+            cellDragInterval = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.width
         } else {
             contentOffset = scrollView.contentOffset.y
             theTargetContentOffset = targetContentOffset.memory.y
             directionVelocity = velocity.y
             contentInset = calendarView.contentInset.top
+            cellDragInterval = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.height
         }
         
         var nextIndex: CGFloat = 0
@@ -813,7 +814,6 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
 
         
         if (directionVelocity == 0) {
-            calendarView.collectionViewLayout.collectionViewContentSize().width
             nextIndex = round(theTargetContentOffset / cellDragInterval)
             targetContentOffset.memory = CGPointMake(0, nextIndex * cellDragInterval)
         } else if (directionVelocity > 0) {
