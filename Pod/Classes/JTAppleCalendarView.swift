@@ -555,7 +555,38 @@ public class JTAppleCalendarView: UIView {
         }
         return retval
     }
-    
+    /// Returns the cellStatus of a date that is visible on the screen. If the row and column for the date cannot be found, then nil is returned
+    /// - Paramater row: Int row of the date to find
+    /// - Paramater column: Int column of the date to find
+    /// - returns:
+    ///     - CellState: The start date of the current section
+    public func cellStatusForDateAtRow(row: Int, column: Int) -> CellState? {
+        if // the row or column falls within an invalid range
+            row < 0 || row >= numberOfRowsPerMonth ||
+            column < 0 || column >= MAX_NUMBER_OF_DAYS_IN_WEEK {
+            return nil
+        }
+        
+        let Offset: Int
+        let convertedRow: Int
+        let convertedSection: Int
+        if direction == .Horizontal {
+            Offset = Int(round(calendarView.contentOffset.x / (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.width))
+            convertedRow = (row * MAX_NUMBER_OF_DAYS_IN_WEEK) + ((column + Offset) % MAX_NUMBER_OF_DAYS_IN_WEEK)
+            convertedSection = (Offset + column) / MAX_NUMBER_OF_DAYS_IN_WEEK
+        } else {
+            Offset = Int(round(calendarView.contentOffset.y / (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.height))
+            convertedRow = ((row * MAX_NUMBER_OF_DAYS_IN_WEEK) +  column + (Offset * MAX_NUMBER_OF_DAYS_IN_WEEK)) % (MAX_NUMBER_OF_DAYS_IN_WEEK * numberOfRowsPerMonth)
+            convertedSection = (Offset + row) / numberOfRowsPerMonth
+        }
+        
+        let indexPathToFind = NSIndexPath(forItem: convertedRow, inSection: convertedSection)
+        if let  date = dateFromPath(indexPathToFind) {
+            let stateOfCell = cellStateFromIndexPath(indexPathToFind, withDate: date)
+            return stateOfCell
+        }
+        return nil
+    }
     /// Scrolls the calendar view to the next section view. It will execute a completion handler at the end of scroll animation if provided.
     /// - Paramater animateScroll: Bool indicating if animation should be enabled
     /// - Parameter completionHandler: A completion handler that will be executed at the end of the scroll animation
@@ -703,12 +734,11 @@ public class JTAppleCalendarView: UIView {
                         selectTheDate()
                     }
                 }
-                
-                
             }
+            
+            // If triggering was false, although the selectDelegates weren't called, we do want the cell refreshed. Reload to call itemAtIndexPath
             if triggerSelectionDelegate == false {
                 self.calendarView.reloadItemsAtIndexPaths(allIndexPathsToReload)
-                //                self.reloadData()
             }
         }
     }
@@ -843,13 +873,19 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
     
     /// Tells the delegate that the scroll view has ended decelerating the scrolling movement.
     public func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        
         // Determing the section from the scrollView direction
         let section = currentSectionPage
+        let itemIndex: Int
+
+        // Calculate the index to be used in focus path
+        if direction == .Horizontal {
+            itemIndex = Int(round(calendarView.contentOffset.x / (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.width)) % MAX_NUMBER_OF_DAYS_IN_WEEK
+        } else {
+            itemIndex = (Int(round(calendarView.contentOffset.y / (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.height)) * MAX_NUMBER_OF_DAYS_IN_WEEK) % (numberOfRowsPerMonth * MAX_NUMBER_OF_DAYS_IN_WEEK)
+        }
         
         // When ever the month/section is switched, let the flowlayout know which page it is on. This is needed in the event user switches orientatoin, we can use the index to snap back to correct position
-        
-        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pathForFocusItem = NSIndexPath(forItem: 0, inSection: section)
+        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pathForFocusItem = NSIndexPath(forItem: itemIndex, inSection: section)
         
         if let currentSegmentDates = currentCalendarSegment() {
             self.delegate?.calendar(self, didScrollToDateSegmentStartingWith: currentSegmentDates.startDate, endingWithDate: currentSegmentDates.endDate)
