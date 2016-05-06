@@ -156,17 +156,13 @@ Lets setup the delegate methods in your viewController. I have called my viewCon
 extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDelegate  {
     // Setting up manditory protocol method 
     func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar) {
-        let startDateComponents = NSDateComponents()
-        startDateComponents.month = -2
-        let today = NSDate()
-        let firstDate = NSCalendar.currentCalendar().dateByAddingComponents(startDateComponents, toDate: today, options: NSCalendarOptions())
-
-        let endDateComponents = NSDateComponents()
-        endDateComponents.month = 1
-        let secondDate = NSCalendar.currentCalendar().dateByAddingComponents(endDateComponents, toDate: today, options: NSCalendarOptions())
-
-        let calendar = NSCalendar.currentCalendar()
-        return (startDate: firstDate!, endDate: secondDate!, calendar: calendar)
+        // Assuming you have a: let formatter = NSDateFormatter() declared in your view controller.
+        // The following demonstrates that you can provide dates both from NSDate() and NSDateFormatter()
+        // For purposes of this tutorial, if you do not have a formatter declared, then simply supply what ever date you want or create a formatter now. Just make sure that the start date is less than the endDate.
+        let firstDate = formatter.dateFromString("2016 01 05") 
+        let secondDate = NSDate()
+        let aCalendar = NSCalendar.currentCalendar() // Properly configure your calendar to your time zone here
+        return (startDate: firstDate!, endDate: secondDate, calendar: aCalendar)
     }
 }
 ```
