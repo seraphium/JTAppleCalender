@@ -845,9 +845,8 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
         }
         
         var nextIndex: CGFloat = 0
-        var diff = abs(theTargetContentOffset - contentOffset)
+        let diff = abs(theTargetContentOffset - contentOffset)
 
-        
         if (directionVelocity == 0) {
             nextIndex = round(theTargetContentOffset / cellDragInterval)
             targetContentOffset.memory = CGPointMake(0, nextIndex * cellDragInterval)
@@ -895,22 +894,15 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
 
 extension JTAppleCalendarView {
     private func cellStateFromIndexPath(indexPath: NSIndexPath, withDate date: NSDate)->CellState {
-        
         let itemIndex = indexPath.item
         let itemSection = indexPath.section
-        
         let currentMonthInfo = monthInfo[itemSection]
-        
         let fdIndex = currentMonthInfo[FIRST_DAY_INDEX]
         let nDays = currentMonthInfo[NUMBER_OF_DAYS_INDEX]
-        let offSet = currentMonthInfo[OFFSET_CALC]
-        
-        
-        var dateBelongsTo: CellState.DateOwner  = .ThisMonth
-        
         let componentDay = calendar!.component(.Day, fromDate: date)
         let componentWeekDay = calendar!.component(.Weekday, fromDate: date)
         let cellText = String(componentDay)
+        let dateBelongsTo: CellState.DateOwner
         
         if itemIndex >= fdIndex && itemIndex < fdIndex + nDays {
             dateBelongsTo = .ThisMonth
