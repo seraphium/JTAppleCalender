@@ -118,11 +118,11 @@ Like a UITableView, the cell has 2 parts.
 
 ##### 2. The calendarView
 ---
-* This step is easy. Go to your Storyboard and add a `UIView` to it. Set the class of the view to be `JTAppleCalendarView`. Then setup an outlet for it to your viewController. You can setupup your autolayout constrainst for the calendar view at this point.
+* This step is easy. Go to your Storyboard and add a `UIView` to it. Set the class of the view to be `JTAppleCalendarView`. Then setup an outlet for it to your viewController. You can setup your autolayout constrainst for the calendar view at this point.
 
 
 ##### Whats next?
-Similar to UITableView protocls, your viewController has to conform to 2 protocols for it to work
+Similar to UITableView protocols, your viewController has to conform to 2 protocols for it to work
 
 * JTAppleCalendarViewDataSource
 
@@ -147,7 +147,7 @@ Similar to UITableView protocls, your viewController has to conform to 2 protoco
 
 
 ##### Setting up the delegate methods
-Lets setup the delegate methods in your viewController. I have called my viewController simply `ViewController`. I prefer setting up my protocols on my controllers using extensions to keep my code neat, but you can put it where ever youre accustomed to. This function needs 3 variables returned. 
+Lets setup the delegate methods in your viewController. I have called my viewController simply `ViewController`. Also, I prefer setting up my protocols on my controllers using extensions to keep my code neat, but you can put it where ever youre accustomed to. This function needs 3 variables returned. 
 - Start boundary date 
 - End boundary date 
 - Calendar which you should configure to the time zone of your liking.
@@ -254,25 +254,29 @@ The following structure was returned when a cell is about to be displayed.
     public func scrollToPreviousSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
     public func scrollToDate(date: NSDate, animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
     public func selectDates(dates: [NSDate], triggerSelectionDelegate: Bool = true)
+    public func cellStatusForDateAtRow(row: Int, column: Int) -> CellState?
 ```
 
 #### Properties you can configure
+```
+// Note: You do not need to configure your calendar with this if it is already the default
+calendarView.direction = .Horizontal                       // default is horizontal
+calendarView.numberOfRowsPerMonth = 6                      // default is 6
+calendarView.cellInset = CGPoint(x: 0, y: 0)               // default is (3,3)
+calendarView.allowsMultipleSelection = false               // default is false
+calendarView.bufferTop = 0                                 // default is 0. - still work in progress
+calendarView.bufferBottom = 0                              // default is 0. - still work in progress
+calendarView.firstDayOfWeek = .Sunday                      // default is Sunday
+calendarView.scrollEnabled = true                          // default is true
+calendarView.pagingEnabled = true                          // default is true
+calendarView.scrollResistance = 0.75                       // default is 0.75 - this is only applicable when paging is not enabled
+```
 
-* allowsMultipleSelection
-* animationsEnabled
-* bufferTop
-* bufferBottom
-* cellInset
-* direction
-* firstDayOfWeek
-* numberOfRowsPerMonth
+Do you have any other questions?. If you are trying to bend heaven and earth to do something complicated with this calendar, then chances are there is already an easy way for it to be done. So [Opening an issue](https://github.com/patchthecode/JTAppleCalendar/issues/new) might be a good idea.
 
-
-
-
+Did you remember to leave a like? I would really appreciate it if you did. 
 
 Other functions/properties are coming. This is a very active project.
-
 
 
 JTAppleCalendar is available through [CocoaPods](https://cocoapods.org/pods/JTAppleCalendar). To install
