@@ -16,22 +16,22 @@ All notable changes to this project will be documented in this file.
 - Update: The CellState for a date now returns more information. It now returns (added to its previous info) a date and a day.
 - Update: New function added so user can query the visible dateCells on the screen: cellStatusForDateAtRow(_: Int, column: Int)
 - Update: With paging disbled, the scrolling now snaps to day
-- Updated by [JayT](https://github.com/patchthecode).
+  - Updated by [JayT](https://github.com/patchthecode).
 
 ## [2.1.1](https://github.com/patchthecode/JTAppleCalendar/releases/tag/2.1.1)
 - Crash on using NSDate() without a formatter for date ranges [Issue 11](https://github.com/patchthecode/JTAppleCalendar/issues/11)
-- Updated by [JayT](https://github.com/patchthecode).
+  - Updated by [JayT](https://github.com/patchthecode).
 
 ## [2.1.0](https://github.com/patchthecode/JTAppleCalendar/releases/tag/2.1.0)
 - Calendar paging is now an option
 - Scroll to date method will now scroll to a date if paging is set to off. [Issue 10](https://github.com/patchthecode/JTAppleCalendar/issues/10)
-- Updated by [JayT](https://github.com/patchthecode).
+  - Updated by [JayT](https://github.com/patchthecode).
 
 
 ## [2.0.3](https://github.com/patchthecode/JTAppleCalendar/releases/tag/2.0.3)
 - Fixed visual bug. Now there should be no flickering when scrolling dates.
 - Updated sample code 
-- Updated by [JayT](https://github.com/patchthecode).
+  - Updated by [JayT](https://github.com/patchthecode).
 
 
 ## [2.0.2](https://github.com/patchthecode/JTAppleCalendar/releases/tag/2.0.2)
