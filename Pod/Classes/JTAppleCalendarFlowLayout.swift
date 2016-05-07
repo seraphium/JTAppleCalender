@@ -12,7 +12,7 @@ protocol JTAppleCalendarLayoutProtocol: class {
     var pathForFocusItem: NSIndexPath {get set}
     func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint
 }
-
+/// Base class for the Horizontal layout
 public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalendarLayoutProtocol {
     var itemSize: CGSize = CGSizeZero
     var headerReferenceSize: CGSize = CGSizeZero
@@ -25,7 +25,7 @@ public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalen
         return CGPointMake(layoutAttrs!.frame.origin.x - self.collectionView!.contentInset.left, layoutAttrs!.frame.origin.y-self.collectionView!.contentInset.top);
     }
 }
-
+/// Vertical flow layout for calendar view
 public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAppleCalendarLayoutProtocol {
     var pathForFocusItem: NSIndexPath = NSIndexPath(forItem: 0, inSection: 0)
     /// Returns the content offset to use after an animation layout update or change.
@@ -52,16 +52,16 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         self.minimumInteritemSpacing = 0
         self.minimumLineSpacing = 0
     }
-    
+    /// Returns an object initialized from data in a given unarchiver. self, initialized using the data in decoder.
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+    /// Tells the layout object to update the current layout.
     public override func prepareLayout() {
         numberOfRows = self.delegate!.numberOfRows()
         numberOfColumns = self.delegate!.numberOfColumns()
     }
-    
+    /// Returns the layout attributes for all of the cells and views in the specified rectangle.
     override public func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         // Determine how many columns needs to be displayed
         let requestedWidth = rect.width
@@ -104,7 +104,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         }
         return attributes
     }
-    
+    /// Returns the layout attributes for the item at the specified index path. A layout attributes object containing the information to apply to the item’s cell.
     override  public func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
         let attr = UICollectionViewLayoutAttributes(forCellWithIndexPath: indexPath)
         applyLayoutAttributes(attr)
@@ -125,7 +125,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             attributes.frame = CGRectMake(xCellOffset, yCellOffset, self.itemSize.width, self.itemSize.height)
         }
     }
-    
+    /// Returns the width and height of the collection view’s contents. The width and height of the collection view’s contents.
     public override func collectionViewContentSize() -> CGSize {
         var size = super.collectionViewContentSize()
         
