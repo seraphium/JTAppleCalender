@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `JTAppleCalendar` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 2.x Releases
-- `2.1.0` Releases - [2.1.0](#210)|[2.1.1](#211)
+- `2.1.0` Releases - [2.1.0](#210)|[2.1.1](#211)|[2.1.2](#212)
 - `2.0.0` Releases - [2.0.0](#200)|[2.0.1](#201)|[2.0.2](#202)|[2.0.3](#203)
 
 #### 1.x Releases
@@ -11,6 +11,12 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100)
 
 ---
+## [2.1.2](https://github.com/patchthecode/JTAppleCalendar/releases/tag/2.1.2)
+- Fixed: When selecting date with delegates disabled, calendar shifted to month offset. This was due to the newly added smooth scrolling feature
+- Update: The CellState for a date now returns more information. It now returns (added to its previous info) a date and a day.
+- Update: New function added so user can query the visible dateCells on the screen: cellStatusForDateAtRow(_: Int, column: Int)
+- Update: With paging disbled, the scrolling now snaps to day
+- Updated by [JayT](https://github.com/patchthecode).
 
 ## [2.1.1](https://github.com/patchthecode/JTAppleCalendar/releases/tag/2.1.1)
 - Crash on using NSDate() without a formatter for date ranges [Issue 11](https://github.com/patchthecode/JTAppleCalendar/issues/11)
