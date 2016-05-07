@@ -283,7 +283,7 @@ JTAppleCalendar is available through [CocoaPods](https://cocoapods.org/pods/JTAp
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'JTAppleCalendar', '~> 2.1.1'
+pod 'JTAppleCalendar', '~> 2.1.2'
 ```
 
 ## Author
