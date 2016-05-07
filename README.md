@@ -258,7 +258,7 @@ The following structure was returned when a cell is about to be displayed.
 ```
 
 #### Properties you can configure
-```
+```swift
 // Note: You do not need to configure your calendar with this if it is already the default
 calendarView.direction = .Horizontal                       // default is horizontal
 calendarView.numberOfRowsPerMonth = 6                      // default is 6
