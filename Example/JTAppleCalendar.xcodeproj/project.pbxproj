@@ -17,6 +17,8 @@
 		6B80035D1C9983A100A3ED9C /* CellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6B80035B1C9983A100A3ED9C /* CellView.xib */; };
 		6B80035F1C9983AE00A3ED9C /* AnimationClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B80035E1C9983AE00A3ED9C /* AnimationClass.swift */; };
 		6BB8DBEA1CA8710F009DB5F8 /* CHANGELOG.md in Sources */ = {isa = PBXBuildFile; fileRef = 6BB8DBE91CA8710F009DB5F8 /* CHANGELOG.md */; };
+		6BCA1FDD1CE3504B0058F1FF /* SectionHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6BCA1FDC1CE3504B0058F1FF /* SectionHeaderView.xib */; };
+		6BCA1FDF1CE351110058F1FF /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCA1FDE1CE351110058F1FF /* SectionHeaderView.swift */; };
 		6BCFFB3E1C9B9F1B005E2C7E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6BCFFB3C1C9B9F1B005E2C7E /* Main.storyboard */; };
 		E9699CD75DFA20E105EA9C08 /* Pods_JTAppleCalendar_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F38860768E73AEAE97646633 /* Pods_JTAppleCalendar_Tests.framework */; };
 /* End PBXBuildFile section */
@@ -47,6 +49,8 @@
 		6B80035B1C9983A100A3ED9C /* CellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CellView.xib; sourceTree = "<group>"; };
 		6B80035E1C9983AE00A3ED9C /* AnimationClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationClass.swift; sourceTree = "<group>"; };
 		6BB8DBE91CA8710F009DB5F8 /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
+		6BCA1FDC1CE3504B0058F1FF /* SectionHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SectionHeaderView.xib; sourceTree = "<group>"; };
+		6BCA1FDE1CE351110058F1FF /* SectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		6BCFFB3D1C9B9F1B005E2C7E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		723F34A697E0B18F35C23486 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		80042DC0DAF9CC9303B1078D /* Pods_JTAppleCalendar_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JTAppleCalendar_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -116,6 +120,8 @@
 				6BCFFB3C1C9B9F1B005E2C7E /* Main.storyboard */,
 				6B8003561C99831B00A3ED9C /* ViewController.swift */,
 				6B80035E1C9983AE00A3ED9C /* AnimationClass.swift */,
+				6BCA1FDC1CE3504B0058F1FF /* SectionHeaderView.xib */,
+				6BCA1FDE1CE351110058F1FF /* SectionHeaderView.swift */,
 				6B80035A1C9983A100A3ED9C /* CellView.swift */,
 				6B80035B1C9983A100A3ED9C /* CellView.xib */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
@@ -260,6 +266,7 @@
 			files = (
 				6B80035D1C9983A100A3ED9C /* CellView.xib in Resources */,
 				6BCFFB3E1C9B9F1B005E2C7E /* Main.storyboard in Resources */,
+				6BCA1FDD1CE3504B0058F1FF /* SectionHeaderView.xib in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 			);
@@ -373,6 +380,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6B8003571C99831B00A3ED9C /* ViewController.swift in Sources */,
+				6BCA1FDF1CE351110058F1FF /* SectionHeaderView.swift in Sources */,
 				6BB8DBEA1CA8710F009DB5F8 /* CHANGELOG.md in Sources */,
 				6B80035F1C9983AE00A3ED9C /* AnimationClass.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
@@ -455,7 +463,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -493,7 +501,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;

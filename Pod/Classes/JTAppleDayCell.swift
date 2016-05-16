@@ -35,10 +35,10 @@ public class JTAppleDayCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.setupCellView()
-        self.addSubview(self.cellView)        
+        self.addSubview(cellView)
     }
     
-    ///Returns an object initialized from data in a given unarchiver.
+    /// Returns an object initialized from data in a given unarchiver.
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }

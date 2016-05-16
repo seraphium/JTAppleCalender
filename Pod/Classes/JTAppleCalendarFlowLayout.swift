@@ -7,16 +7,30 @@
 //
 
 protocol JTAppleCalendarLayoutProtocol: class {
+    var sectionInset: UIEdgeInsets {get set}
     var itemSize: CGSize {get set}
-    var headerReferenceSize: CGSize {get set}
     var pathForFocusItem: NSIndexPath {get set}
+    var headerReferenceSize: CGSize {get set}
+    var footerReferenceSize: CGSize {get set}
+    var scrollDirection: UICollectionViewScrollDirection {get set}
+    var minimumInteritemSpacing: CGFloat {get set}
+    var minimumLineSpacing: CGFloat {get set}
+    
+    
     func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint
 }
 /// Base class for the Horizontal layout
 public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalendarLayoutProtocol {
+    var sectionInset: UIEdgeInsets = UIEdgeInsetsZero
     var itemSize: CGSize = CGSizeZero
     var headerReferenceSize: CGSize = CGSizeZero
+    var footerReferenceSize: CGSize = CGSizeZero
     var pathForFocusItem: NSIndexPath = NSIndexPath(forItem: 0, inSection: 0)
+    var scrollDirection: UICollectionViewScrollDirection = .Horizontal
+    var minimumInteritemSpacing: CGFloat = 0
+    var minimumLineSpacing: CGFloat = 0
+
+    
     /// Returns the content offset to use after an animation layout update or change.
     /// - Parameter proposedContentOffset: The proposed point for the upper-left corner of the visible content
     /// - returns: The content offset that you want to use instead
@@ -40,9 +54,8 @@ public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAp
 public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout {
     var numberOfRows = 0
     var numberOfColumns = 0
-    var minimumInteritemSpacing: CGFloat = 0
-    var minimumLineSpacing: CGFloat = 0
-    var scrollDirection: UICollectionViewScrollDirection = .Horizontal
+    
+    var sectionInsets: UIEdgeInsets = UIEdgeInsetsZero
     
     weak var delegate: JTAppleCalendarDelegateProtocol?
     

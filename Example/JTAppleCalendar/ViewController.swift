@@ -32,11 +32,13 @@ class ViewController: UIViewController {
 
         calendarView.dataSource = self
         calendarView.delegate = self
-        calendarView.registerCellViewXib(fileName: "CellView")     // manditory
+        
+        calendarView.registerCellViewXib(fileName: "CellView") // manditory
+        calendarView.registerHeaderViewXibs(fileNames: ["SectionHeaderView"]) // Optional
         
         // The following default code can be removed since they are already the default.
         // They are only included here so that you can know what properties can be configured
-        calendarView.direction = .Horizontal                       // default is horizontal
+        calendarView.direction = .Vertical                       // default is horizontal
         calendarView.numberOfRowsPerMonth = 6                      // default is 6
         calendarView.cellInset = CGPoint(x: 0, y: 0)               // default is (3,3)
         calendarView.allowsMultipleSelection = false               // default is false
@@ -44,8 +46,8 @@ class ViewController: UIViewController {
         calendarView.bufferBottom = 0                              // default is 0. - still work in progress
         calendarView.firstDayOfWeek = .Sunday                      // default is Sunday
         calendarView.scrollEnabled = true                          // default is true
-        calendarView.pagingEnabled = true                          // default is true
-        calendarView.scrollResistance = 0.75                       // default is 0.75 - this is only applicable when paging is not enabled
+        calendarView.pagingEnabled = false                          // default is true
+        calendarView.scrollResistance = 0.65                       // default is 0.75 - this is only applicable when paging is not enabled
         calendarView.reloadData()
     }
     
@@ -109,6 +111,11 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
 
         return (startDate: firstDate!, endDate: secondDate, calendar: aCalendar)
     }
+    
+    
+    func calendar(calendar: JTAppleCalendarView, sectionHeaderSizeForDate date: NSDate) -> CGSize {
+        return CGSize(width: 200, height: 50)
+    }
 
     func calendar(calendar: JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date: NSDate, cellState: CellState) {
         (cell as! CellView).setupCellBeforeDisplay(cellState, date: date)
@@ -135,4 +142,12 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
             monthLabel.text = monthName + " " + String(year)
         }
     }
+    
+    func calendar(calendar: JTAppleCalendarView, sectionHeaderForDate date: NSDate) -> String {
+        return "SectionHeaderView"
+    }
+    
+//    func calendar(calendar: JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: NSDate) {
+//        (header as? SectionHeaderView)?.setupHeaderBeforeDisplay()
+//    }
 }
