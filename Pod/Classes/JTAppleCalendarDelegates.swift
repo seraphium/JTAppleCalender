@@ -22,7 +22,6 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
     }
     
     public func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        
         if pagingEnabled {
             return
         }
@@ -44,7 +43,6 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
             cellDragInterval = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.height
         }
         
-        
         var nextIndex: CGFloat = 0
         let diff = abs(theTargetContentOffset - contentOffset)
         
@@ -55,20 +53,22 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                 return
             } else { // If there are headers
                 let testPoint = CGPoint(x: 0, y: theTargetContentOffset - (diff * scrollResistance))
-                if let indexPath = calendarView.indexPathForItemAtPoint(testPoint) {
-                    if let attributes = calendarView.layoutAttributesForItemAtIndexPath(indexPath) {
-                        let frame = attributes.frame
-                        
-                        if theTargetContentOffset <= frame.origin.y + (frame.height / 2)  {
-                            let targetOffset = attributes.frame.origin.y
-                            targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
-                        } else {
-                            let targetOffset = attributes.frame.origin.y + frame.height
-                            targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
-                        }
-                        return
-                    }
+                
+                guard let
+                        indexPath = calendarView.indexPathForItemAtPoint(testPoint),
+                        attributes = calendarView.layoutAttributesForItemAtIndexPath(indexPath) else {
+                            print("failed")
+                            return
                 }
+                
+                if theTargetContentOffset <= attributes.frame.origin.y + (attributes.frame.height / 2)  {
+                    let targetOffset = attributes.frame.origin.y
+                    targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
+                } else {
+                    let targetOffset = attributes.frame.origin.y + attributes.frame.height
+                    targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
+                }
+
             }
         } else if (directionVelocity > 0) { // scrolling down
             if scrollView.contentOffset.y > (scrollView.contentSize.height - scrollView.frame.size.height) {
@@ -80,10 +80,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
             if let indexPath = calendarView.indexPathForItemAtPoint(testPoint) {
                 if let attributes = calendarView.layoutAttributesForItemAtIndexPath(indexPath) {
                     let targetOffset = attributes.frame.origin.y
-                    
-                    
                     targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
-                    return
                 }
             } else {
                 print("\nfailed")
@@ -98,19 +95,12 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
             let testPoint = CGPoint(x: 0, y: theTargetContentOffset + (diff * scrollResistance))
             if let indexPath = calendarView.indexPathForItemAtPoint(testPoint) {
                 if let attributes = calendarView.layoutAttributesForItemAtIndexPath(indexPath) { //Crash
-
-                
                     let targetOffsetx = attributes.frame.origin.y
-                    
-                    
                     targetContentOffset.memory = CGPoint(x: 0, y: targetOffsetx)
-                    return
                 }
             } else {
                 print("\nfailed")
             }
-            
-            return
         }
     }
     
@@ -142,9 +132,12 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
         }
     }
     
-    func calendarViewHeaderSize() -> CGSize {
-        if let size = delegate?.calendar(self, sectionHeaderSizeForDate: NSDate()) {
-            return size
+    func calendarViewHeaderSizeForsection(section: Int) -> CGSize {
+        
+        if let date = dateFromSection(section) {
+            if let size = delegate?.calendar(self, sectionHeaderSizeForDate: date) {
+                return size
+            }
         }
         
         return CGSizeZero
@@ -155,7 +148,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
 extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         if headerViewXibs.count < 1 { return CGSizeZero }
-        return calendarViewHeaderSize()
+        return calendarViewHeaderSizeForsection(section)
     }
     
     public func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
@@ -172,7 +165,11 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
                                                                                withReuseIdentifier: reuseIdentifier,
                                                                                forIndexPath: indexPath) as! JTAppleCollectionReusableView
         
-        delegate?.calendar(self, isAboutToDisplaySectionHeader: headerView.view, date: NSDate())
+        
+        if let date = dateFromSection(indexPath.section) {
+            delegate?.calendar(self, isAboutToDisplaySectionHeader: headerView.view, date: date)
+        }
+    
         return headerView
     }
     

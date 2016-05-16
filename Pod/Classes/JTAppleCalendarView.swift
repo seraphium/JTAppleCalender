@@ -129,8 +129,8 @@ public protocol JTAppleCalendarViewDelegate {
     
     
     func calendar(calendar : JTAppleCalendarView, sectionHeaderIdentifierForDate date:NSDate) -> String?
-    func calendar(calendar : JTAppleCalendarView, sectionHeaderSizeForDate date:NSDate) -> CGSize
-    func calendar(calendar : JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date:NSDate) -> Void
+    func calendar(calendar : JTAppleCalendarView, sectionHeaderSizeForDate date: (startDate: NSDate, endDate: NSDate)) -> CGSize
+    func calendar(calendar : JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: (startDate: NSDate, endDate: NSDate)) -> Void
 }
 /// Default delegate functions
 public extension JTAppleCalendarViewDelegate {
@@ -140,9 +140,9 @@ public extension JTAppleCalendarViewDelegate {
     func calendar(calendar : JTAppleCalendarView, didDeselectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) {}
     func calendar(calendar : JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {}
     func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) {}
-    func calendar(calendar : JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date:NSDate) {}
+    func calendar(calendar : JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: (startDate: NSDate, endDate: NSDate)) {}
     func calendar(calendar : JTAppleCalendarView, sectionHeaderIdentifierForDate date:NSDate) -> String? {return nil}
-    func calendar(calendar : JTAppleCalendarView, sectionHeaderSizeForDate date:NSDate) -> CGSize {return CGSizeZero}
+    func calendar(calendar : JTAppleCalendarView, sectionHeaderSizeForDate date: (startDate: NSDate, endDate: NSDate)) -> CGSize {return CGSizeZero}
 }
 
 /// An instance of JTAppleCalendarView (or simply, a calendar view) is a means for displaying and interacting with a gridstyle layout of date-cells
@@ -205,7 +205,7 @@ public class JTAppleCalendarView: UIView {
         }
     }
     /// The object that acts as the delegate of the calendar view.
-    public var delegate : JTAppleCalendarViewDelegate?
+    public var delegate: JTAppleCalendarViewDelegate?
 
     var dateComponents = NSDateComponents()
     var delayedExecutionClosure: (()->Void)?
@@ -348,9 +348,10 @@ public class JTAppleCalendarView: UIView {
     
     private func updateLayoutItemSize (layout: JTAppleCalendarLayoutProtocol) {
         layout.itemSize = CGSizeMake(
-            self.calendarView.frame.size.width / CGFloat(MAX_NUMBER_OF_DAYS_IN_WEEK),
-            (self.calendarView.frame.size.height - layout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth)
+            self.calendarView.bounds.size.width / CGFloat(MAX_NUMBER_OF_DAYS_IN_WEEK),
+            (self.calendarView.bounds.size.height - layout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth)
         )
+        print(layout.itemSize)
         self.calendarView.collectionViewLayout = layout as! UICollectionViewLayout
     }
     
@@ -363,10 +364,10 @@ public class JTAppleCalendarView: UIView {
         }
     }
     
-    override init(frame: CGRect) { // Jt101 why is this here?
-        super.init(frame : CGRectMake(0.0, 0.0, 200.0, 200.0))
-        self.initialSetup()
-    }
+//    override init(frame: CGRect) { // Jt101 why is this here?
+//        super.init(frame : CGRectMake(0.0, 0.0, 200.0, 200.0))
+//        self.initialSetup()
+//    }
     
     
     /// Returns an object initialized from data in a given unarchiver. self, initialized using the data in decoder.
@@ -393,6 +394,24 @@ public class JTAppleCalendarView: UIView {
         self.addSubview(self.calendarView)
     }
     
+    
+    func dateFromSection(section: Int) -> (startDate: NSDate, endDate: NSDate)? {
+        if monthInfo.count < 1 {
+            return nil
+        }
+        
+        let monthData = monthInfo[section]
+        let itemLength = monthData[NUMBER_OF_DAYS_INDEX]
+        let fdIndex = monthData[FIRST_DAY_INDEX]
+        let startIndex = NSIndexPath(forItem: fdIndex, inSection: section)
+        let endIndex = NSIndexPath(forItem: fdIndex + itemLength - 1, inSection: section)
+        
+        if let theStartDate = dateFromPath(startIndex), theEndDate = dateFromPath(endIndex) {
+            return (theStartDate, theEndDate)
+        }
+        return nil
+    }
+    
     func scrollToHeaderInSection(section:Int)  {
         let indexPath = NSIndexPath(forItem: 1, inSection: section)
         calendarView.layoutIfNeeded()
@@ -404,10 +423,12 @@ public class JTAppleCalendarView: UIView {
     }
     
     func setupHeaderViews(layout: JTAppleCalendarLayoutProtocol?) {
-        // Let the layout start calling the header delegate
+        print("huh")
+         //Let the layout start calling the header delegate
         var size = CGSizeZero
         if headerViewXibs.count > 0 {
-            if let delegateSize = delegate?.calendar(self, sectionHeaderSizeForDate: NSDate()) {
+//            size = CGSize(width: 100, height: 100)
+            if let delegateSize = delegate?.calendar(self, sectionHeaderSizeForDate: dateFromSection(0)!) {
                 size = delegateSize
             }
         }
@@ -586,13 +607,6 @@ public class JTAppleCalendarView: UIView {
     }
 
     
-    /// Reload the date of specified date-cells on the calendar-view
-    /// - Parameter dates: Date-cells with these specified dates will be reloaded
-    public func reloadDates(dates: [NSDate]) {
-        let paths = pathsFromDates(dates)
-        reloadPaths(paths)
-    }
-    
     func reloadPaths(indexPaths: [NSIndexPath]) {
         if indexPaths.count > 0 {
             calendarView.reloadItemsAtIndexPaths(indexPaths)
@@ -701,7 +715,7 @@ extension JTAppleCalendarView {
         let fdIndex = currentMonthInfo[FIRST_DAY_INDEX]
         let offSet = currentMonthInfo[OFFSET_CALC]
         let cellDate = (numberOfRowsPerMonth * MAX_NUMBER_OF_DAYS_IN_WEEK * (itemSection % numberOfSectionsPerMonth)) + itemIndex - fdIndex - offSet + 1
-//        let offsetComponents = NSDateComponents()
+
         
         dateComponents.month = monthIndexWeAreOn
         dateComponents.weekday = cellDate - 1

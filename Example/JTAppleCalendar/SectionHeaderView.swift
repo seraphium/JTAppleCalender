@@ -9,4 +9,5 @@
 import JTAppleCalendar
 
 class SectionHeaderView: JTAppleHeaderView {
+    @IBOutlet var monthLabel: UILabel!
 }

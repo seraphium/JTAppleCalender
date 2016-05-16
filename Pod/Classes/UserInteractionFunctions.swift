@@ -60,21 +60,7 @@ extension JTAppleCalendarView {
     ///     - startDate: The start date of the current section
     ///     - endDate: The end date of the current section
     public func currentCalendarSegment() -> (startDate: NSDate, endDate: NSDate)? {
-        if monthInfo.count < 1 {
-            return nil
-        }
-        
-        let section = currentSectionPage
-        let monthData = monthInfo[section]
-        let itemLength = monthData[NUMBER_OF_DAYS_INDEX]
-        let fdIndex = monthData[FIRST_DAY_INDEX]
-        let startIndex = NSIndexPath(forItem: fdIndex, inSection: section)
-        let endIndex = NSIndexPath(forItem: fdIndex + itemLength - 1, inSection: section)
-        
-        if let theStartDate = dateFromPath(startIndex), theEndDate = dateFromPath(endIndex) {
-            return (theStartDate, theEndDate)
-        }
-        return nil
+        return dateFromSection(currentSectionPage)
     }
     
     
@@ -117,6 +103,13 @@ extension JTAppleCalendarView {
     /// Reloads the data on the calendar view
     public func reloadData() {
         reloadData(true)
+    }
+    
+    /// Reload the date of specified date-cells on the calendar-view
+    /// - Parameter dates: Date-cells with these specified dates will be reloaded
+    public func reloadDates(dates: [NSDate]) {
+        let paths = pathsFromDates(dates)
+        reloadPaths(paths)
     }
     
     /// Select a date-cell if it is on screen

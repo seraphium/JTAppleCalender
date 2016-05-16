@@ -111,11 +111,6 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
 
         return (startDate: firstDate!, endDate: secondDate, calendar: aCalendar)
     }
-    
-    
-    func calendar(calendar: JTAppleCalendarView, sectionHeaderSizeForDate date: NSDate) -> CGSize {
-        return CGSize(width: 200, height: 50)
-    }
 
     func calendar(calendar: JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date: NSDate, cellState: CellState) {
         (cell as! CellView).setupCellBeforeDisplay(cellState, date: date)
@@ -143,11 +138,14 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
         }
     }
     
-    func calendar(calendar: JTAppleCalendarView, sectionHeaderForDate date: NSDate) -> String {
-        return "SectionHeaderView"
+   
+    func calendar(calendar: JTAppleCalendarView, sectionHeaderSizeForDate date: (startDate: NSDate, endDate: NSDate)) -> CGSize {
+        return CGSize(width: 200, height: 100)
     }
     
-//    func calendar(calendar: JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: NSDate) {
-//        (header as? SectionHeaderView)?.setupHeaderBeforeDisplay()
-//    }
+    func calendar(calendar: JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: (startDate: NSDate, endDate: NSDate)) {
+        let headerCell = (header as? SectionHeaderView)
+        headerCell?.monthLabel.text = formatter.stringFromDate(date.startDate)
+    }
+
 }
