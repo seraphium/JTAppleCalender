@@ -57,7 +57,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                 guard let
                         indexPath = calendarView.indexPathForItemAtPoint(testPoint),
                         attributes = calendarView.layoutAttributesForItemAtIndexPath(indexPath) else {
-                            print("failed")
+                            print("Landed on a header")
                             return
                 }
                 
@@ -83,7 +83,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                     targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
                 }
             } else {
-                print("\nfailed")
+                print("\nOffset landed on a header. Complete code here")
             }
             return
         } else { // Scrolling back up
@@ -99,7 +99,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                     targetContentOffset.memory = CGPoint(x: 0, y: targetOffsetx)
                 }
             } else {
-                print("\nfailed")
+                print("\nOffset landed on a header. Complete code here")
             }
         }
     }
@@ -153,10 +153,19 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
     
     public func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
         let reuseIdentifier: String
+        guard let date = dateFromSection(indexPath.section) else {
+            assert(false, "Date could not be generated fro section. This is a bug. Contact the developer")
+        }
+        
         if headerViewXibs.count == 1 {
             reuseIdentifier = headerViewXibs[0]
         } else {
-            reuseIdentifier = (delegate?.calendar(self, sectionHeaderIdentifierForDate: NSDate()))!
+            
+            guard let identifier = delegate?.calendar(self, sectionHeaderIdentifierForDate: date) where headerViewXibs.contains(identifier) else {
+                assert(false, "Identifier was not registered")
+            }
+            
+            reuseIdentifier = identifier
         }
         
         currentXib = reuseIdentifier
@@ -164,11 +173,8 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         let headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind,
                                                                                withReuseIdentifier: reuseIdentifier,
                                                                                forIndexPath: indexPath) as! JTAppleCollectionReusableView
-        
-        
-        if let date = dateFromSection(indexPath.section) {
-            delegate?.calendar(self, isAboutToDisplaySectionHeader: headerView.view, date: date)
-        }
+
+        delegate?.calendar(self, isAboutToDisplaySectionHeader: headerView.view, date: date)
     
         return headerView
     }

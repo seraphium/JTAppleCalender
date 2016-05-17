@@ -128,7 +128,7 @@ public protocol JTAppleCalendarViewDelegate {
     func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) -> Void
     
     
-    func calendar(calendar : JTAppleCalendarView, sectionHeaderIdentifierForDate date:NSDate) -> String?
+    func calendar(calendar : JTAppleCalendarView, sectionHeaderIdentifierForDate date: (startDate: NSDate, endDate: NSDate)) -> String?
     func calendar(calendar : JTAppleCalendarView, sectionHeaderSizeForDate date: (startDate: NSDate, endDate: NSDate)) -> CGSize
     func calendar(calendar : JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: (startDate: NSDate, endDate: NSDate)) -> Void
 }
@@ -141,7 +141,7 @@ public extension JTAppleCalendarViewDelegate {
     func calendar(calendar : JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {}
     func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) {}
     func calendar(calendar : JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: (startDate: NSDate, endDate: NSDate)) {}
-    func calendar(calendar : JTAppleCalendarView, sectionHeaderIdentifierForDate date:NSDate) -> String? {return nil}
+    func calendar(calendar : JTAppleCalendarView, sectionHeaderIdentifierForDate date: (startDate: NSDate, endDate: NSDate)) -> String? {return nil}
     func calendar(calendar : JTAppleCalendarView, sectionHeaderSizeForDate date: (startDate: NSDate, endDate: NSDate)) -> CGSize {return CGSizeZero}
 }
 
@@ -241,7 +241,6 @@ public class JTAppleCalendarView: UIView {
     
     lazy var cachedConfiguration : (startDate: NSDate, endDate: NSDate, calendar: NSCalendar)? = {
         [weak self] in
-        print(self!.dataSource)
         if let  config = self!.dataSource?.configureCalendar(self!) {
             return (startDate: config.startDate, endDate: config.endDate, calendar: config.calendar)
         }
@@ -351,7 +350,7 @@ public class JTAppleCalendarView: UIView {
             self.calendarView.bounds.size.width / CGFloat(MAX_NUMBER_OF_DAYS_IN_WEEK),
             (self.calendarView.bounds.size.height - layout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth)
         )
-        print(layout.itemSize)
+
         self.calendarView.collectionViewLayout = layout as! UICollectionViewLayout
     }
     
@@ -423,12 +422,12 @@ public class JTAppleCalendarView: UIView {
     }
     
     func setupHeaderViews(layout: JTAppleCalendarLayoutProtocol?) {
-        print("huh")
          //Let the layout start calling the header delegate
         var size = CGSizeZero
         if headerViewXibs.count > 0 {
-//            size = CGSize(width: 100, height: 100)
-            if let delegateSize = delegate?.calendar(self, sectionHeaderSizeForDate: dateFromSection(0)!) {
+            if let
+                dateFromSection0 = dateFromSection(0),
+                delegateSize = delegate?.calendar(self, sectionHeaderSizeForDate: dateFromSection0) {
                 size = delegateSize
             }
         }

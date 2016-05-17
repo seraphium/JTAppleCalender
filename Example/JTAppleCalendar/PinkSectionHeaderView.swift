@@ -1,5 +1,5 @@
 //
-//  SectionHeaderView.swift
+//  PinkSectionHeaderView.swift
 //  JTAppleCalendar
 //
 //  Created by Jay Thomas on 2016-05-11.
@@ -8,6 +8,6 @@
 
 import JTAppleCalendar
 
-class SectionHeaderView: JTAppleHeaderView {
+class PinkSectionHeaderView: JTAppleHeaderView {
     @IBOutlet var monthLabel: UILabel!
 }

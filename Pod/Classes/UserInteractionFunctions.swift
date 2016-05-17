@@ -80,7 +80,7 @@ extension JTAppleCalendarView {
 
         for headerViewXibName in headerViewXibNames {
             
-            let viewObject = NSBundle.mainBundle().loadNibNamed("SectionHeaderView", owner: self, options: [:])
+            let viewObject = NSBundle.mainBundle().loadNibNamed(headerViewXibName, owner: self, options: [:])
             assert(viewObject.count > 0, "your nib file name \(headerViewXibName) could not be loaded)")
             
             guard let view = viewObject[0] as? JTAppleHeaderView else {

@@ -34,7 +34,7 @@ class ViewController: UIViewController {
         calendarView.delegate = self
         
         calendarView.registerCellViewXib(fileName: "CellView") // manditory
-        calendarView.registerHeaderViewXibs(fileNames: ["SectionHeaderView"]) // Optional
+        calendarView.registerHeaderViewXibs(fileNames: ["PinkSectionHeaderView", "WhiteSectionHeaderView"]) // Optional
         
         // The following default code can be removed since they are already the default.
         // They are only included here so that you can know what properties can be configured
@@ -47,7 +47,7 @@ class ViewController: UIViewController {
         calendarView.firstDayOfWeek = .Sunday                      // default is Sunday
         calendarView.scrollEnabled = true                          // default is true
         calendarView.pagingEnabled = false                          // default is true
-        calendarView.scrollResistance = 0.65                       // default is 0.75 - this is only applicable when paging is not enabled
+        calendarView.scrollResistance = 0.75                       // default is 0.75 - this is only applicable when paging is not enabled
         calendarView.reloadData()
     }
     
@@ -138,13 +138,16 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
         }
     }
     
+    func calendar(calendar: JTAppleCalendarView, sectionHeaderIdentifierForDate date: (startDate: NSDate, endDate: NSDate)) -> String? {
+        return "WhiteSectionHeaderView"
+    }
    
     func calendar(calendar: JTAppleCalendarView, sectionHeaderSizeForDate date: (startDate: NSDate, endDate: NSDate)) -> CGSize {
         return CGSize(width: 200, height: 100)
     }
     
     func calendar(calendar: JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: (startDate: NSDate, endDate: NSDate)) {
-        let headerCell = (header as? SectionHeaderView)
+        let headerCell = (header as? PinkSectionHeaderView)
         headerCell?.monthLabel.text = formatter.stringFromDate(date.startDate)
     }
 
