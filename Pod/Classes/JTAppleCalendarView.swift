@@ -170,6 +170,8 @@ public class JTAppleCalendarView: UIView {
     /// First day of the week value for JTApleCalendar. You can set this to anyday
     public var firstDayOfWeek = DaysOfWeek.Sunday
     
+    var triggerScrollToDateDelegate = true
+    
     public var sectionInset: UIEdgeInsets {
         set {
             let flowLayout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
@@ -180,8 +182,6 @@ public class JTAppleCalendarView: UIView {
             let flowLayout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
             return flowLayout.sectionInset
         }
-        
-        
     }
     
     private var layoutNeedsUpdating = false
