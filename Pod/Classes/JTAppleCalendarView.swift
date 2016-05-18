@@ -167,8 +167,12 @@ public class JTAppleCalendarView: UIView {
             self.calendarView.allowsMultipleSelection = allowsMultipleSelection
         }
     }
-    /// First day of the week value for JTApleCalendar. You can set this to anyday
-    public var firstDayOfWeek = DaysOfWeek.Sunday
+    /// First day of the week value for JTApleCalendar. You can set this to anyday. After changing this value you must reload your calendar view to show the change.
+    public var firstDayOfWeek = DaysOfWeek.Sunday {
+        didSet {
+            layoutNeedsUpdating = true
+        }
+    }
     
     var triggerScrollToDateDelegate = true
     
@@ -641,7 +645,7 @@ public class JTAppleCalendarView: UIView {
         }
         
         return returnPaths
-    }    
+    }
 }
 
 extension JTAppleCalendarView {
