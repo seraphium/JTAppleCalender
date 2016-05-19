@@ -130,7 +130,7 @@ public protocol JTAppleCalendarViewDelegate {
     
     func calendar(calendar : JTAppleCalendarView, sectionHeaderIdentifierForDate date: (startDate: NSDate, endDate: NSDate)) -> String?
     func calendar(calendar : JTAppleCalendarView, sectionHeaderSizeForDate date: (startDate: NSDate, endDate: NSDate)) -> CGSize
-    func calendar(calendar : JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: (startDate: NSDate, endDate: NSDate)) -> Void
+    func calendar(calendar : JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: (startDate: NSDate, endDate: NSDate), identifier: String) -> Void
 }
 /// Default delegate functions
 public extension JTAppleCalendarViewDelegate {
@@ -140,7 +140,7 @@ public extension JTAppleCalendarViewDelegate {
     func calendar(calendar : JTAppleCalendarView, didDeselectDate date : NSDate, cell: JTAppleDayCellView?, cellState: CellState) {}
     func calendar(calendar : JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {}
     func calendar(calendar : JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date:NSDate, cellState: CellState) {}
-    func calendar(calendar : JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: (startDate: NSDate, endDate: NSDate)) {}
+    func calendar(calendar : JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: (startDate: NSDate, endDate: NSDate), identifier: String) {}
     func calendar(calendar : JTAppleCalendarView, sectionHeaderIdentifierForDate date: (startDate: NSDate, endDate: NSDate)) -> String? {return nil}
     func calendar(calendar : JTAppleCalendarView, sectionHeaderSizeForDate date: (startDate: NSDate, endDate: NSDate)) -> CGSize {return CGSizeZero}
 }
@@ -170,7 +170,9 @@ public class JTAppleCalendarView: UIView {
     /// First day of the week value for JTApleCalendar. You can set this to anyday. After changing this value you must reload your calendar view to show the change.
     public var firstDayOfWeek = DaysOfWeek.Sunday {
         didSet {
-            layoutNeedsUpdating = true
+            if firstDayOfWeek != oldValue {
+                layoutNeedsUpdating = true
+            }
         }
     }
     
@@ -292,9 +294,17 @@ public class JTAppleCalendarView: UIView {
         }()
     
     
-    var selectedIndexPaths : [NSIndexPath] = [NSIndexPath]()
+    var theSelectedIndexPaths: [NSIndexPath] = []
+    var theSelectedDates:   [NSDate]      = []
+    
     /// Returns all selected dates
-    public var selectedDates : [NSDate] = [NSDate]()
+    public var selectedDates: [NSDate] {
+        get {
+            // Array may contain duplicate dates in case where out-dates are selected. So clean it up here
+            return Array(Set(theSelectedDates))
+        }
+    }
+
     
     lazy var monthInfo : [[Int]] = {
         [weak self] in
@@ -303,9 +313,9 @@ public class JTAppleCalendarView: UIView {
         }()
     
     
-    private var numberOfMonthSections: Int = 0
-    private var numberOfSectionsPerMonth: Int = 0
-    private var numberOfItemsPerSection: Int {return MAX_NUMBER_OF_DAYS_IN_WEEK * numberOfRowsPerMonth}
+    var numberOfMonthSections: Int = 0
+    var numberOfSectionsPerMonth: Int = 0
+    var numberOfItemsPerSection: Int {return MAX_NUMBER_OF_DAYS_IN_WEEK * numberOfRowsPerMonth}
     
     /// Cell inset padding for the x and y axis of every date-cell on the calendar view.
     public var cellInset: CGPoint {
@@ -482,8 +492,8 @@ public class JTAppleCalendarView: UIView {
     }
     
     func configureChangeOfRows() {
-        selectedDates.removeAll()
-        selectedIndexPaths.removeAll()
+        theSelectedDates.removeAll()
+        theSelectedIndexPaths.removeAll()
         
         monthInfo = setupMonthInfoDataForStartAndEndDate()
         
@@ -506,6 +516,78 @@ public class JTAppleCalendarView: UIView {
         delayRunOnMainThread(0.0, closure: { () -> () in
             self.scrollToDate(dateToScrollTo)
         })
+    }
+    
+    func indexPathOfdateCellCounterPart(cellState: CellState, indexPath: NSIndexPath) -> NSIndexPath? {
+        var retval: NSIndexPath?
+        if cellState.dateBelongsTo != .ThisMonth { // If the cell is anything but this month, then the cell belongs to either a previous of following month
+            // Get the indexPath of the counterpartCell
+            let counterPathIndex = pathsFromDates([cellState.date])
+            if counterPathIndex.count > 0 {
+                retval = counterPathIndex[0]
+            }
+        } else { // If the date does belong to this month, then lets find out if it has a counterpart date
+            
+            let date = cellState.date
+            guard let validCachedCalendar = calendar else {
+                return retval
+            }
+            
+            if date >= startOfMonthCache && date <= endOfMonthCache {
+                let dayIndex = validCachedCalendar.components(.Day, fromDate: date).day
+                if case 1...13 = dayIndex  { // then check the previous month
+                    // get the index path of the last day of the previous month
+                    
+                    guard let prevMonth = validCachedCalendar.dateByAddingUnit(.Month, value: -1, toDate: date, options: []) where prevMonth >= startOfMonthCache && prevMonth <= endOfMonthCache else {
+                        return retval
+                    }
+                    
+                    guard let lastDayOfPrevMonth = NSDate.endOfMonthForDate(prevMonth, usingCalendar: validCachedCalendar) else {
+                        print("Error generating date in indexPathOfdateCellCounterPart(). Contact the developer on github")
+                        return retval
+                    }
+                    let indexPathOfLastDayOfPreviousMonth = pathsFromDates([lastDayOfPrevMonth])
+                    if indexPathOfLastDayOfPreviousMonth.count > 0 {
+                        let lastDayIndex = indexPathOfLastDayOfPreviousMonth[0].item
+                        
+                        let indexPathItemToBeFound = lastDayIndex + dayIndex
+                        if indexPathItemToBeFound < 42 { // then it is valid
+                            retval = NSIndexPath(forItem: indexPathItemToBeFound, inSection: indexPathOfLastDayOfPreviousMonth[0].section)
+                        }
+                    } else {
+                        print("out of range error in indexPathOfdateCellCounterPart() upper. This should not happen. Contact developer on github")
+                    }
+                } else if case 26...31 = dayIndex  { // check the following month
+                    guard let followingMonth = validCachedCalendar.dateByAddingUnit(.Month, value: 1, toDate: date, options: []) where followingMonth >= startOfMonthCache && followingMonth <= endOfMonthCache else {
+                        return retval
+                    }
+                    
+                    guard let firstDayOfFollowingMonth = NSDate.startOfMonthForDate(followingMonth, usingCalendar: validCachedCalendar) else {
+                        print("Error generating date in indexPathOfdateCellCounterPart(). Contact the developer on github")
+                        return retval
+                    }
+                    let indexPathOfFirstDayOfFollowingMonth = pathsFromDates([firstDayOfFollowingMonth])
+                    if indexPathOfFirstDayOfFollowingMonth.count > 0 {
+                        let firstDayIndex = indexPathOfFirstDayOfFollowingMonth[0].item
+                        
+                        
+                        let lastDay = NSDate.endOfMonthForDate(date, usingCalendar: validCachedCalendar)!
+                        let lastDayIndex = validCachedCalendar.components(.Day, fromDate: lastDay).day
+                        
+                        let x = lastDayIndex - dayIndex
+                        let y = firstDayIndex - x - 1
+                        
+                        if y > -1 {
+                            return NSIndexPath(forItem: y, inSection: indexPathOfFirstDayOfFollowingMonth[0].section)
+                        }
+                    } else {
+                        print("out of range error in indexPathOfdateCellCounterPart() lower. This should not happen. Contact developer on github")
+                    }
+                }
+            }
+            
+        }
+        return retval
     }
     
     func generateNewLayout() -> UICollectionViewLayout {
@@ -691,7 +773,7 @@ extension JTAppleCalendarView {
         }
         
         let cellState = CellState(
-            isSelected: selectedIndexPaths.contains(indexPath),
+            isSelected: theSelectedIndexPaths.contains(indexPath),
             text: cellText,
             dateBelongsTo: dateBelongsTo,
             date: date,
@@ -701,7 +783,7 @@ extension JTAppleCalendarView {
         return cellState
     }
     
-    private func startMonthSectionForSection(aSection: Int)->Int {
+    func startMonthSectionForSection(aSection: Int)->Int {
         let monthIndexWeAreOn = aSection / numberOfSectionsPerMonth
         let nextSection = numberOfSectionsPerMonth * monthIndexWeAreOn
         return nextSection
@@ -764,7 +846,7 @@ public func <(lhs: NSDate, rhs: NSDate) -> Bool {
 
 extension NSDate: Comparable { }
 
-private extension NSDate {
+extension NSDate {
 
     class func numberOfDaysDifferenceBetweenFirstDate(firstDate: NSDate, secondDate: NSDate, usingCalendar calendar: NSCalendar)->Int {
         let date1 = calendar.startOfDayForDate(firstDate)

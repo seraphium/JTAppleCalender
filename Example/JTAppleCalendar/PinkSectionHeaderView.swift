@@ -9,5 +9,5 @@
 import JTAppleCalendar
 
 class PinkSectionHeaderView: JTAppleHeaderView {
-    @IBOutlet var monthLabel: UILabel!
+    @IBOutlet var title: UILabel!
 }

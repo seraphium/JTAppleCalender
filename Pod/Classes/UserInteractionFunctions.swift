@@ -59,14 +59,26 @@ extension JTAppleCalendarView {
     /// - returns:
     ///     - startDate: The start date of the current section
     ///     - endDate: The end date of the current section
-    public func currentCalendarSegment() -> (startDate: NSDate, endDate: NSDate)? {
+    @available(*, deprecated=3.0, message="Since 3.0.0 Use currentCalendarDateSegment function instead") public func currentCalendarSegment() -> (startDate: NSDate, endDate: NSDate)? {
         return dateFromSection(currentSectionPage)
+    }
+    
+    /// Returns the calendar view's current section boundary dates.
+    /// - returns:
+    ///     - startDate: The start date of the current section
+    ///     - endDate: The end date of the current section
+    public func currentCalendarDateSegment() -> (startDate: NSDate, endDate: NSDate) {
+        guard let dateSegment = dateFromSection(currentSectionPage) else {
+            assert(false, "Error in currentCalendarDateSegment method. Report this issue to Jay on github.")
+            return (NSDate(), NSDate())
+        }
+        return dateSegment
     }
     
     
     /// Let's the calendar know which cell xib to use for the displaying of it's date-cells.
     /// - Parameter name: The name of the xib of your cell design
-    @available(*, deprecated=3.0, message="Since 3.0. Use registerCellViewXib") public func registerCellViewXib(fileName name: String) {
+    public func registerCellViewXib(fileName name: String) {
         cellViewXibName = name
     }
     
@@ -141,9 +153,9 @@ extension JTAppleCalendarView {
                 let sectionIndexPath = pathFromDates[0]
                 allIndexPathsToReload.append(sectionIndexPath)
                 let selectTheDate = {
-                    if self.selectedIndexPaths.contains(sectionIndexPath) == false { // Can contain the value already if the user selected the same date twice.
-                        self.selectedDates.append(date)
-                        self.selectedIndexPaths.append(sectionIndexPath)
+                    if self.theSelectedIndexPaths.contains(sectionIndexPath) == false { // Can contain the value already if the user selected the same date twice.
+                        self.theSelectedDates.append(date)
+                        self.theSelectedIndexPaths.append(sectionIndexPath)
                     }
                     self.calendarView.selectItemAtIndexPath(sectionIndexPath, animated: false, scrollPosition: .None)
                     
@@ -156,11 +168,11 @@ extension JTAppleCalendarView {
                 let deSelectTheDate = { (indexPath: NSIndexPath) -> Void in
                     self.calendarView.deselectItemAtIndexPath(indexPath, animated: false)
                     if
-                        self.selectedIndexPaths.contains(indexPath),
-                        let index = self.selectedIndexPaths.indexOf(indexPath) {
+                        self.theSelectedIndexPaths.contains(indexPath),
+                        let index = self.theSelectedIndexPaths.indexOf(indexPath) {
                         
-                        self.selectedIndexPaths.removeAtIndex(index)
-                        self.selectedDates.removeAtIndex(index)
+                        self.theSelectedIndexPaths.removeAtIndex(index)
+                        self.theSelectedDates.removeAtIndex(index)
                     }
                     if triggerSelectionDelegate {
                         self.collectionView(self.calendarView, didDeselectItemAtIndexPath: indexPath)
@@ -169,7 +181,7 @@ extension JTAppleCalendarView {
                 
                 // Remove old selections
                 if self.calendarView.allowsMultipleSelection == false { // If single selection is ON
-                    for indexPath in self.selectedIndexPaths {
+                    for indexPath in self.theSelectedIndexPaths {
                         if indexPath != sectionIndexPath {
                             deSelectTheDate(indexPath)
                         }
@@ -180,7 +192,7 @@ extension JTAppleCalendarView {
                     selectTheDate()
                 } else { // If multiple selection is on. Multiple selection behaves differently to singleselection. It behaves like a toggle.
                     
-                    if self.selectedIndexPaths.contains(sectionIndexPath) { // If this cell is already selected, then deselect it
+                    if self.theSelectedIndexPaths.contains(sectionIndexPath) { // If this cell is already selected, then deselect it
                         deSelectTheDate(sectionIndexPath)
                     } else {
                         // Add new selections

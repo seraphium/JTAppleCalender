@@ -24,7 +24,7 @@
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
-                <outlet property="monthLabel" destination="odf-t5-Cpb" id="FU1-Ox-DIa"/>
+                <outlet property="title" destination="odf-t5-Cpb" id="iDV-ld-hMj"/>
             </connections>
             <point key="canvasLocation" x="327" y="586"/>
         </view>

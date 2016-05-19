@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var calendarView: JTAppleCalendarView!
     @IBOutlet weak var monthLabel: UILabel!
     let formatter = NSDateFormatter()
+    let testCalendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)
     
     @IBAction func reloadCalendarView(sender: UIButton) {
         let date = formatter.dateFromString("2016 04 11")
@@ -28,13 +29,16 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         formatter.dateFormat = "yyyy MM dd"
+        testCalendar.timeZone = NSTimeZone(abbreviation: "GMT")!
 
         calendarView.dataSource = self
+        
         calendarView.delegate = self
         
         calendarView.registerCellViewXib(fileName: "CellView") // manditory
-        calendarView.registerHeaderViewXibs(fileNames: ["PinkSectionHeaderView", "WhiteSectionHeaderView"]) // Optional
+//        calendarView.registerHeaderViewXibs(fileNames: ["PinkSectionHeaderView", "WhiteSectionHeaderView"]) // Optional
         
         // The following default code can be removed since they are already the default.
         // They are only included here so that you can know what properties can be configured
@@ -49,6 +53,9 @@ class ViewController: UIViewController {
         calendarView.pagingEnabled = false                          // default is true
         calendarView.scrollResistance = 0.75                       // default is 0.75 - this is only applicable when paging is not enabled
         calendarView.reloadData()
+        
+        let currentDate = calendarView.currentCalendarDateSegment()
+        setupViewsOfCalendar(currentDate.startDate, endDate: currentDate.endDate)
     }
     
     @IBAction func select10(sender: AnyObject?) {
@@ -84,6 +91,13 @@ class ViewController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+    }
+    
+    func setupViewsOfCalendar(startDate: NSDate, endDate: NSDate) {
+        let month = testCalendar.component(NSCalendarUnit.Month, fromDate: startDate)
+        let monthName = NSDateFormatter().monthSymbols[(month-1) % 12] // 0 indexed array
+        let year = NSCalendar.currentCalendar().component(NSCalendarUnit.Year, fromDate: startDate)
+        monthLabel.text = monthName + " " + String(year)
     }
     
     func delayRunOnMainThread(delay:Double, closure:()->()) {
@@ -127,28 +141,32 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
     }
     
     func calendar(calendar: JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {
-        if let _ = date, _ = endingWithDate {
-            let  gmtCalendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
-            gmtCalendar.timeZone = NSTimeZone(abbreviation: "GMT")!
-            
-            let month = gmtCalendar.component(NSCalendarUnit.Month, fromDate: date!)
-            let monthName = NSDateFormatter().monthSymbols[(month-1) % 12] // 0 indexed array
-            let year = NSCalendar.currentCalendar().component(NSCalendarUnit.Year, fromDate: date!)
-            monthLabel.text = monthName + " " + String(year)
+        
+        if let startDate = date, endDate = endingWithDate {
+            setupViewsOfCalendar(startDate, endDate: endDate)
         }
     }
     
     func calendar(calendar: JTAppleCalendarView, sectionHeaderIdentifierForDate date: (startDate: NSDate, endDate: NSDate)) -> String? {
-        return "WhiteSectionHeaderView"
+        let comp = testCalendar.component(.Month, fromDate: date.startDate)
+        if comp % 2 > 0{
+            return "WhiteSectionHeaderView"
+        }
+        return "PinkSectionHeaderView"
     }
    
     func calendar(calendar: JTAppleCalendarView, sectionHeaderSizeForDate date: (startDate: NSDate, endDate: NSDate)) -> CGSize {
         return CGSize(width: 200, height: 100)
     }
     
-    func calendar(calendar: JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: (startDate: NSDate, endDate: NSDate)) {
-        let headerCell = (header as? PinkSectionHeaderView)
-        headerCell?.monthLabel.text = formatter.stringFromDate(date.startDate)
+    func calendar(calendar: JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: (startDate: NSDate, endDate: NSDate), identifier: String) {
+        switch identifier {
+        case "WhiteSectionHeaderView":
+            let headerCell = (header as? WhiteSectionHeaderView)
+            headerCell?.title.text = "Sample white header"
+        default:
+            let headerCell = (header as? PinkSectionHeaderView)
+            headerCell?.title.text = "Sample pink header"
+        }
     }
-
 }
