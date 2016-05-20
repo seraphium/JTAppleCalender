@@ -195,9 +195,11 @@ public class JTAppleCalendarView: UIView {
     /// After changing this value, you should reload your calendarView to show your change
     public var numberOfRowsPerMonth = 6 {
         didSet {
-            if numberOfRowsPerMonth == 4 || numberOfRowsPerMonth == 5 || numberOfRowsPerMonth > 6 || numberOfRowsPerMonth < 0 {numberOfRowsPerMonth = 6}
-            if cachedConfiguration != nil {
-                layoutNeedsUpdating = true
+            if numberOfRowsPerMonth != oldValue {
+                if numberOfRowsPerMonth == 4 || numberOfRowsPerMonth == 5 || numberOfRowsPerMonth > 6 || numberOfRowsPerMonth < 0 {numberOfRowsPerMonth = 6}
+                if cachedConfiguration != nil {
+                    layoutNeedsUpdating = true
+                }
             }
         }
     }
@@ -506,7 +508,7 @@ public class JTAppleCalendarView: UIView {
         guard let dateToScrollTo = scrollToDatePathOnRowChange else {
             // If the date is invalid just scroll to the the first item on the view or scroll to the start of a header (if header is enabled)
             if headerViewXibs.count < 1 {
-                scrollToDate(startOfMonthCache)
+                scrollToDate(startOfMonthCache, triggerScrollToDateDelegate: false)
             } else {
                 scrollToHeaderForDate(startOfMonthCache)
             }
@@ -514,21 +516,24 @@ public class JTAppleCalendarView: UIView {
         }
         
         delayRunOnMainThread(0.0, closure: { () -> () in
-            self.scrollToDate(dateToScrollTo)
+            self.scrollToDate(dateToScrollTo, triggerScrollToDateDelegate: false)
         })
     }
     
-    func indexPathOfdateCellCounterPart(cellState: CellState, indexPath: NSIndexPath) -> NSIndexPath? {
+    func calendarViewHeaderSizeForsection(section: Int) -> CGSize {
+        if let date = dateFromSection(section), size = delegate?.calendar(self, sectionHeaderSizeForDate: date) { return size }
+        return CGSizeZero
+    }
+    
+    func indexPathOfdateCellCounterPart(date: NSDate, indexPath: NSIndexPath, dateOwner: CellState.DateOwner) -> NSIndexPath? {
         var retval: NSIndexPath?
-        if cellState.dateBelongsTo != .ThisMonth { // If the cell is anything but this month, then the cell belongs to either a previous of following month
+        if dateOwner != .ThisMonth { // If the cell is anything but this month, then the cell belongs to either a previous of following month
             // Get the indexPath of the counterpartCell
-            let counterPathIndex = pathsFromDates([cellState.date])
+            let counterPathIndex = pathsFromDates([date])
             if counterPathIndex.count > 0 {
                 retval = counterPathIndex[0]
             }
         } else { // If the date does belong to this month, then lets find out if it has a counterpart date
-            
-            let date = cellState.date
             guard let validCachedCalendar = calendar else {
                 return retval
             }
@@ -590,31 +595,32 @@ public class JTAppleCalendarView: UIView {
         return retval
     }
     
+    func xibFileValid() -> Bool {
+        //"Did you remember to register your xib file to JTAppleCalendarView? call the registerCellViewXib method on it because xib filename is nil"
+        guard let xibName =  cellViewXibName else { return false }
+        //"your nib file name \(cellViewXibName) could not be loaded)"
+        guard let viewObject = NSBundle.mainBundle().loadNibNamed(xibName, owner: self, options: [:]) where viewObject.count > 0 else { return false }
+        //"xib file class does not conform to the protocol<JTAppleDayCellViewProtocol>"
+        guard let _ = viewObject[0] as? JTAppleDayCellView else { return false }
+        return true
+    }
+    
     func generateNewLayout() -> UICollectionViewLayout {
         let layout: UICollectionViewLayout = direction == .Horizontal ? JTAppleCalendarHorizontalFlowLayout(withDelegate: self) : JTAppleCalendarVerticalFlowLayout()
- 
         let conformingProtocolLayout = layout as! JTAppleCalendarLayoutProtocol
+        
         conformingProtocolLayout.scrollDirection = direction
         conformingProtocolLayout.minimumInteritemSpacing = 0
         conformingProtocolLayout.minimumLineSpacing = 0
-        
         setupHeaderViews(conformingProtocolLayout)
         return layout
     }
     private func setupMonthInfoDataForStartAndEndDate()-> [[Int]] {
-        
         var retval: [[Int]] = []
-        
         if let  validConfig = dataSource?.configureCalendar(self) {
-            
             // check if the dates are in correct order
-            if validConfig.calendar.compareDate(validConfig.startDate, toDate: validConfig.endDate, toUnitGranularity: NSCalendarUnit.Nanosecond) == NSComparisonResult.OrderedDescending {
-                //                print("No dates can be generated because your start date is greater than your end date.")
-                return retval
-            }
-            
+            if validConfig.calendar.compareDate(validConfig.startDate, toDate: validConfig.endDate, toUnitGranularity: NSCalendarUnit.Nanosecond) == NSComparisonResult.OrderedDescending { return retval }
             cachedConfiguration = validConfig
-            
             if let
                 startMonth = NSDate.startOfMonthForDate(validConfig.startDate, usingCalendar: validConfig.calendar),
                 endMonth = NSDate.endOfMonthForDate(validConfig.endDate, usingCalendar: validConfig.calendar) {
@@ -787,6 +793,48 @@ extension JTAppleCalendarView {
         let monthIndexWeAreOn = aSection / numberOfSectionsPerMonth
         let nextSection = numberOfSectionsPerMonth * monthIndexWeAreOn
         return nextSection
+    }
+    
+    func refreshIndexPathIfVisible(indexPath: NSIndexPath) {
+        if let counterPartCell = calendarView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell {
+            calendarView.reloadItemsAtIndexPaths([indexPath])
+        }
+    }
+    
+    func addCellToSelectedSetIfUnselected(indexPath: NSIndexPath, date: NSDate) {
+        if self.theSelectedIndexPaths.contains(indexPath) == false {
+            self.theSelectedIndexPaths.append(indexPath)
+            self.theSelectedDates.append(date)
+        }
+    }
+    func deleteCellFromSelectedSetIfSelected(indexPath: NSIndexPath) {
+        if let index = self.theSelectedIndexPaths.indexOf(indexPath) {
+            self.theSelectedIndexPaths.removeAtIndex(index)
+            self.theSelectedDates.removeAtIndex(index)
+        }
+    }
+    func deselectCounterPartCellIndexPath(indexPath: NSIndexPath, date: NSDate, dateOwner: CellState.DateOwner) -> NSIndexPath? {
+        if let
+            counterPartCellIndexPath = indexPathOfdateCellCounterPart(date, indexPath: indexPath, dateOwner: dateOwner) {
+            deleteCellFromSelectedSetIfSelected(counterPartCellIndexPath)
+            return counterPartCellIndexPath
+        }
+        return nil
+    }
+    
+    func selectCounterPartCellIndexPath(indexPath: NSIndexPath, date: NSDate, dateOwner: CellState.DateOwner) -> NSIndexPath? {
+        if let
+            counterPartCellIndexPath = indexPathOfdateCellCounterPart(date, indexPath: indexPath, dateOwner: dateOwner),
+            validCalendar = calendar {
+            var dateComps = validCalendar.components([.Month, .Day, .Year], fromDate: date)
+            guard let counterpartDate = validCalendar.dateFromComponents(dateComps) else {
+                return nil
+            }
+            
+            addCellToSelectedSetIfUnselected(counterPartCellIndexPath, date:counterpartDate)
+            return counterPartCellIndexPath
+        }
+        return nil
     }
     
     func dateFromPath(indexPath: NSIndexPath)-> NSDate? { // Returns nil if date is out of scope

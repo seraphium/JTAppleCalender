@@ -44,7 +44,7 @@ extension JTAppleCalendarView {
     /// Change the number of rows per month on the calendar view. Once the row count is changed, the calendar view will auto-focus on the date provided. The calendarView will also reload its data.
     /// - Parameter number: The number of rows per month the calendar view should display. This is restricted to 1, 2, 3, & 6. 6 will be chosen as default.
     public func changeNumberOfRowsPerMonthTo(number: Int, withFocusDate date: NSDate?) {
-        self.scrollToDatePathOnRowChange = date
+        scrollToDatePathOnRowChange = date
         switch number {
         case 1, 2, 3:
             numberOfRowsPerMonth = number
@@ -128,12 +128,13 @@ extension JTAppleCalendarView {
     /// - Parameter date: The date-cell with this date will be selected
     /// - Parameter triggerDidSelectDelegate: Triggers the delegate function only if the value is set to true. Sometimes it is necessary to setup some dates without triggereing the delegate e.g. For instance, when youre initally setting up data in your viewDidLoad
     public func selectDates(dates: [NSDate], triggerSelectionDelegate: Bool = true) {
+        guard let validCachedCalendar = self.calendar else {
+            return
+        }
+        
+        var allIndexPathsToReload: [NSIndexPath] = []
+        
         delayRunOnMainThread(0.0) {
-            guard let validCachedCalendar = self.calendar else {
-                return
-            }
-            
-            var allIndexPathsToReload: [NSIndexPath] = []
             for date in dates {
                 let components = validCachedCalendar.components([.Year, .Month, .Day],  fromDate: date)
                 let firstDayOfDate = validCachedCalendar.dateFromComponents(components)!
@@ -152,16 +153,20 @@ extension JTAppleCalendarView {
                 
                 let sectionIndexPath = pathFromDates[0]
                 allIndexPathsToReload.append(sectionIndexPath)
+                
                 let selectTheDate = {
-                    if self.theSelectedIndexPaths.contains(sectionIndexPath) == false { // Can contain the value already if the user selected the same date twice.
-                        self.theSelectedDates.append(date)
-                        self.theSelectedIndexPaths.append(sectionIndexPath)
-                    }
+                    self.addCellToSelectedSetIfUnselected(sectionIndexPath, date: date)
                     self.calendarView.selectItemAtIndexPath(sectionIndexPath, animated: false, scrollPosition: .None)
                     
                     // If triggereing is enabled, then let their delegate handle the reloading of view, else we will reload the data
                     if triggerSelectionDelegate {
                         self.collectionView(self.calendarView, didSelectItemAtIndexPath: sectionIndexPath)
+                    } else { // Although we do not want the delegate triggered, we still want counterpart cells to be selected
+                        let cellState = self.cellStateFromIndexPath(sectionIndexPath, withDate: date)
+                        if let aSelectedCounterPartIndexPath = self.selectCounterPartCellIndexPath(sectionIndexPath, date: date, dateOwner: cellState.dateBelongsTo) {
+                            // ONLY if the counterPart cell is visible, then we need to inform the delegate
+                            self.refreshIndexPathIfVisible(aSelectedCounterPartIndexPath)
+                        }
                     }
                 }
                 
@@ -174,8 +179,15 @@ extension JTAppleCalendarView {
                         self.theSelectedIndexPaths.removeAtIndex(index)
                         self.theSelectedDates.removeAtIndex(index)
                     }
+                    // If delegate triggering is enabled, let the delegate function handle the cell
                     if triggerSelectionDelegate {
                         self.collectionView(self.calendarView, didDeselectItemAtIndexPath: indexPath)
+                    } else { // Although we do not want the delegate triggered, we still want counterpart cells to be deselected
+                        let cellState = self.cellStateFromIndexPath(sectionIndexPath, withDate: date)
+                        if let anUnselectedCounterPartIndexPath = self.deselectCounterPartCellIndexPath(indexPath, date: date, dateOwner: cellState.dateBelongsTo) {
+                            // ONLY if the counterPart cell is visible, then we need to inform the delegate
+                            self.refreshIndexPathIfVisible(anUnselectedCounterPartIndexPath)
+                        }
                     }
                 }
                 

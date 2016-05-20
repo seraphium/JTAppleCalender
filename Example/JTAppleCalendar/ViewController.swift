@@ -29,20 +29,18 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         formatter.dateFormat = "yyyy MM dd"
         testCalendar.timeZone = NSTimeZone(abbreviation: "GMT")!
 
         calendarView.dataSource = self
-        
         calendarView.delegate = self
         
         calendarView.registerCellViewXib(fileName: "CellView") // manditory
-//        calendarView.registerHeaderViewXibs(fileNames: ["PinkSectionHeaderView", "WhiteSectionHeaderView"]) // Optional
+        calendarView.registerHeaderViewXibs(fileNames: ["PinkSectionHeaderView", "WhiteSectionHeaderView"]) // Optional
         
         // The following default code can be removed since they are already the default.
         // They are only included here so that you can know what properties can be configured
-        calendarView.direction = .Vertical                       // default is horizontal
+        calendarView.direction = .Vertical                         // default is horizontal
         calendarView.numberOfRowsPerMonth = 6                      // default is 6
         calendarView.cellInset = CGPoint(x: 0, y: 0)               // default is (3,3)
         calendarView.allowsMultipleSelection = false               // default is false
@@ -50,7 +48,7 @@ class ViewController: UIViewController {
         calendarView.bufferBottom = 0                              // default is 0. - still work in progress
         calendarView.firstDayOfWeek = .Sunday                      // default is Sunday
         calendarView.scrollEnabled = true                          // default is true
-        calendarView.pagingEnabled = false                          // default is true
+        calendarView.pagingEnabled = false                         // default is true
         calendarView.scrollResistance = 0.75                       // default is 0.75 - this is only applicable when paging is not enabled
         calendarView.reloadData()
         
@@ -74,7 +72,7 @@ class ViewController: UIViewController {
     @IBAction func select11(sender: AnyObject?) {
         calendarView.allowsMultipleSelection = false
         let date = formatter.dateFromString("2016 02 11")
-        self.calendarView.selectDates([date!])
+        self.calendarView.selectDates([date!], triggerSelectionDelegate: false)
     }
     
     @IBAction func scrollToDate(sender: AnyObject?) {
@@ -141,7 +139,7 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
     }
     
     func calendar(calendar: JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {
-        
+        print("scrolled")
         if let startDate = date, endDate = endingWithDate {
             setupViewsOfCalendar(startDate, endDate: endDate)
         }
@@ -163,10 +161,10 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
         switch identifier {
         case "WhiteSectionHeaderView":
             let headerCell = (header as? WhiteSectionHeaderView)
-            headerCell?.title.text = "Sample white header"
+            headerCell?.title.text = "Design your own header"
         default:
             let headerCell = (header as? PinkSectionHeaderView)
-            headerCell?.title.text = "Sample pink header"
+            headerCell?.title.text = "However you want"
         }
     }
 }
