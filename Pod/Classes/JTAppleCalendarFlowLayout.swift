@@ -9,13 +9,12 @@
 protocol JTAppleCalendarLayoutProtocol: class {
     var sectionInset: UIEdgeInsets {get set}
     var itemSize: CGSize {get set}
-    var pathForFocusItem: NSIndexPath {get set}
+    var pointForFocusItem: CGPoint {get set}
     var headerReferenceSize: CGSize {get set}
     var footerReferenceSize: CGSize {get set}
     var scrollDirection: UICollectionViewScrollDirection {get set}
     var minimumInteritemSpacing: CGFloat {get set}
     var minimumLineSpacing: CGFloat {get set}
-    
     
     func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint
 }
@@ -25,7 +24,7 @@ public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalen
     var itemSize: CGSize = CGSizeZero
     var headerReferenceSize: CGSize = CGSizeZero
     var footerReferenceSize: CGSize = CGSizeZero
-    var pathForFocusItem: NSIndexPath = NSIndexPath(forItem: 0, inSection: 0)
+    var pointForFocusItem = CGPointZero
     var scrollDirection: UICollectionViewScrollDirection = .Horizontal
     var minimumInteritemSpacing: CGFloat = 0
     var minimumLineSpacing: CGFloat = 0
@@ -35,19 +34,18 @@ public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalen
     /// - Parameter proposedContentOffset: The proposed point for the upper-left corner of the visible content
     /// - returns: The content offset that you want to use instead
     public override func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint {
-        let layoutAttrs = layoutAttributesForItemAtIndexPath(pathForFocusItem)
-        return CGPointMake(layoutAttrs!.frame.origin.x - self.collectionView!.contentInset.left, layoutAttrs!.frame.origin.y-self.collectionView!.contentInset.top);
+        return pointForFocusItem
     }
 }
 /// Vertical flow layout for calendar view
 public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAppleCalendarLayoutProtocol {
-    var pathForFocusItem: NSIndexPath = NSIndexPath(forItem: 0, inSection: 0)
+    var pointForFocusItem: CGPoint = CGPointZero
+    
     /// Returns the content offset to use after an animation layout update or change.
     /// - Parameter proposedContentOffset: The proposed point for the upper-left corner of the visible content
     /// - returns: The content offset that you want to use instead
     public override func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint {
-        let layoutAttrs = layoutAttributesForItemAtIndexPath(pathForFocusItem)
-        return CGPointMake(layoutAttrs!.frame.origin.x - self.collectionView!.contentInset.left, layoutAttrs!.frame.origin.y-self.collectionView!.contentInset.top);
+        return pointForFocusItem
     }
 }
 /// The JTAppleCalendarFlowLayout class is a concrete layout object that organizes day-cells into a grid

@@ -46,7 +46,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                 guard let
                         indexPath = calendarView.indexPathForItemAtPoint(testPoint),
                         attributes = calendarView.layoutAttributesForItemAtIndexPath(indexPath) else {
-                            print("Landed on a header")
+//                            print("Landed on a header")
                             return
                 }
                 
@@ -57,11 +57,13 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                     let targetOffset = attributes.frame.origin.y + attributes.frame.height
                     targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
                 }
+                
+//                (calendarView.collectionViewLayout as! JTAppleCalendarVerticalFlowLayout).focusPoint = targetContentOffset.memory
 
             }
         } else if (directionVelocity > 0) { // scrolling down
             if scrollView.contentOffset.y > (scrollView.contentSize.height - scrollView.frame.size.height) {
-                print("While scrolling down: RETURN ON: \(scrollView.contentSize.height - scrollView.frame.size.height)")
+//                print("While scrolling down: RETURN ON: \(scrollView.contentSize.height - scrollView.frame.size.height)")
                 return
             }
 
@@ -72,12 +74,12 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                     targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
                 }
             } else {
-                print("\nOffset landed on a header. Complete code here")
+//                print("\nOffset landed on a header. Complete code here")
             }
-            return
+            
         } else { // Scrolling back up
             if scrollView.contentOffset.y < 1 {
-                print("while scrolling up: RETURNING ON \(scrollView.contentOffset.y)")
+//                print("while scrolling up: RETURNING ON \(scrollView.contentOffset.y)")
                 return
             }
 
@@ -88,9 +90,10 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                     targetContentOffset.memory = CGPoint(x: 0, y: targetOffsetx)
                 }
             } else {
-                print("\nOffset landed on a header. Complete code here")
+//                print("\nOffset landed on a header. Complete code here")
             }
         }
+        (calendarView.collectionViewLayout as! JTAppleCalendarVerticalFlowLayout).pointForFocusItem = targetContentOffset.memory
     }
     
     /// Tells the delegate when a scrolling animation in the scroll view concludes.
@@ -116,7 +119,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
             itemIndex = (Int(round(calendarView.contentOffset.y / (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.height)) * MAX_NUMBER_OF_DAYS_IN_WEEK) % (numberOfRowsPerMonth * MAX_NUMBER_OF_DAYS_IN_WEEK)
         }
         // When ever the month/section is switched, let the flowlayout know which page it is on. This is needed in the event user switches orientatoin, we can use the index to snap back to correct position
-        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pathForFocusItem = NSIndexPath(forItem: itemIndex, inSection: section)
+//        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pathForFocusItem = NSIndexPath(forItem: itemIndex, inSection: section)
         if let currentSegmentDates = currentCalendarSegment() {
             self.delegate?.calendar(self, didScrollToDateSegmentStartingWith: currentSegmentDates.startDate, endingWithDate: currentSegmentDates.endDate)
         }
@@ -238,6 +241,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
     }
     /// Tells the delegate that the item at the specified index path was selected. The collection view calls this method when the user successfully selects an item in the collection view. It does not call this method when you programmatically set the selection.
     public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        print(indexPath)
         if let
             delegate = self.delegate,
             dateSelectedByUser = dateFromPath(indexPath) {
