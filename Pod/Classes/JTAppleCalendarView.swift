@@ -171,6 +171,9 @@ public class JTAppleCalendarView: UIView {
     
     var triggerScrollToDateDelegate = true
     
+    // Keeps track of item size for a section. This is an optimization
+    var indexPathSectionItemSize: (section: Int, itemSize: CGSize)?
+    
     public var sectionInset: UIEdgeInsets {
         set {
             let flowLayout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
@@ -355,11 +358,10 @@ public class JTAppleCalendarView: UIView {
     }()
     
     private func updateLayoutItemSize (layout: JTAppleCalendarLayoutProtocol) {
-        
-            
+
         layout.itemSize = CGSizeMake(
             self.calendarView.bounds.size.width / CGFloat(MAX_NUMBER_OF_DAYS_IN_WEEK),
-            0//(self.calendarView.bounds.size.height - layout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth)
+            (self.calendarView.bounds.size.height - layout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth)
         )
 
         self.calendarView.collectionViewLayout = layout as! UICollectionViewLayout
@@ -500,6 +502,8 @@ public class JTAppleCalendarView: UIView {
     func configureChangeOfRows() {
         theSelectedDates.removeAll()
         theSelectedIndexPaths.removeAll()
+        indexPathSectionItemSize = nil
+        
         
         monthInfo = setupMonthInfoDataForStartAndEndDate()
         

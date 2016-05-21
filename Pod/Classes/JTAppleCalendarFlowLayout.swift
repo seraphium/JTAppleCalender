@@ -25,6 +25,7 @@ protocol JTAppleCalendarDelegateProtocol: class {
     func numberOfsectionsPermonth() -> Int
     func numberOfSections() -> Int
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
 }
 
 /// Base class for the Horizontal layout
@@ -37,6 +38,13 @@ public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalen
     var scrollDirection: UICollectionViewScrollDirection = .Horizontal
     var minimumInteritemSpacing: CGFloat = 0
     var minimumLineSpacing: CGFloat = 0
+    
+    var numberOfColumns: Int { get { return delegate!.numberOfColumns() } }
+    var numberOfSections: Int { get { return delegate!.numberOfSections() } }
+    var numberOfSectionsPerMonth: Int { get { return delegate!.numberOfsectionsPermonth() } }
+    var numberOfRows: Int { get { return delegate!.numberOfRows() } }
+    
+    weak var delegate: JTAppleCalendarDelegateProtocol?
 
     
     /// Returns the content offset to use after an animation layout update or change.
@@ -57,24 +65,6 @@ public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAp
     public override func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint {
         return pointForFocusItem
     }
-//    public override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-//        let x = super.layoutAttributesForElementsInRect(rect)
-//        return x
-//    }
-//    
-//    public override func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
-//        let x = super.layoutAttributesForItemAtIndexPath(indexPath)
-//        
-//        return x
-//    }
-//    public override func layoutAttributesForSupplementaryViewOfKind(elementKind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
-//        let x = super.layoutAttributesForItemAtIndexPath(indexPath)
-//        
-//        let size = delegate!.collectionView(collectionView!, layout: self, referenceSizeForHeaderInSection: indexPath.section)
-//        itemSize.height = (collectionView!.frame.height - size.height) / CGFloat(6)
-//        
-//        return x
-//    }
     
     init(withDelegate delegate: JTAppleCalendarDelegateProtocol) {
         super.init()
@@ -86,17 +76,12 @@ public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAp
     }
     
 }
+
+
+
 /// The JTAppleCalendarFlowLayout class is a concrete layout object that organizes day-cells into a grid
 public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout {
-    var numberOfColumns: Int { get { return delegate!.numberOfColumns() } }
-    var numberOfSections: Int { get { return delegate!.numberOfSections() } }
-    var numberOfSectionsPerMonth: Int { get { return delegate!.numberOfsectionsPermonth() } }
-    var numberOfRows: Int { get { return delegate!.numberOfRows() } }
-    
-    
-    var sectionInsets: UIEdgeInsets = UIEdgeInsetsZero
-    
-    weak var delegate: JTAppleCalendarDelegateProtocol?
+
     
     init(withDelegate delegate: JTAppleCalendarDelegateProtocol) {
         super.init()
@@ -109,17 +94,6 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
     /// Returns an object initialized from data in a given unarchiver. self, initialized using the data in decoder.
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-    }
-    /// Tells the layout object to update the current layout.
-    public override func prepareLayout() {
-//        super.prepareLayout()
-//        print(numberOfColumns)
-//        print(numberOfSections)
-//        print(numberOfSectionsPerMonth)
-//        print(numberOfRows)
-        
-//        if UIApplication.sharedApplication().statusBarOrientation != 
-//        self
     }
     
     /// Returns the layout attributes for all of the cells and views in the specified rectangle.
@@ -142,8 +116,9 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
 //        print("startColumn: \(startColumn)")
 //        print("endColumn: \(endColumn)")
         
-        let maxColumns = numberOfSections * numberOfSectionsPerMonth * 7
         let maxSections = numberOfSections * numberOfSectionsPerMonth
+        let maxColumns = maxSections * 7
+        
         
         if endColumn > maxColumns {
             endColumn = maxColumns
@@ -151,8 +126,6 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         if startColumn >= endColumn { startColumn = endColumn - 1 }
         if startColumn < 0 { startColumn = 0 } // If the user scrolls beyond the left end boundary
 
-        
-        
         var attributes: [UICollectionViewLayoutAttributes] = []
         
         if headerViewXibs.count > 0 {
@@ -180,8 +153,6 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         for index in 0..<numberOfRows {
             for columnNumber in startColumn..<endColumn {
                 let section = columnNumber / numberOfColumns
-                
-                
                 let sectionIndex = (columnNumber % numberOfColumns) + (index * numberOfColumns)
                 let indexPath = NSIndexPath(forItem: sectionIndex, inSection: section)
 
@@ -214,20 +185,27 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             
             
             
-            
-            let headerHeight = delegate?.collectionView(collectionView, layout: self, referenceSizeForHeaderInSection: attributes.indexPath.section)
-            if headerViewXibs.count > 0 && headerHeight != nil {
-                itemSize.height = (collectionView.frame.height - headerHeight!.height) / CGFloat(numberOfRows)
-            } else {
-                assert(false, "error")
+            if headerViewXibs.count > 0 {
+                if let sizeOfItem = delegate?.collectionView(collectionView, layout: self, sizeForItemAtIndexPath: attributes.indexPath) {
+                    itemSize.height = sizeOfItem.height
+                }
             }
+            
+//            let headerHeight = delegate?.collectionView(collectionView, layout: self, referenceSizeForHeaderInSection: attributes.indexPath.section)
+//            if headerViewXibs.count > 0 && headerHeight != nil {
+//                
+//                
+//                itemSize.height = (collectionView.frame.height - headerHeight!.height) / CGFloat(numberOfRows)
+//            } else {
+//                assert(false, "error")
+//            }
             
             var yCellOffset : CGFloat = CGFloat(attributes.indexPath.item / 7) * self.itemSize.height
             
-            if headerViewXibs.count > 0 && headerHeight != nil {
-                yCellOffset += headerHeight!.height
-            } else {
-                assert(false, "error")
+            if headerViewXibs.count > 0{
+                if let headerHeight = delegate?.collectionView(collectionView, layout: self, referenceSizeForHeaderInSection: attributes.indexPath.section) {
+                    yCellOffset += headerHeight.height
+                }
             }
             
 

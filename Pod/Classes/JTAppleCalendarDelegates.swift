@@ -86,8 +86,9 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
         
         if (directionVelocity == 0) {
             if headerViewXibs.count < 1 {  // If there are no headers
-                nextIndex = round(theTargetContentOffset / cellDragInterval)
-                targetContentOffset.memory = CGPointMake(0, nextIndex * cellDragInterval)
+//                calcTestPoint(directionVelocity)
+//                nextIndex = round(theTargetContentOffset / 2)
+//                targetContentOffset.memory = CGPointMake(0, calcTestPoint(directionVelocity))
                 return
             } else { // If there are headers
                 guard let
@@ -276,6 +277,23 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
             delegate.calendar(self, didDeselectDate: dateDeselectedByUser, cell: selectedCell?.cellView, cellState: cellState)
         }
     }
+    
+    public func collectionView(collectionView: UICollectionView,
+                               layout collectionViewLayout: UICollectionViewLayout,
+                               sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        
+        if let size = indexPathSectionItemSize where size.section == indexPath.section {
+            return size.itemSize
+        }
+        
+        let headerHeight = self.collectionView(self.calendarView, layout: self.calendarView.collectionViewLayout, referenceSizeForHeaderInSection: indexPath.section)
+        var currentItemSize = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize
+        let size = CGSize(width: currentItemSize.width, height: (calendarView.frame.height - headerHeight.height) / CGFloat(numberOfRows()))
+        indexPathSectionItemSize = (section: indexPath.section, itemSize: size)
+        return size
+
+    }
+    
     /// Asks the delegate if the specified item should be deselected. true if the item should be deselected or false if it should not.
     public func collectionView(collectionView: UICollectionView, shouldDeselectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
         if let
