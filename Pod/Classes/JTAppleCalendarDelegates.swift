@@ -18,22 +18,71 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
         var contentOffset: CGFloat = 0,
         theTargetContentOffset: CGFloat = 0,
         directionVelocity: CGFloat = 0,
-        cellDragInterval: CGFloat = 0
-        
+        cellDragInterval: CGFloat = 0,
+        contentSize: CGFloat = 0,
+        frameSize: CGFloat = 0
+
         if direction == .Horizontal {
             contentOffset = scrollView.contentOffset.x
             theTargetContentOffset = targetContentOffset.memory.x
             directionVelocity = velocity.x
             cellDragInterval = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.width
+            contentSize = scrollView.contentSize.width
+            frameSize = scrollView.frame.size.width
         } else {
             contentOffset = scrollView.contentOffset.y
             theTargetContentOffset = targetContentOffset.memory.y
             directionVelocity = velocity.y
             cellDragInterval = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.height
+            contentSize = scrollView.contentSize.height
+            frameSize = scrollView.frame.size.height
         }
         
         var nextIndex: CGFloat = 0
         let diff = abs(theTargetContentOffset - contentOffset)
+        
+        let calcTestPoint = {(velocity: CGFloat) -> CGPoint in
+            var recalcOffset: CGFloat
+            if velocity == 0 || velocity > 0 {
+                recalcOffset = theTargetContentOffset - (diff * self.scrollResistance)
+            } else {
+                recalcOffset = theTargetContentOffset + (diff * self.scrollResistance)
+            }
+            
+            let retval: CGPoint
+            if self.direction == .Vertical {
+                retval = CGPoint(x: 0, y: recalcOffset)
+            } else {
+                if headerViewXibs.count < 1 {
+                    retval = CGPoint(x: recalcOffset, y: 0)
+                } else {
+                    let targetSection =  Int(recalcOffset / self.calendarView.frame.size.width)
+                    let headerHeigt = self.collectionView(self.calendarView, layout: self.calendarView.collectionViewLayout, referenceSizeForHeaderInSection: targetSection)
+                    retval = CGPoint(x: recalcOffset, y: headerHeigt.height)
+                }
+            }
+            
+            return retval
+        }
+        
+        let setTestPoint = {(testPoint: CGPoint) in
+            if let indexPath = self.calendarView.indexPathForItemAtPoint(testPoint) {
+                if let attributes = self.calendarView.layoutAttributesForItemAtIndexPath(indexPath) {
+                    
+                    if self.direction == .Vertical {
+                        let targetOffset = attributes.frame.origin.y
+                        targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
+                    } else {
+                        let targetOffset = attributes.frame.origin.x
+                        targetContentOffset.memory = CGPoint(x: targetOffset, y: 0)
+                    }
+                }
+            } else {
+                print("")
+            }
+        }
+        
+        
         
         if (directionVelocity == 0) {
             if headerViewXibs.count < 1 {  // If there are no headers
@@ -41,59 +90,42 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                 targetContentOffset.memory = CGPointMake(0, nextIndex * cellDragInterval)
                 return
             } else { // If there are headers
-                let testPoint = CGPoint(x: 0, y: theTargetContentOffset - (diff * scrollResistance))
-                
                 guard let
-                        indexPath = calendarView.indexPathForItemAtPoint(testPoint),
+                        indexPath = calendarView.indexPathForItemAtPoint(calcTestPoint(directionVelocity)),
                         attributes = calendarView.layoutAttributesForItemAtIndexPath(indexPath) else {
-//                            print("Landed on a header")
-                            return
+                            return //                            print("Landed on a header")
                 }
                 
-                if theTargetContentOffset <= attributes.frame.origin.y + (attributes.frame.height / 2)  {
-                    let targetOffset = attributes.frame.origin.y
-                    targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
+                if self.direction == .Vertical {
+                    if theTargetContentOffset <= attributes.frame.origin.y + (attributes.frame.height / 2)  {
+                        let targetOffset = attributes.frame.origin.y
+                        targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
+                    } else {
+                        let targetOffset = attributes.frame.origin.y + attributes.frame.height
+                        targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
+                        
+                    }
                 } else {
-                    let targetOffset = attributes.frame.origin.y + attributes.frame.height
-                    targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
+                    if theTargetContentOffset <= attributes.frame.origin.x + (attributes.frame.width / 2)  {
+                        let targetOffset = attributes.frame.origin.x
+                        targetContentOffset.memory = CGPoint(x: targetOffset, y: 0)
+                    } else {
+                        let targetOffset = attributes.frame.origin.x + attributes.frame.width
+                        targetContentOffset.memory = CGPoint(x: targetOffset, y: 0)
+                    }
                 }
-                
-//                (calendarView.collectionViewLayout as! JTAppleCalendarVerticalFlowLayout).focusPoint = targetContentOffset.memory
-
             }
-        } else if (directionVelocity > 0) { // scrolling down
-            if scrollView.contentOffset.y > (scrollView.contentSize.height - scrollView.frame.size.height) {
-//                print("While scrolling down: RETURN ON: \(scrollView.contentSize.height - scrollView.frame.size.height)")
+        } else if (directionVelocity > 0) { // scrolling down or left
+            if contentOffset > (contentSize - frameSize) { return }
+            setTestPoint(calcTestPoint(directionVelocity))
+        } else { // Scrolling back up
+            if contentOffset < 1 {
                 return
-            }
-
-            let testPoint = CGPoint(x: 0, y: theTargetContentOffset - (diff * scrollResistance))
-            if let indexPath = calendarView.indexPathForItemAtPoint(testPoint) {
-                if let attributes = calendarView.layoutAttributesForItemAtIndexPath(indexPath) {
-                    let targetOffset = attributes.frame.origin.y
-                    targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
-                }
-            } else {
-//                print("\nOffset landed on a header. Complete code here")
             }
             
-        } else { // Scrolling back up
-            if scrollView.contentOffset.y < 1 {
-//                print("while scrolling up: RETURNING ON \(scrollView.contentOffset.y)")
-                return
-            }
-
-            let testPoint = CGPoint(x: 0, y: theTargetContentOffset + (diff * scrollResistance))
-            if let indexPath = calendarView.indexPathForItemAtPoint(testPoint) {
-                if let attributes = calendarView.layoutAttributesForItemAtIndexPath(indexPath) { //Crash
-                    let targetOffsetx = attributes.frame.origin.y
-                    targetContentOffset.memory = CGPoint(x: 0, y: targetOffsetx)
-                }
-            } else {
-//                print("\nOffset landed on a header. Complete code here")
-            }
+            setTestPoint(calcTestPoint(directionVelocity))
         }
-        (calendarView.collectionViewLayout as! JTAppleCalendarVerticalFlowLayout).pointForFocusItem = targetContentOffset.memory
+        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pointForFocusItem = targetContentOffset.memory
     }
     
     /// Tells the delegate when a scrolling animation in the scroll view concludes.
@@ -109,15 +141,15 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
     /// Tells the delegate that the scroll view has ended decelerating the scrolling movement.
     public func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         // Determing the section from the scrollView direction
-        let section = currentSectionPage
-        let itemIndex: Int
+//        let section = currentSectionPage
+//        let itemIndex: Int
         
         // Calculate the index to be used in focus path
-        if direction == .Horizontal {
-            itemIndex = Int(round(calendarView.contentOffset.x / (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.width)) % MAX_NUMBER_OF_DAYS_IN_WEEK
-        } else {
-            itemIndex = (Int(round(calendarView.contentOffset.y / (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.height)) * MAX_NUMBER_OF_DAYS_IN_WEEK) % (numberOfRowsPerMonth * MAX_NUMBER_OF_DAYS_IN_WEEK)
-        }
+//        if direction == .Horizontal {
+//            itemIndex = Int(round(calendarView.contentOffset.x / (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.width)) % MAX_NUMBER_OF_DAYS_IN_WEEK
+//        } else {
+//            itemIndex = (Int(round(calendarView.contentOffset.y / (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.height)) * MAX_NUMBER_OF_DAYS_IN_WEEK) % (numberOfRowsPerMonth * MAX_NUMBER_OF_DAYS_IN_WEEK)
+//        }
         // When ever the month/section is switched, let the flowlayout know which page it is on. This is needed in the event user switches orientatoin, we can use the index to snap back to correct position
 //        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pathForFocusItem = NSIndexPath(forItem: itemIndex, inSection: section)
         if let currentSegmentDates = currentCalendarSegment() {
@@ -130,8 +162,10 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
 extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         if headerViewXibs.count < 1 { return CGSizeZero }
-        return calendarViewHeaderSizeForsection(section)
+        let size = calendarViewHeaderSizeForSection(section)
+        return size
     }
+    
     
     public func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
         let reuseIdentifier: String

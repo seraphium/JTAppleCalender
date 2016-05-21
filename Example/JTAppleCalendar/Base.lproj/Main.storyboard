@@ -31,7 +31,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Change to 3 rows"/>
                                         <connections>
-                                            <action selector="reloadCalendarView:" destination="BYZ-38-t0r" eventType="touchUpInside" id="F2w-Xs-iRQ"/>
+                                            <action selector="changeToThreeRows:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Wb1-go-yPa"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="13p-cR-5Oy">
@@ -39,7 +39,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Change to 6 Rows"/>
                                         <connections>
-                                            <action selector="reloadCalendarViewTo6:" destination="BYZ-38-t0r" eventType="touchUpInside" id="nvl-99-SWw"/>
+                                            <action selector="changeToSixRows:" destination="BYZ-38-t0r" eventType="touchUpInside" id="YTT-Xm-Hgz"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EZB-eU-i2Z">

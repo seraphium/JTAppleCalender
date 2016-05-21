@@ -55,13 +55,6 @@ public enum DaysOfWeek: Int {
     case Sunday = 7, Monday = 6, Tuesday = 5, Wednesday = 4, Thursday = 10, Friday = 9, Saturday = 8
 }
 
-protocol JTAppleCalendarDelegateProtocol: class {
-    func numberOfRows() -> Int
-    func numberOfColumns() -> Int
-    func numberOfsectionsPermonth() -> Int
-    func numberOfSections() -> Int
-}
-
 /// The JTAppleCalendarViewDataSource protocol is adopted by an object that mediates the application’s data model for a JTAppleCalendarViewDataSource object. The data source provides the calendar-view object with the information it needs to construct and modify it self
 public protocol JTAppleCalendarViewDataSource {
     /// Asks the data source to return the start and end boundary dates as well as the calendar to use. You should properly configure your calendar at this point.
@@ -428,7 +421,7 @@ public class JTAppleCalendarView: UIView {
     }
     
     func scrollToHeaderInSection(section:Int)  {
-        let indexPath = NSIndexPath(forItem: 1, inSection: section)
+        let indexPath = NSIndexPath(forItem: 0, inSection: section)
         calendarView.layoutIfNeeded()
         if let attributes =  calendarView.layoutAttributesForSupplementaryElementOfKind(UICollectionElementKindSectionHeader, atIndexPath: indexPath) {
             
@@ -516,13 +509,17 @@ public class JTAppleCalendarView: UIView {
         }
         
         delayRunOnMainThread(0.0, closure: { () -> () in
-            self.scrollToDate(dateToScrollTo, triggerScrollToDateDelegate: false)
+            self.scrollToDate(dateToScrollTo, triggerScrollToDateDelegate: true) // Delegate should be called here. User set the scroll to date
+            self.scrollToDatePathOnRowChange = nil
         })
     }
     
-    func calendarViewHeaderSizeForsection(section: Int) -> CGSize {
-        if let date = dateFromSection(section), size = delegate?.calendar(self, sectionHeaderSizeForDate: date) { return size }
-        return CGSizeZero
+    func calendarViewHeaderSizeForSection(section: Int) -> CGSize {
+        var retval = CGSizeZero
+        if headerViewXibs.count > 0 {
+            if let date = dateFromSection(section), size = delegate?.calendar(self, sectionHeaderSizeForDate: date){ retval = size }
+        }
+        return retval
     }
     
     func indexPathOfdateCellCounterPart(date: NSDate, indexPath: NSIndexPath, dateOwner: CellState.DateOwner) -> NSIndexPath? {
@@ -606,7 +603,7 @@ public class JTAppleCalendarView: UIView {
     }
     
     func generateNewLayout() -> UICollectionViewLayout {
-        let layout: UICollectionViewLayout = direction == .Horizontal ? JTAppleCalendarHorizontalFlowLayout(withDelegate: self) : JTAppleCalendarVerticalFlowLayout()
+        let layout: UICollectionViewLayout = direction == .Horizontal ? JTAppleCalendarHorizontalFlowLayout(withDelegate: self) : JTAppleCalendarVerticalFlowLayout(withDelegate: self)
         let conformingProtocolLayout = layout as! JTAppleCalendarLayoutProtocol
         
         conformingProtocolLayout.scrollDirection = direction
@@ -796,7 +793,7 @@ extension JTAppleCalendarView {
     }
     
     func refreshIndexPathIfVisible(indexPath: NSIndexPath) {
-        if let counterPartCell = calendarView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell {
+        if (calendarView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell) != nil {
             calendarView.reloadItemsAtIndexPaths([indexPath])
         }
     }
@@ -826,7 +823,7 @@ extension JTAppleCalendarView {
         if let
             counterPartCellIndexPath = indexPathOfdateCellCounterPart(date, indexPath: indexPath, dateOwner: dateOwner),
             validCalendar = calendar {
-            var dateComps = validCalendar.components([.Month, .Day, .Year], fromDate: date)
+            let dateComps = validCalendar.components([.Month, .Day, .Year], fromDate: date)
             guard let counterpartDate = validCalendar.dateFromComponents(dateComps) else {
                 return nil
             }

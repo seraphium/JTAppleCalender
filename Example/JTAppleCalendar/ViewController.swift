@@ -16,12 +16,12 @@ class ViewController: UIViewController {
     let formatter = NSDateFormatter()
     let testCalendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)
     
-    @IBAction func reloadCalendarView(sender: UIButton) {
+    @IBAction func changeToThreeRows(sender: UIButton) {
         let date = formatter.dateFromString("2016 04 11")
         calendarView.changeNumberOfRowsPerMonthTo(3, withFocusDate: date)
     }
     
-    @IBAction func reloadCalendarViewTo6(sender: UIButton) {
+    @IBAction func changeToSixRows(sender: UIButton) {
         let date = formatter.dateFromString("2016 04 11")
         calendarView.changeNumberOfRowsPerMonthTo(6, withFocusDate: date)
     }
@@ -130,16 +130,15 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
 
     func calendar(calendar: JTAppleCalendarView, didDeselectDate date: NSDate, cell: JTAppleDayCellView?, cellState: CellState) {
         (cell as? CellView)?.cellSelectionChanged(cellState)
-        printSelectedDates()
+//        printSelectedDates()
     }
     
     func calendar(calendar: JTAppleCalendarView, didSelectDate date: NSDate, cell: JTAppleDayCellView?, cellState: CellState) {
         (cell as? CellView)?.cellSelectionChanged(cellState)
-        printSelectedDates()
+//        printSelectedDates()
     }
     
     func calendar(calendar: JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {
-        print("scrolled")
         if let startDate = date, endDate = endingWithDate {
             setupViewsOfCalendar(startDate, endDate: endDate)
         }
@@ -154,7 +153,12 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
     }
    
     func calendar(calendar: JTAppleCalendarView, sectionHeaderSizeForDate date: (startDate: NSDate, endDate: NSDate)) -> CGSize {
-        return CGSize(width: 200, height: 100)
+        if formatter.stringFromDate(date.startDate) == "2016 01 01" {
+            return CGSize(width: 200, height: 100)
+        } else {
+//            return CGSizeZero
+            return CGSize(width: 200, height: 200) // Yes you can have different size headers
+        }
     }
     
     func calendar(calendar: JTAppleCalendarView, isAboutToDisplaySectionHeader header: JTAppleHeaderView, date: (startDate: NSDate, endDate: NSDate), identifier: String) {

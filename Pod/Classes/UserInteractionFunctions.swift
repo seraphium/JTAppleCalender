@@ -95,11 +95,10 @@ extension JTAppleCalendarView {
             let viewObject = NSBundle.mainBundle().loadNibNamed(headerViewXibName, owner: self, options: [:])
             assert(viewObject.count > 0, "your nib file name \(headerViewXibName) could not be loaded)")
             
-            guard let view = viewObject[0] as? JTAppleHeaderView else {
+            guard viewObject[0] is JTAppleHeaderView else {
                 assert(false, "xib file class does not conform to the protocol<JTAppleHeaderViewProtocol>")
                 return
             }
-            
             
             headerViewXibs.append(headerViewXibName)
             
@@ -272,7 +271,14 @@ extension JTAppleCalendarView {
                 if self.pagingEnabled {
                     if headerViewXibs.count > 0 {
                         // If both paging and header is on, then scroll to the actual date
-                        self.scrollToHeaderForDate(date)
+                        if self.direction == .Vertical {
+                            self.scrollToHeaderInSection(sectionIndexPath.section)
+                        } else {
+                            self.calendarView.scrollToItemAtIndexPath(NSIndexPath(forItem: 0,
+                                inSection: sectionIndexPath.section),
+                                atScrollPosition: position, animated: animateScroll
+                            )
+                        }
                     } else {
                         // If paging is on and header is off, then scroll to the start date in section
                         self.calendarView.scrollToItemAtIndexPath(NSIndexPath(forItem: 0,
