@@ -355,9 +355,11 @@ public class JTAppleCalendarView: UIView {
     }()
     
     private func updateLayoutItemSize (layout: JTAppleCalendarLayoutProtocol) {
+        
+            
         layout.itemSize = CGSizeMake(
             self.calendarView.bounds.size.width / CGFloat(MAX_NUMBER_OF_DAYS_IN_WEEK),
-            (self.calendarView.bounds.size.height - layout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth)
+            0//(self.calendarView.bounds.size.height - layout.headerReferenceSize.height) / CGFloat(numberOfRowsPerMonth)
         )
 
         self.calendarView.collectionViewLayout = layout as! UICollectionViewLayout
@@ -402,6 +404,15 @@ public class JTAppleCalendarView: UIView {
         self.addSubview(self.calendarView)
     }
     
+    func restoreSelectionStateForCellAtIndexPath(indexPath: NSIndexPath) {
+        if theSelectedIndexPaths.count > 0 {
+            if theSelectedIndexPaths.contains(indexPath) {
+                calendarView.selectItemAtIndexPath(indexPath, animated: false, scrollPosition: .None)
+            } else {
+                calendarView.deselectItemAtIndexPath(indexPath, animated: false)
+            }
+        }
+    }
     
     func dateFromSection(section: Int) -> (startDate: NSDate, endDate: NSDate)? {
         if monthInfo.count < 1 {

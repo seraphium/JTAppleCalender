@@ -43,7 +43,7 @@ public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalen
     /// - Parameter proposedContentOffset: The proposed point for the upper-left corner of the visible content
     /// - returns: The content offset that you want to use instead
     public override func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint {
-        return pointForFocusItem
+        return proposedContentOffset
     }
 }
 /// Vertical flow layout for calendar view
@@ -88,11 +88,11 @@ public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAp
 }
 /// The JTAppleCalendarFlowLayout class is a concrete layout object that organizes day-cells into a grid
 public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout {
-    var numberOfRows = 0
-    var numberOfColumns = 0
-    var cellIndexPathCache: [NSIndexPath:UICollectionViewLayoutAttributes] = [:]
-    var headerIndexPathCache: [Int:UICollectionViewLayoutAttributes] = [:]
-    var currentOrientation: UIDeviceOrientation?
+    var numberOfColumns: Int { get { return delegate!.numberOfColumns() } }
+    var numberOfSections: Int { get { return delegate!.numberOfSections() } }
+    var numberOfSectionsPerMonth: Int { get { return delegate!.numberOfsectionsPermonth() } }
+    var numberOfRows: Int { get { return delegate!.numberOfRows() } }
+    
     
     var sectionInsets: UIEdgeInsets = UIEdgeInsetsZero
     
@@ -103,7 +103,6 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         self.delegate = delegate
         minimumInteritemSpacing = 0
         minimumLineSpacing = 0
-
     }
     
     
@@ -113,16 +112,21 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
     }
     /// Tells the layout object to update the current layout.
     public override func prepareLayout() {
+//        super.prepareLayout()
+//        print(numberOfColumns)
+//        print(numberOfSections)
+//        print(numberOfSectionsPerMonth)
+//        print(numberOfRows)
         
-        
-        numberOfColumns = self.delegate!.numberOfColumns()
-        clearCacheAndUpdateIfLayoutChanged()
+//        if UIApplication.sharedApplication().statusBarOrientation != 
+//        self
     }
     
     /// Returns the layout attributes for all of the cells and views in the specified rectangle.
     override public func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         // Determine how many columns needs to be displayed
         let requestedWidth = rect.width
+        
         let requestedColumns = Int(requestedWidth / itemSize.width) + 2
         let requestSections = (requestedColumns / numberOfColumns) + 1
         
@@ -138,8 +142,8 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
 //        print("startColumn: \(startColumn)")
 //        print("endColumn: \(endColumn)")
         
-        let maxColumns = delegate!.numberOfSections() * delegate!.numberOfsectionsPermonth() * 7
-        let maxSections = delegate!.numberOfSections() * delegate!.numberOfsectionsPermonth()
+        let maxColumns = numberOfSections * numberOfSectionsPerMonth * 7
+        let maxSections = numberOfSections * numberOfSectionsPerMonth
         
         if endColumn > maxColumns {
             endColumn = maxColumns
@@ -164,18 +168,14 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             
             for index in startSection...endSection {
                 let sectionIndexPath = NSIndexPath(forItem: 0, inSection: index)
-                if let indexAttr = headerIndexPathCache[sectionIndexPath.section] {
-                    attributes.append(indexAttr)
-                    continue
-                }
                 if let aHeaderAttr = layoutAttributesForSupplementaryViewOfKind(UICollectionElementKindSectionHeader, atIndexPath: sectionIndexPath) {
-                    headerIndexPathCache[sectionIndexPath.section] = aHeaderAttr
                     attributes.append(aHeaderAttr)
+                    
+                } else {
+                    print("error")
                 }
             }
         }
-        
-        
         
         for index in 0..<numberOfRows {
             for columnNumber in startColumn..<endColumn {
@@ -184,13 +184,14 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
                 
                 let sectionIndex = (columnNumber % numberOfColumns) + (index * numberOfColumns)
                 let indexPath = NSIndexPath(forItem: sectionIndex, inSection: section)
-                if let indexAttr = cellIndexPathCache[indexPath] {
-                    attributes.append(indexAttr)
-                    continue
-                }
+
                 if let attribute = layoutAttributesForItemAtIndexPath(indexPath) {
-                    cellIndexPathCache[indexPath] = attribute
+                    if indexPath.item == 0 && indexPath.section == 1 {
+                        print(attribute.frame)
+                    }
                     attributes.append(attribute)
+                } else {
+                    print("error")
                 }
             }
         }
@@ -212,16 +213,24 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             let stride = collectionView.frame.size.width
             let offset = CGFloat(attributes.indexPath.section) * stride
             var xCellOffset : CGFloat = CGFloat(attributes.indexPath.item % 7) * self.itemSize.width
+            xCellOffset += offset
             
             
-            itemSize.height = (collectionView.frame.height - headerIndexPathCache[attributes.indexPath.section]!.frame.size.height) / CGFloat(numberOfRows)
+            
+            
+            let headerHeight = delegate?.collectionView(collectionView, layout: self, referenceSizeForHeaderInSection: attributes.indexPath.section)
+            if headerViewXibs.count > 0 && headerHeight != nil {
+                itemSize.height = (collectionView.frame.height - headerHeight!.height) / CGFloat(numberOfRows)
+            } else {
+                assert(false, "error")
+            }
             
             var yCellOffset : CGFloat = CGFloat(attributes.indexPath.item / 7) * self.itemSize.height
-            xCellOffset += offset
-            if let extraHeaderSize = headerIndexPathCache[attributes.indexPath.section]?.frame.size.height {//size of header for this section
-                yCellOffset += extraHeaderSize
+            
+            if headerViewXibs.count > 0 && headerHeight != nil {
+                yCellOffset += headerHeight!.height
             } else {
-                print("failed for \(attributes.indexPath)")
+                assert(false, "error")
             }
             attributes.frame = CGRectMake(xCellOffset, yCellOffset, self.itemSize.width, self.itemSize.height)
         }
@@ -230,7 +239,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
     public override func collectionViewContentSize() -> CGSize {
         var size = super.collectionViewContentSize()
         
-        size.width = self.collectionView!.bounds.size.width * CGFloat(delegate!.numberOfSections()) * CGFloat(delegate!.numberOfsectionsPermonth())
+        size.width = self.collectionView!.bounds.size.width * CGFloat(numberOfSections * numberOfSectionsPerMonth)
         return size
     }
     
@@ -248,25 +257,6 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         }
         
         return attributes
-    }
-    
-    func clearCacheAndUpdateIfLayoutChanged() {
-        let currentOrientation = UIDevice.currentDevice().orientation
-        if
-            currentOrientation != self.currentOrientation ||
-            delegate?.numberOfRows() != numberOfRows
-        {
-            // clear the caches, because the orientation just changed
-            removeAllCachedData()
-            self.currentOrientation = UIDevice.currentDevice().orientation
-            numberOfRows = delegate!.numberOfRows()
-        }
-}
-    
-    func removeAllCachedData() {
-        print("All cache deleted")
-        cellIndexPathCache.removeAll()
-        headerIndexPathCache.removeAll()
     }
 }
 

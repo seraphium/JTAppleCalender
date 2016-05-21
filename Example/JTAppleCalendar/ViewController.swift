@@ -16,6 +16,11 @@ class ViewController: UIViewController {
     let formatter = NSDateFormatter()
     let testCalendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)
     
+    
+    @IBAction func reloadView(sender: UIButton) {
+        calendarView.reloadData()
+    }
+    
     @IBAction func changeToThreeRows(sender: UIButton) {
         let date = formatter.dateFromString("2016 04 11")
         calendarView.changeNumberOfRowsPerMonthTo(3, withFocusDate: date)
@@ -40,7 +45,7 @@ class ViewController: UIViewController {
         
         // The following default code can be removed since they are already the default.
         // They are only included here so that you can know what properties can be configured
-        calendarView.direction = .Vertical                         // default is horizontal
+//        calendarView.direction = .Vertical                         // default is horizontal
         calendarView.numberOfRowsPerMonth = 6                      // default is 6
         calendarView.cellInset = CGPoint(x: 0, y: 0)               // default is (3,3)
         calendarView.allowsMultipleSelection = false               // default is false
