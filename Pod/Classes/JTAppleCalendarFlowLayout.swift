@@ -186,9 +186,6 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
                 let indexPath = NSIndexPath(forItem: sectionIndex, inSection: section)
 
                 if let attribute = layoutAttributesForItemAtIndexPath(indexPath) {
-                    if indexPath.item == 0 && indexPath.section == 1 {
-                        print(attribute.frame)
-                    }
                     attributes.append(attribute)
                 } else {
                     print("error")
@@ -232,9 +229,14 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             } else {
                 assert(false, "error")
             }
+            
+
             attributes.frame = CGRectMake(xCellOffset, yCellOffset, self.itemSize.width, self.itemSize.height)
+            attributes.bounds = CGRectMake(0, 0, self.itemSize.width, self.itemSize.height)
         }
     }
+    
+    
     /// Returns the width and height of the collection view’s contents. The width and height of the collection view’s contents.
     public override func collectionViewContentSize() -> CGSize {
         var size = super.collectionViewContentSize()

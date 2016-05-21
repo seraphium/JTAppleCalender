@@ -159,10 +159,9 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
    
     func calendar(calendar: JTAppleCalendarView, sectionHeaderSizeForDate date: (startDate: NSDate, endDate: NSDate)) -> CGSize {
         if formatter.stringFromDate(date.startDate) == "2016 01 01" {
-            return CGSize(width: 200, height: 100)
+            return CGSize(width: 200, height: 50)
         } else {
-//            return CGSizeZero
-            return CGSize(width: 200, height: 200) // Yes you can have different size headers
+            return CGSize(width: 200, height: 100) // Yes you can have different size headers
         }
     }
     
