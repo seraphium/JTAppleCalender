@@ -107,7 +107,7 @@ extension JTAppleCalendarView {
         }
         
         
-        setupHeaderViews(nil)
+//        setupHeaderViews(nil)
     }
     
     /// Reloads the data on the calendar view

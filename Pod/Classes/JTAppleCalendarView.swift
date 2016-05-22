@@ -453,24 +453,24 @@ public class JTAppleCalendarView: UIView {
         }
     }
     
-    func setupHeaderViews(layout: JTAppleCalendarLayoutProtocol?) {
-         //Let the layout start calling the header delegate
-        var size = CGSizeZero
-        if headerViewXibs.count > 0 {
-            if let
-                dateFromSection0 = dateFromSection(0),
-                delegateSize = delegate?.calendar(self, sectionHeaderSizeForDate: dateFromSection0) {
-                size = delegateSize
-            }
-        }
-        
-        if let validLayout = layout {
-            validLayout.headerReferenceSize = size
-        } else {
-            let layout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
-            layout.headerReferenceSize = size
-        }
-    }
+//    func setupHeaderViews(layout: JTAppleCalendarLayoutProtocol?) {
+//         //Let the layout start calling the header delegate
+//        var size = CGSizeZero
+//        if headerViewXibs.count > 0 {
+//            if let
+//                dateFromSection0 = dateFromSection(0),
+//                delegateSize = delegate?.calendar(self, sectionHeaderSizeForDate: dateFromSection0) {
+//                size = delegateSize
+//            }
+//        }
+//        
+//        if let validLayout = layout {
+//            validLayout.headerReferenceSize = size
+//        } else {
+//            let layout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
+//            layout.headerReferenceSize = size
+//        }
+//    }
     
     func reloadData(checkDelegateDataSource: Bool) {
         if checkDelegateDataSource {
@@ -634,7 +634,7 @@ public class JTAppleCalendarView: UIView {
         conformingProtocolLayout.scrollDirection = direction
         conformingProtocolLayout.minimumInteritemSpacing = 0
         conformingProtocolLayout.minimumLineSpacing = 0
-        setupHeaderViews(conformingProtocolLayout)
+//        setupHeaderViews(conformingProtocolLayout)
         return layout
     }
     private func setupMonthInfoDataForStartAndEndDate()-> [[Int]] {
