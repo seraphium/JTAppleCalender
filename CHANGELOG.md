@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 `JTAppleCalendar` adheres to [Semantic Versioning](http://semver.org/).
 
+#### 3.x Releases
+- `3.0.0` Releases - [3.0.0](#300)
+
 #### 2.x Releases
 - `2.1.0` Releases - [2.1.0](#210)|[2.1.1](#211)|[2.1.2](#212)
 - `2.0.0` Releases - [2.0.0](#200)|[2.0.1](#201)|[2.0.2](#202)|[2.0.3](#203)
@@ -11,6 +14,13 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100)
 
 ---
+## [3.0.0](https://github.com/patchthecode/JTAppleCalendar/releases/tag/3.0.0)
+- Fixed: Issue [#20](https://github.com/patchthecode/JTAppleCalendar/issues/20). Layout should be set to needsUpdate when firstDayOfWeek changes
+- Update: Issue [#19](https://github.com/patchthecode/JTAppleCalendar/issues/19). DidScroll delegate will now only get called when user scolls. This makes clear system actions vs user actions.
+- Fixed: Issue [#18](https://github.com/patchthecode/JTAppleCalendar/issues/18). Selecting out-dates now also select their date counterparts.
+- Update: Issue [#16](https://github.com/patchthecode/JTAppleCalendar/issues/16). Headers are now added to the project.
+  - Updated by [JayT](https://github.com/patchthecode).
+
 ## [2.1.2](https://github.com/patchthecode/JTAppleCalendar/releases/tag/2.1.2)
 - Fixed: When selecting date with delegates disabled, calendar shifted to month offset. This was due to the newly added smooth scrolling feature
 - Update: The CellState for a date now returns more information. It now returns (added to its previous info) a date and a day.
