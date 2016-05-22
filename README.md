@@ -81,7 +81,7 @@ This is an incorrect way to build controls. It leaves the developer with an extr
 ---
 
 #### Want to get started? 
-[Quickly check out this documentation](https://github.com/patchthecode/JTAppleCalendar/wiki/Setup-the-calendar-in-this-quick-tutorial)
+[Quickly check out this documentation](https://github.com/patchthecode/JTAppleCalendar/wiki)
 
 
 ## Author
