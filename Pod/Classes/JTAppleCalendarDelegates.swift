@@ -144,6 +144,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         let reuseIdentifier: String
         guard let date = dateFromSection(indexPath.section) else {
             assert(false, "Date could not be generated fro section. This is a bug. Contact the developer")
+            return UICollectionReusableView()
         }
         
         if headerViewXibs.count == 1 {
@@ -151,6 +152,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         } else {
             guard let identifier = delegate?.calendar(self, sectionHeaderIdentifierForDate: date) where headerViewXibs.contains(identifier) else {
                 assert(false, "Identifier was not registered")
+                return UICollectionReusableView()
             }
             reuseIdentifier = identifier
         }

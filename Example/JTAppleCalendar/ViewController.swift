@@ -16,11 +16,6 @@ class ViewController: UIViewController {
     let formatter = NSDateFormatter()
     let testCalendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)
     
-    
-    @IBAction func reloadView(sender: UIButton) {
-        calendarView.reloadData()
-    }
-    
     @IBAction func changeToThreeRows(sender: UIButton) {
         let date = formatter.dateFromString("2016 04 11")
         calendarView.changeNumberOfRowsPerMonthTo(3, withFocusDate: date)
