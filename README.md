@@ -24,6 +24,7 @@ Much like a UITableView, because you can design this calendar to look however yo
 - [x] Custom calendar view - make your calendar look however you want, with what ever functionality you want
 - [x] First Day of week - pick anyday to be first day of the week
 - [x] Horizontal or vertical mode
+- [x] Ability to add month headers in varying sizes/styles of your liking
 - [x] Ability to scroll to any month by simply using the date
 - [x] Ability to design your calendar [however you want.](https://github.com/patchthecode/JTAppleCalendar/issues/2) You want it, you build it
 - [x] [Complete Documentation](http://cocoadocs.org/docsets/JTAppleCalendar)
