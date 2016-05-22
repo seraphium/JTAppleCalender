@@ -75,7 +75,6 @@ extension JTAppleCalendarView {
         return dateSegment
     }
     
-    
     /// Let's the calendar know which cell xib to use for the displaying of it's date-cells.
     /// - Parameter name: The name of the xib of your cell design
     public func registerCellViewXib(fileName name: String) {

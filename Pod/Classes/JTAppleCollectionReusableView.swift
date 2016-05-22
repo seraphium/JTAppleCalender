@@ -13,6 +13,7 @@ protocol JTAppleCollectionReusableViewProtocol {
     func registeredHeaderViewToUse()-> String
 }
 
+/// The header view class of the calendar
 public class JTAppleCollectionReusableView: UICollectionReusableView {
     var view: JTAppleHeaderView!
 

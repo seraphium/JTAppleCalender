@@ -40,21 +40,21 @@ class ViewController: UIViewController {
         calendarView.dataSource = self
         calendarView.delegate = self
         
-        calendarView.registerCellViewXib(fileName: "CellView") // manditory
-//        calendarView.registerHeaderViewXibs(fileNames: ["PinkSectionHeaderView", "WhiteSectionHeaderView"]) // Optional
+        calendarView.registerCellViewXib(fileName: "CellView") // Registering your cell is manditory
+        calendarView.registerHeaderViewXibs(fileNames: ["PinkSectionHeaderView", "WhiteSectionHeaderView"]) // headers are Optional. You can register multiple if you want.
         
         // The following default code can be removed since they are already the default.
         // They are only included here so that you can know what properties can be configured
-//        calendarView.direction = .Vertical                         // default is horizontal
+        calendarView.direction = .Horizontal                       // default is horizontal
         calendarView.numberOfRowsPerMonth = 6                      // default is 6
         calendarView.cellInset = CGPoint(x: 0, y: 0)               // default is (3,3)
         calendarView.allowsMultipleSelection = false               // default is false
-        calendarView.bufferTop = 0                                 // default is 0. - still work in progress
-        calendarView.bufferBottom = 0                              // default is 0. - still work in progress
+        calendarView.bufferTop = 0                                 // default is 0. - still work in progress on this
+        calendarView.bufferBottom = 0                              // default is 0. - still work in progress on this
         calendarView.firstDayOfWeek = .Sunday                      // default is Sunday
         calendarView.scrollEnabled = true                          // default is true
-        calendarView.pagingEnabled = false                         // default is true
-        calendarView.scrollResistance = 0.75                       // default is 0.75 - this is only applicable when paging is not enabled
+        calendarView.pagingEnabled = true                          // default is true
+        calendarView.scrollResistance = 0.75                       // default is 0.75 - this is only applicable when paging is not enabled.
         calendarView.reloadData()
         
         let currentDate = calendarView.currentCalendarDateSegment()
@@ -135,18 +135,16 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
 
     func calendar(calendar: JTAppleCalendarView, didDeselectDate date: NSDate, cell: JTAppleDayCellView?, cellState: CellState) {
         (cell as? CellView)?.cellSelectionChanged(cellState)
-//        printSelectedDates()
     }
     
     func calendar(calendar: JTAppleCalendarView, didSelectDate date: NSDate, cell: JTAppleDayCellView?, cellState: CellState) {
         (cell as? CellView)?.cellSelectionChanged(cellState)
-//        printSelectedDates()
+        printSelectedDates()
     }
     
-    func calendar(calendar: JTAppleCalendarView, didScrollToDateSegmentStartingWith date: NSDate?, endingWithDate: NSDate?) {
-        if let startDate = date, endDate = endingWithDate {
-            setupViewsOfCalendar(startDate, endDate: endDate)
-        }
+    
+    func calendar(calendar: JTAppleCalendarView, didScrollToDateSegmentStartingWithdate startDate: NSDate, endingWithDate endDate: NSDate) {
+        setupViewsOfCalendar(startDate, endDate: endDate)
     }
     
     func calendar(calendar: JTAppleCalendarView, sectionHeaderIdentifierForDate date: (startDate: NSDate, endDate: NSDate)) -> String? {
@@ -169,10 +167,10 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
         switch identifier {
         case "WhiteSectionHeaderView":
             let headerCell = (header as? WhiteSectionHeaderView)
-            headerCell?.title.text = "Design your own header"
+            headerCell?.title.text = "Design multiple headers"
         default:
             let headerCell = (header as? PinkSectionHeaderView)
-            headerCell?.title.text = "However you want"
+            headerCell?.title.text = "In any color or size you want"
         }
     }
 }

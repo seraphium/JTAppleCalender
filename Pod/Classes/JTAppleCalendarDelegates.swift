@@ -12,13 +12,13 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
     /// Tells the delegate when the user finishes scrolling the content.
     public func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         if pagingEnabled {
+            (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pointForFocusItem = targetContentOffset.memory
             return
         }
         
         var contentOffset: CGFloat = 0,
         theTargetContentOffset: CGFloat = 0,
         directionVelocity: CGFloat = 0,
-        cellDragInterval: CGFloat = 0,
         contentSize: CGFloat = 0,
         frameSize: CGFloat = 0
 
@@ -26,19 +26,16 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
             contentOffset = scrollView.contentOffset.x
             theTargetContentOffset = targetContentOffset.memory.x
             directionVelocity = velocity.x
-            cellDragInterval = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.width
             contentSize = scrollView.contentSize.width
             frameSize = scrollView.frame.size.width
         } else {
             contentOffset = scrollView.contentOffset.y
             theTargetContentOffset = targetContentOffset.memory.y
             directionVelocity = velocity.y
-            cellDragInterval = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.height
             contentSize = scrollView.contentSize.height
             frameSize = scrollView.frame.size.height
         }
         
-        var nextIndex: CGFloat = 0
         let diff = abs(theTargetContentOffset - contentOffset)
         
         let calcTestPoint = {(velocity: CGFloat) -> CGPoint in
@@ -85,46 +82,36 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
         
         
         if (directionVelocity == 0) {
-            if headerViewXibs.count < 1 {  // If there are no headers
-//                calcTestPoint(directionVelocity)
-//                nextIndex = round(theTargetContentOffset / 2)
-//                targetContentOffset.memory = CGPointMake(0, calcTestPoint(directionVelocity))
-                return
-            } else { // If there are headers
-                guard let
-                        indexPath = calendarView.indexPathForItemAtPoint(calcTestPoint(directionVelocity)),
-                        attributes = calendarView.layoutAttributesForItemAtIndexPath(indexPath) else {
-                            return //                            print("Landed on a header")
-                }
-                
-                if self.direction == .Vertical {
-                    if theTargetContentOffset <= attributes.frame.origin.y + (attributes.frame.height / 2)  {
-                        let targetOffset = attributes.frame.origin.y
-                        targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
-                    } else {
-                        let targetOffset = attributes.frame.origin.y + attributes.frame.height
-                        targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
-                        
-                    }
+            guard let
+                    indexPath = calendarView.indexPathForItemAtPoint(calcTestPoint(directionVelocity)),
+                    attributes = calendarView.layoutAttributesForItemAtIndexPath(indexPath) else {
+                        return //                            print("Landed on a header")
+            }
+            
+            if self.direction == .Vertical {
+                if theTargetContentOffset <= attributes.frame.origin.y + (attributes.frame.height / 2)  {
+                    let targetOffset = attributes.frame.origin.y
+                    targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
                 } else {
-                    if theTargetContentOffset <= attributes.frame.origin.x + (attributes.frame.width / 2)  {
-                        let targetOffset = attributes.frame.origin.x
-                        targetContentOffset.memory = CGPoint(x: targetOffset, y: 0)
-                    } else {
-                        let targetOffset = attributes.frame.origin.x + attributes.frame.width
-                        targetContentOffset.memory = CGPoint(x: targetOffset, y: 0)
-                    }
+                    let targetOffset = attributes.frame.origin.y + attributes.frame.height
+                    targetContentOffset.memory = CGPoint(x: 0, y: targetOffset)
+                }
+            } else {
+                if theTargetContentOffset <= attributes.frame.origin.x + (attributes.frame.width / 2)  {
+                    let targetOffset = attributes.frame.origin.x
+                    targetContentOffset.memory = CGPoint(x: targetOffset, y: 0)
+                } else {
+                    let targetOffset = attributes.frame.origin.x + attributes.frame.width
+                    targetContentOffset.memory = CGPoint(x: targetOffset, y: 0)
                 }
             }
         } else if (directionVelocity > 0) { // scrolling down or left
             if contentOffset > (contentSize - frameSize) { return }
             setTestPoint(calcTestPoint(directionVelocity))
         } else { // Scrolling back up
-            if contentOffset < 1 {
-                return
+            if contentOffset >= 1 {
+                setTestPoint(calcTestPoint(directionVelocity))
             }
-            
-            setTestPoint(calcTestPoint(directionVelocity))
         }
         (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pointForFocusItem = targetContentOffset.memory
     }
@@ -137,37 +124,22 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
         
         delayedExecutionClosure?()
         delayedExecutionClosure = nil
+        
+        // Update the focus item whenever scrolled
+        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pointForFocusItem = scrollView.contentOffset
     }
     
     /// Tells the delegate that the scroll view has ended decelerating the scrolling movement.
     public func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        // Determing the section from the scrollView direction
-//        let section = currentSectionPage
-//        let itemIndex: Int
+        let currentSegmentDates = currentCalendarDateSegment()
+        self.delegate?.calendar(self, didScrollToDateSegmentStartingWithdate: currentSegmentDates.startDate, endingWithDate: currentSegmentDates.endDate)
         
-        // Calculate the index to be used in focus path
-//        if direction == .Horizontal {
-//            itemIndex = Int(round(calendarView.contentOffset.x / (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.width)) % MAX_NUMBER_OF_DAYS_IN_WEEK
-//        } else {
-//            itemIndex = (Int(round(calendarView.contentOffset.y / (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize.height)) * MAX_NUMBER_OF_DAYS_IN_WEEK) % (numberOfRowsPerMonth * MAX_NUMBER_OF_DAYS_IN_WEEK)
-//        }
-        // When ever the month/section is switched, let the flowlayout know which page it is on. This is needed in the event user switches orientatoin, we can use the index to snap back to correct position
-//        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pathForFocusItem = NSIndexPath(forItem: itemIndex, inSection: section)
-        if let currentSegmentDates = currentCalendarSegment() {
-            self.delegate?.calendar(self, didScrollToDateSegmentStartingWith: currentSegmentDates.startDate, endingWithDate: currentSegmentDates.endDate)
-        }
     }
 }
 
 // MARK: CollectionView delegates
 extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if headerViewXibs.count < 1 { return CGSizeZero }
-        let size = calendarViewHeaderSizeForSection(section)
-        return size
-    }
-    
-    
+    /// Asks your data source object to provide a supplementary view to display in the collection view.
     public func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
         let reuseIdentifier: String
         guard let date = dateFromSection(indexPath.section) else {
@@ -191,6 +163,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         return headerView
     }
     
+    /// Tells the delegate that the specified cell is about to be displayed in the collection view.
     public func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
         let dayCell = collectionView.dequeueReusableCellWithReuseIdentifier(cellReuseIdentifier, forIndexPath: indexPath) as! JTAppleDayCell
         dayCell.cellView.frame.size.width = dayCell.frame.size.width
@@ -278,22 +251,6 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         }
     }
     
-    public func collectionView(collectionView: UICollectionView,
-                               layout collectionViewLayout: UICollectionViewLayout,
-                               sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        
-        if let size = indexPathSectionItemSize where size.section == indexPath.section {
-            return size.itemSize
-        }
-        
-        let headerHeight = self.collectionView(self.calendarView, layout: self.calendarView.collectionViewLayout, referenceSizeForHeaderInSection: indexPath.section)
-        var currentItemSize = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize
-        let size = CGSize(width: currentItemSize.width, height: (calendarView.frame.height - headerHeight.height) / CGFloat(numberOfRows()))
-        indexPathSectionItemSize = (section: indexPath.section, itemSize: size)
-        return size
-
-    }
-    
     /// Asks the delegate if the specified item should be deselected. true if the item should be deselected or false if it should not.
     public func collectionView(collectionView: UICollectionView, shouldDeselectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
         if let
@@ -326,5 +283,27 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
             
             delegate.calendar(self, didSelectDate: dateSelectedByUser, cell: selectedCell?.cellView, cellState: cellState)
         }
+    }
+}
+
+extension JTAppleCalendarView:  UICollectionViewDelegateFlowLayout {
+    /// Asks the delegate for the size of the header view in the specified section.
+    public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        if headerViewXibs.count < 1 { return CGSizeZero }
+        let size = calendarViewHeaderSizeForSection(section)
+        return size
+    }
+    
+    /// Asks the delegate for the size of the specified item’s cell.
+    public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        if let size = indexPathSectionItemSize where size.section == indexPath.section {
+            return size.itemSize
+        }
+        
+        let headerHeight = self.collectionView(self.calendarView, layout: self.calendarView.collectionViewLayout, referenceSizeForHeaderInSection: indexPath.section)
+        let currentItemSize = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize
+        let size = CGSize(width: currentItemSize.width, height: (calendarView.frame.height - headerHeight.height) / CGFloat(numberOfRows()))
+        indexPathSectionItemSize = (section: indexPath.section, itemSize: size)
+        return size
     }
 }

@@ -46,7 +46,6 @@ public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalen
     
     weak var delegate: JTAppleCalendarDelegateProtocol?
 
-    
     /// Returns the content offset to use after an animation layout update or change.
     /// - Parameter proposedContentOffset: The proposed point for the upper-left corner of the visible content
     /// - returns: The content offset that you want to use instead
@@ -63,7 +62,7 @@ public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAp
     /// - Parameter proposedContentOffset: The proposed point for the upper-left corner of the visible content
     /// - returns: The content offset that you want to use instead
     public override func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint {
-        return pointForFocusItem
+        return proposedContentOffset
     }
     
     init(withDelegate delegate: JTAppleCalendarDelegateProtocol) {
@@ -71,18 +70,16 @@ public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAp
         self.delegate = delegate
     }
     
+    /// Returns an object initialized from data in a given unarchiver. self, initialized using the data in decoder.
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
 }
 
 
 
 /// The JTAppleCalendarFlowLayout class is a concrete layout object that organizes day-cells into a grid
 public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout {
-
-    
     init(withDelegate delegate: JTAppleCalendarDelegateProtocol) {
         super.init()
         self.delegate = delegate
@@ -182,23 +179,12 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             let offset = CGFloat(attributes.indexPath.section) * stride
             var xCellOffset : CGFloat = CGFloat(attributes.indexPath.item % 7) * self.itemSize.width
             xCellOffset += offset
-            
-            
-            
+
             if headerViewXibs.count > 0 {
                 if let sizeOfItem = delegate?.collectionView(collectionView, layout: self, sizeForItemAtIndexPath: attributes.indexPath) {
                     itemSize.height = sizeOfItem.height
                 }
             }
-            
-//            let headerHeight = delegate?.collectionView(collectionView, layout: self, referenceSizeForHeaderInSection: attributes.indexPath.section)
-//            if headerViewXibs.count > 0 && headerHeight != nil {
-//                
-//                
-//                itemSize.height = (collectionView.frame.height - headerHeight!.height) / CGFloat(numberOfRows)
-//            } else {
-//                assert(false, "error")
-//            }
             
             var yCellOffset : CGFloat = CGFloat(attributes.indexPath.item / 7) * self.itemSize.height
             
@@ -208,7 +194,6 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
                 }
             }
             
-
             attributes.frame = CGRectMake(xCellOffset, yCellOffset, self.itemSize.width, self.itemSize.height)
             attributes.bounds = CGRectMake(0, 0, self.itemSize.width, self.itemSize.height)
         }
@@ -223,8 +208,9 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         return size
     }
     
+    /// Returns the layout attributes for the specified supplementary view.
     public override func layoutAttributesForSupplementaryViewOfKind(elementKind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
-        var attributes = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: elementKind, withIndexPath: indexPath)
+        let attributes = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: elementKind, withIndexPath: indexPath)
         let size = delegate!.collectionView(collectionView!, layout: self, referenceSizeForHeaderInSection: indexPath.section)
         let modifiedSize = CGSize(width: collectionView!.frame.size.width, height: size.height)
         let stride = collectionView!.frame.size.width
