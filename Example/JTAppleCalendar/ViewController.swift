@@ -36,7 +36,9 @@ class ViewController: UIViewController {
         calendarView.delegate = self
         
         calendarView.registerCellViewXib(fileName: "CellView") // Registering your cell is manditory
-        calendarView.registerHeaderViewXibs(fileNames: ["PinkSectionHeaderView", "WhiteSectionHeaderView"]) // headers are Optional. You can register multiple if you want.
+        
+        // Enable the following code line to show headers. There are other lines of code to uncomment as well
+         calendarView.registerHeaderViewXibs(fileNames: ["PinkSectionHeaderView", "WhiteSectionHeaderView"]) // headers are Optional. You can register multiple if you want.
         
         // The following default code can be removed since they are already the default.
         // They are only included here so that you can know what properties can be configured
