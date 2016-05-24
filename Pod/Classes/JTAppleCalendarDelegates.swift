@@ -170,10 +170,6 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         restoreSelectionStateForCellAtIndexPath(indexPath)
         
         let dayCell = collectionView.dequeueReusableCellWithReuseIdentifier(cellReuseIdentifier, forIndexPath: indexPath) as! JTAppleDayCell
-
-        dayCell.bounds.origin.y = 0
-        dayCell.bounds.origin.x = 0
-        
         let date = dateFromPath(indexPath)!
         let cellState = cellStateFromIndexPath(indexPath, withDate: date)
         

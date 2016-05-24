@@ -195,7 +195,13 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             }
             
             attributes.frame = CGRectMake(xCellOffset, yCellOffset, self.itemSize.width, self.itemSize.height)
-            attributes.bounds = CGRectMake(0, 0, self.itemSize.width, self.itemSize.height)
+            if let visibleCell = collectionView.cellForItemAtIndexPath(attributes.indexPath) as? JTAppleDayCell {
+                // tell the cell to update its contents
+                visibleCell.updateCellView(visibleCell.cellView)
+
+                visibleCell.bounds.origin.y = 0
+                visibleCell.bounds.origin.x = 0                
+            }
         }
     }
     
