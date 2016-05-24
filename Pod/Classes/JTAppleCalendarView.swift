@@ -386,10 +386,10 @@ public class JTAppleCalendarView: UIView {
         }
     }
     
-//    override init(frame: CGRect) { // Jt101 why is this here?
-//        super.init(frame : CGRectMake(0.0, 0.0, 200.0, 200.0))
-//        self.initialSetup()
-//    }
+    override init(frame: CGRect) {
+        super.init(frame : frame)
+        self.initialSetup()
+    }
     
     
     /// Returns an object initialized from data in a given unarchiver. self, initialized using the data in decoder.
