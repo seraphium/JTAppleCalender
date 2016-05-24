@@ -386,7 +386,7 @@ public class JTAppleCalendarView: UIView {
         }
     }
     
-    override init(frame: CGRect) { // Jt101 why is this here?
+    override init(frame: CGRect) {
         super.init(frame : frame)
         self.initialSetup()
     }
