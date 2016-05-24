@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `JTAppleCalendar` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
-- `3.0.0` Releases - [3.0.0](#300)
+- `3.0.0` Releases - [3.0.0](#300)|[3.0.1](#301)
 
 #### 2.x Releases
 - `2.1.0` Releases - [2.1.0](#210)|[2.1.1](#211)|[2.1.2](#212)
@@ -14,6 +14,11 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100)
 
 ---
+## [3.0.1](https://github.com/patchthecode/JTAppleCalendar/releases/tag/3.0.1)
+- Fixed issue: Cell Inset was borken with 3.0.0 release
+- Fixed issue: canSelectDate always returned true. 
+  - Updated by [JayT](https://github.com/patchthecode).
+  
 ## [3.0.0](https://github.com/patchthecode/JTAppleCalendar/releases/tag/3.0.0)
 - Fixed: Issue [#20](https://github.com/patchthecode/JTAppleCalendar/issues/20). Layout should be set to needsUpdate when firstDayOfWeek changes
 - Update: Issue [#19](https://github.com/patchthecode/JTAppleCalendar/issues/19). DidScroll delegate will now only get called when user scolls. This makes clear system actions vs user actions.
