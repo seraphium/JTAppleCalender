@@ -263,7 +263,6 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
                 // ONLY if the counterPart cell is visible, then we need to inform the delegate
                 refreshIndexPathIfVisible(aSelectedCounterPartIndexPath)
             }
-            
             delegate.calendar(self, didSelectDate: dateSelectedByUser, cell: selectedCell?.cellView, cellState: cellState)
         }
     }

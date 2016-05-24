@@ -53,15 +53,6 @@ extension JTAppleCalendarView {
         }
         configureChangeOfRows()
     }
-
-    
-    /// Returns the calendar view's current section boundary dates.
-    /// - returns:
-    ///     - startDate: The start date of the current section
-    ///     - endDate: The end date of the current section
-    @available(*, deprecated=3.0, message="Since 3.0.0 Use currentCalendarDateSegment function instead") public func currentCalendarSegment() -> (startDate: NSDate, endDate: NSDate)? {
-        return dateFromSection(currentSectionPage)
-    }
     
     /// Returns the calendar view's current section boundary dates.
     /// - returns:
