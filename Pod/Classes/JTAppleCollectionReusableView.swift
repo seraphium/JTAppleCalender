@@ -39,9 +39,8 @@ public class JTAppleCollectionReusableView: UICollectionReusableView {
             assert(false )
             return
         }
-        
-        let vFrame = CGRectInset(self.frame, internalCellInset.x, internalCellInset.y)
-        view.frame = vFrame
+
+        view.frame = self.frame
         
         view.center = CGPoint(x: self.bounds.size.width * 0.5, y: self.bounds.size.height * 0.5)
         self.view = view

@@ -165,30 +165,14 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         return headerView
     }
     
-    /// Tells the delegate that the specified cell is about to be displayed in the collection view.
-    public func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-        let dayCell = collectionView.dequeueReusableCellWithReuseIdentifier(cellReuseIdentifier, forIndexPath: indexPath) as! JTAppleDayCell
-        dayCell.cellView.frame.size.width = dayCell.frame.size.width
-        dayCell.cellView.frame.size.height = dayCell.frame.size.height
-        dayCell.bounds.origin.y = 0
-        dayCell.bounds.origin.x = 0
-        dayCell.cellView.bounds.origin.y = 0
-        dayCell.cellView.bounds.origin.x = 0
-    }
-    
     /// Asks your data source object for the cell that corresponds to the specified item in the collection view.
     public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         restoreSelectionStateForCellAtIndexPath(indexPath)
         
         let dayCell = collectionView.dequeueReusableCellWithReuseIdentifier(cellReuseIdentifier, forIndexPath: indexPath) as! JTAppleDayCell
-        dayCell.cellView.frame.size.width = dayCell.frame.size.width
-        dayCell.cellView.frame.size.height = dayCell.frame.size.height
+
         dayCell.bounds.origin.y = 0
         dayCell.bounds.origin.x = 0
-        
-//        assert(dayCell.bounds.origin.x == 0)
-//        assert(dayCell.cellView.bounds.origin.y == 0)
-//        assert(dayCell.cellView.bounds.origin.x == 0)
         
         let date = dateFromPath(indexPath)!
         let cellState = cellStateFromIndexPath(indexPath, withDate: date)
