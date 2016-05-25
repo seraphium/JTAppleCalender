@@ -81,8 +81,58 @@ This is an incorrect way to build controls. It leaves the developer with an extr
 ### **The Solution: JTAppleCalendar**
 ---
 
-#### Want to get started? 
-[Check out the documentation](https://github.com/patchthecode/JTAppleCalendar/wiki)
+#### [Click here to check out a quick tutorial](https://github.com/patchthecode/JTAppleCalendar/wiki)
+
+#### Properties/functions/structs to help configure your calendar
+
+
+The following structure was returned when a cell is about to be displayed.
+
+```swift
+    public enum DateOwner: Int {
+        case ThisMonth = 0, PreviousMonthWithinBoundary, PreviousMonthOutsideBoundary, FollowingMonthWithinBoundary, FollowingMonthOutsideBoundary
+    }
+```
+
+
+* `.ThisMonth` = the date to be displayed belongs to the month section
+* `.PreviousMonthWithinBoundary` = date belongs to the previous month, and it is within the date boundary you set
+* `.PreviousMonthOutsideBoundary` = date belongs to previous month, and it is outside the boundary you have set
+* `.FollowingMonthWithinBoundary` = date belongs to following month, within boundary
+* `.FollowingMonthOutsideBoundary` = date belongs to following month, outside boundary
+
+
+
+```swift
+    public func changeNumberOfRowsPerMonthTo(number: Int, withFocusDate date: NSDate?) // After switching the number of rows shown, pick a date to autofocus on
+    public func reloadData()
+    public func scrollToNextSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil) 
+    public func scrollToPreviousSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
+    public func scrollToDate(date: NSDate, animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
+    public func selectDates(dates: [NSDate], triggerSelectionDelegate: Bool = true)
+    public func cellStatusForDateAtRow(row: Int, column: Int) -> CellState?
+```
+
+#### Properties you can configure
+```swift
+// Note: You do not need to configure your calendar with this if it is already the default
+calendarView.direction = .Horizontal                       // default is horizontal
+calendarView.numberOfRowsPerMonth = 6                      // default is 6
+calendarView.cellInset = CGPoint(x: 0, y: 0)               // default is (3,3)
+calendarView.allowsMultipleSelection = false               // default is false
+calendarView.bufferTop = 0                                 // default is 0. - still work in progress
+calendarView.bufferBottom = 0                              // default is 0. - still work in progress
+calendarView.firstDayOfWeek = .Sunday                      // default is Sunday
+calendarView.scrollEnabled = true                          // default is true
+calendarView.pagingEnabled = true                          // default is true
+calendarView.scrollResistance = 0.75                       // default is 0.75 - this is only applicable when paging is not enabled
+```
+
+Do you have any other questions?. If you are trying to bend heaven and earth to do something complicated with this calendar, then chances are there is already an easy way for it to be done. So [Opening an issue](https://github.com/patchthecode/JTAppleCalendar/issues/new) might be a good idea.
+
+Did you remember to leave a like? I would really appreciate it if you did. 
+
+Other functions/properties are coming. This is a very active project.
 
 
 ## Author
