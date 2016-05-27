@@ -413,6 +413,7 @@ public class JTAppleCalendarView: UIView {
         self.calendarView.registerClass(JTAppleDayCell.self,
                                         forCellWithReuseIdentifier: cellReuseIdentifier)
         
+        
         self.addSubview(self.calendarView)
     }
     
@@ -618,8 +619,9 @@ public class JTAppleCalendarView: UIView {
     }
     
     func xibFileValid() -> Bool {
+        return true //jt101 remove this
         //"Did you remember to register your xib file to JTAppleCalendarView? call the registerCellViewXib method on it because xib filename is nil"
-        guard let xibName =  cellViewXibName else { return false }
+        guard let xibName =  cellViewFromDeveloper else { return false }
         //"your nib file name \(cellViewXibName) could not be loaded)"
         guard let viewObject = NSBundle.mainBundle().loadNibNamed(xibName, owner: self, options: [:]) where viewObject.count > 0 else { return false }
         //"xib file class does not conform to the protocol<JTAppleDayCellViewProtocol>"
@@ -877,23 +879,6 @@ extension JTAppleCalendarView {
         
         return validCachedCalendar.dateByAddingComponents(dateComponents, toDate: startOfMonthCache, options: [])
     }
-    
-    func delayRunOnMainThread(delay:Double, closure:()->()) {
-        dispatch_after(
-            dispatch_time(
-                DISPATCH_TIME_NOW,
-                Int64(delay * Double(NSEC_PER_SEC))
-            ),
-            dispatch_get_main_queue(), closure)
-    }
-    
-    func delayRunOnGlobalThread(delay:Double, qos: qos_class_t,closure:()->()) {
-        dispatch_after(
-            dispatch_time(
-                DISPATCH_TIME_NOW,
-                Int64(delay * Double(NSEC_PER_SEC))
-            ), dispatch_get_global_queue(qos, 0), closure)
-    }
 }
 
 
@@ -912,6 +897,23 @@ public func ==(lhs: NSDate, rhs: NSDate) -> Bool {
 /// NSDates can be compared with the > and < operators
 public func <(lhs: NSDate, rhs: NSDate) -> Bool {
     return lhs.compare(rhs) == .OrderedAscending
+}
+
+func delayRunOnMainThread(delay:Double, closure:()->()) {
+    dispatch_after(
+        dispatch_time(
+            DISPATCH_TIME_NOW,
+            Int64(delay * Double(NSEC_PER_SEC))
+        ),
+        dispatch_get_main_queue(), closure)
+}
+
+func delayRunOnGlobalThread(delay:Double, qos: qos_class_t,closure:()->()) {
+    dispatch_after(
+        dispatch_time(
+            DISPATCH_TIME_NOW,
+            Int64(delay * Double(NSEC_PER_SEC))
+        ), dispatch_get_global_queue(qos, 0), closure)
 }
 
 extension NSDate: Comparable { }

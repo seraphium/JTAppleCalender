@@ -107,6 +107,8 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         var startSection = (startColumn + 1) / 7
         var endSection = startSection + requestSections
         
+
+        
 //        print("requestedWidth: \(requestedWidth) itemSize: \(itemSize) = \(requestedWidth / itemSize.width)")
 //        print("requestedColumns: \(requestedColumns)")
 //        print("range: \(endColumn - startColumn)")
@@ -146,6 +148,10 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
                 }
             }
         }
+        
+//        print("requestedColumns: \(requestedColumns)")
+//        print("startColumn     : \(startColumn)")
+//        print("endColumn       : \(endColumn)")
         
         for index in 0..<numberOfRows {
             for columnNumber in startColumn..<endColumn {
@@ -194,17 +200,21 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
                 }
             }
             
+
+            
             attributes.frame = CGRectMake(xCellOffset, yCellOffset, self.itemSize.width, self.itemSize.height)
+            
+            
+            
             if let visibleCell = collectionView.cellForItemAtIndexPath(attributes.indexPath) as? JTAppleDayCell {
                 // tell the cell to update its contents
-                visibleCell.updateCellView(visibleCell.cellView)
-
                 visibleCell.bounds.origin.y = 0
-                visibleCell.bounds.origin.x = 0                
+                visibleCell.bounds.origin.x = 0
+ 
+                visibleCell.updateCellView(visibleCell.cellView) // Jt101 need to look into this
             }
         }
     }
-    
     
     /// Returns the width and height of the collection view’s contents. The width and height of the collection view’s contents.
     public override func collectionViewContentSize() -> CGSize {

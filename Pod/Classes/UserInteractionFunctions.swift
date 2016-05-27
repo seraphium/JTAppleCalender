@@ -69,8 +69,15 @@ extension JTAppleCalendarView {
     /// Let's the calendar know which cell xib to use for the displaying of it's date-cells.
     /// - Parameter name: The name of the xib of your cell design
     public func registerCellViewXib(fileName name: String) {
-        cellViewXibName = name
+        cellViewIsClass = false
+        cellViewFromDeveloper = name
     }
+    
+    public func registerCellViewClass(fileName name: String) {
+        cellViewIsClass = true
+        cellViewFromDeveloper = name
+    }
+    
     
     /// Register header views with the calender. This needs to be done before the view can be displayed
     /// - Parameter fileNames: A dictionary containing [headerViewNames:HeaderviewSizes]

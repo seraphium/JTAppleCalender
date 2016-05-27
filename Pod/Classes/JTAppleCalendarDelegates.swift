@@ -135,6 +135,8 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
         self.delegate?.calendar(self, didScrollToDateSegmentStartingWithdate: currentSegmentDates.startDate, endingWithDate: currentSegmentDates.endDate)
         
     }
+    
+
 }
 
 // MARK: CollectionView delegates
@@ -147,6 +149,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
             return UICollectionReusableView()
         }
         
+        // Get the reuse identifier
         if headerViewXibs.count == 1 {
             reuseIdentifier = headerViewXibs[0]
         } else {
@@ -170,10 +173,21 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         restoreSelectionStateForCellAtIndexPath(indexPath)
         
         let dayCell = collectionView.dequeueReusableCellWithReuseIdentifier(cellReuseIdentifier, forIndexPath: indexPath) as! JTAppleDayCell
+        
+        
         let date = dateFromPath(indexPath)!
         let cellState = cellStateFromIndexPath(indexPath, withDate: date)
         
         delegate?.calendar(self, isAboutToDisplayCell: dayCell.cellView, date: date, cellState: cellState)
+        
+        dayCell.updateCellView(dayCell.cellView)
+        
+//        print("\n\(dayCell.frame)")
+//        print(indexPath)
+//        print("cFrame \(dayCell.frame) -- \(indexPath)")
+//        print("dFrame \(dayCell.cellView.frame) -- \(indexPath)")
+//        print("cBounds\(dayCell.bounds) -- \(indexPath)")
+//        print("dBounds\(dayCell.cellView.bounds) -- \(indexPath)\n")
         
         return dayCell
     }
@@ -244,6 +258,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
     }
     /// Tells the delegate that the item at the specified index path was selected. The collection view calls this method when the user successfully selects an item in the collection view. It does not call this method when you programmatically set the selection.
     public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        print(indexPath)
         if let
             delegate = self.delegate,
             dateSelectedByUser = dateFromPath(indexPath) {
