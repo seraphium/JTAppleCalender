@@ -237,7 +237,7 @@ extension JTAppleCalendarView {
             calendarView.scrollToItemAtIndexPath(NSIndexPath(forItem: 0, inSection:page - 1), atScrollPosition: position, animated: animateScroll)
         }
     }
-    
+
     /// Scrolls the calendar view to the start of a section view containing a specified date.
     /// - Paramater date: The calendar view will scroll to a date-cell containing this date if it exists
     /// - Paramater animateScroll: Bool indicating if animation should be enabled
@@ -252,19 +252,21 @@ extension JTAppleCalendarView {
         let components = validCachedCalendar.components([.Year, .Month, .Day],  fromDate: date)
         let firstDayOfDate = validCachedCalendar.dateFromComponents(components)!
         
-        if !(firstDayOfDate >= startOfMonthCache && firstDayOfDate <= endOfMonthCache) {
-            return
-        }
-        
-        let retrievedPathsFromDates = pathsFromDates([date])
-        
-        if retrievedPathsFromDates.count > 0 {
-            let sectionIndexPath =  pathsFromDates([date])[0]
-            delayedExecutionClosure = completionHandler
+        scrollInProgress = true
+        delayRunOnMainThread(0.0, closure: {
+            // This part should be inside the mainRunLoop
+            if !(firstDayOfDate >= self.startOfMonthCache && firstDayOfDate <= self.endOfMonthCache) {
+                self.scrollInProgress = false
+                return
+            }
             
-            let position: UICollectionViewScrollPosition = self.direction == .Horizontal ? .Left : .Top
-            delayRunOnMainThread(0.0, closure: {
+            let retrievedPathsFromDates = self.pathsFromDates([date])
+            
+            if retrievedPathsFromDates.count > 0 {
+                let sectionIndexPath =  self.pathsFromDates([date])[0]
+                self.delayedExecutionClosure = completionHandler
                 
+                let position: UICollectionViewScrollPosition = self.direction == .Horizontal ? .Left : .Top
                 if self.pagingEnabled {
                     if headerViewXibs.count > 0 {
                         // If both paging and header is on, then scroll to the actual date
@@ -294,8 +296,9 @@ extension JTAppleCalendarView {
                 if  !animateScroll {
                     self.scrollViewDidEndScrollingAnimation(self.calendarView)
                 }
-            })
-        }
+            }
+            self.scrollInProgress = false
+        })
     }
     
     /// Scrolls the calendar view to the start of a section view header. If the calendar has no headers registered, then this function does nothing

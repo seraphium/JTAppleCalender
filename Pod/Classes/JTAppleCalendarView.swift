@@ -196,6 +196,8 @@ public class JTAppleCalendarView: UIView {
         }
     }
     
+    var scrollInProgress = false
+    
     private var layoutNeedsUpdating = false
     /// Number of rows to be displayed per month. Allowed values are 1, 2, 3 & 6.
     /// After changing this value, you should reload your calendarView to show your change
@@ -527,7 +529,9 @@ public class JTAppleCalendarView: UIView {
         guard let dateToScrollTo = scrollToDatePathOnRowChange else {
             // If the date is invalid just scroll to the the first item on the view or scroll to the start of a header (if header is enabled)
             if headerViewXibs.count < 1 {
-                scrollToDate(startOfMonthCache, triggerScrollToDateDelegate: false)
+                if !scrollInProgress { // Make sure this scroll only gets activated if no other scroll is in queue
+                    scrollToDate(startOfMonthCache, triggerScrollToDateDelegate: false)
+                }
             } else {
                 scrollToHeaderForDate(startOfMonthCache)
             }
@@ -536,7 +540,7 @@ public class JTAppleCalendarView: UIView {
         
         delayRunOnMainThread(0.0, closure: { () -> () in
             self.scrollToDate(dateToScrollTo, triggerScrollToDateDelegate: true) // Delegate should be called here. User set the scroll to date
-            self.scrollToDatePathOnRowChange = nil
+            self.scrollToDatePathOnRowChange = nil // jt101 try moving this out to parent caller
         })
     }
     
