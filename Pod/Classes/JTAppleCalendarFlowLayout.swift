@@ -23,7 +23,7 @@ protocol JTAppleCalendarDelegateProtocol: class {
     func numberOfRows() -> Int
     func numberOfColumns() -> Int
     func numberOfsectionsPermonth() -> Int
-    func numberOfSections() -> Int
+    func numberOfMonthsInCalendar() -> Int
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
 }
@@ -40,7 +40,7 @@ public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalen
     var minimumLineSpacing: CGFloat = 0
     
     var numberOfColumns: Int { get { return delegate!.numberOfColumns() } }
-    var numberOfSections: Int { get { return delegate!.numberOfSections() } }
+    var numberOfMonthsInCalendar: Int { get { return delegate!.numberOfMonthsInCalendar() } }
     var numberOfSectionsPerMonth: Int { get { return delegate!.numberOfsectionsPermonth() } }
     var numberOfRows: Int { get { return delegate!.numberOfRows() } }
     
@@ -80,6 +80,9 @@ public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAp
 
 /// The JTAppleCalendarFlowLayout class is a concrete layout object that organizes day-cells into a grid
 public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout {
+    
+    var cache: [Int:[UICollectionViewLayoutAttributes]] = [:]
+    
     init(withDelegate delegate: JTAppleCalendarDelegateProtocol) {
         super.init()
         self.delegate = delegate
@@ -93,6 +96,34 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         super.init(coder: aDecoder)
     }
     
+    public override func prepareLayout() {
+        if !cache.isEmpty {
+            return
+        }
+        
+        let maxSections = numberOfMonthsInCalendar * numberOfSectionsPerMonth
+        let maxColumns = maxSections * MAX_NUMBER_OF_DAYS_IN_WEEK
+
+        for index in 0..<numberOfRows {
+            for columnNumber in 0..<maxColumns {
+                let section = columnNumber / numberOfColumns
+                let sectionIndex = (columnNumber % numberOfColumns) + (index * numberOfColumns)
+                let indexPath = NSIndexPath(forItem: sectionIndex, inSection: section)
+                
+                if let attribute = layoutAttributesForItemAtIndexPath(indexPath) {
+                    if cache[section] == nil {
+                        cache[section] = []
+                    }
+                    
+                    cache[section]!.append(attribute)
+                    
+                } else {
+                    print("error")
+                }
+            }
+        }
+    }
+    
     /// Returns the layout attributes for all of the cells and views in the specified rectangle.
     override public func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         // Determine how many columns needs to be displayed
@@ -104,10 +135,6 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         var startColumn = Int(rect.origin.x / itemSize.width)
         var endColumn = startColumn + requestedColumns
         
-        var startSection = (startColumn + 1) / 7
-        var endSection = startSection + requestSections
-        
-
         
 //        print("requestedWidth: \(requestedWidth) itemSize: \(itemSize) = \(requestedWidth / itemSize.width)")
 //        print("requestedColumns: \(requestedColumns)")
@@ -115,7 +142,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
 //        print("startColumn: \(startColumn)")
 //        print("endColumn: \(endColumn)")
         
-        let maxSections = numberOfSections * numberOfSectionsPerMonth
+        let maxSections = numberOfMonthsInCalendar * numberOfSectionsPerMonth
         let maxColumns = maxSections * 7
         
         
@@ -127,17 +154,29 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
 
         var attributes: [UICollectionViewLayoutAttributes] = []
         
+        var startSection = (startColumn + 1) / 7
+        var endSection = startSection + requestSections
+        
+        
+        if endSection >= maxSections {
+            endSection = maxSections - 1
+        }
+        if startSection >= endSection {
+            startSection = endSection - 1
+        }
+        if startSection < 0 {
+            startSection = 0
+        }
+
+        for index in startSection...endSection {
+            let cachedVal = cache[index]!
+            attributes.appendContentsOf(cachedVal)
+        }
+        
         if headerViewXibs.count > 0 {
-            if endSection >= maxSections {
-                endSection = maxSections - 1
-            }
-            if startSection >= endSection {
-                startSection = endSection - 1
-            }
-            if startSection < 0 {
-                startSection = 0
-            }
-            
+            print(startSection)
+            print(endSection)
+            print(abs(endSection - startSection))
             for index in startSection...endSection {
                 let sectionIndexPath = NSIndexPath(forItem: 0, inSection: index)
                 if let aHeaderAttr = layoutAttributesForSupplementaryViewOfKind(UICollectionElementKindSectionHeader, atIndexPath: sectionIndexPath) {
@@ -149,24 +188,25 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             }
         }
         
-//        print("requestedColumns: \(requestedColumns)")
-//        print("startColumn     : \(startColumn)")
-//        print("endColumn       : \(endColumn)")
-        
-        for index in 0..<numberOfRows {
-            for columnNumber in startColumn..<endColumn {
-                let section = columnNumber / numberOfColumns
-                let sectionIndex = (columnNumber % numberOfColumns) + (index * numberOfColumns)
-                let indexPath = NSIndexPath(forItem: sectionIndex, inSection: section)
-
-                if let attribute = layoutAttributesForItemAtIndexPath(indexPath) {
-                    attributes.append(attribute)
-                } else {
-                    print("error")
-                }
-            }
-        }
         return attributes
+        
+        //        print("requestedColumns: \(requestedColumns)")
+        //        print("startColumn     : \(startColumn)")
+        //        print("endColumn       : \(endColumn)")
+        
+        //        for index in 0..<numberOfRows {
+        //            for columnNumber in startColumn..<endColumn {
+        //                let section = columnNumber / numberOfColumns
+        //                let sectionIndex = (columnNumber % numberOfColumns) + (index * numberOfColumns)
+        //                let indexPath = NSIndexPath(forItem: sectionIndex, inSection: section)
+        //
+        //                if let attribute = layoutAttributesForItemAtIndexPath(indexPath) {
+        //                    attributes.append(attribute)
+        //                } else {
+        //                    print("error")
+        //                }
+        //            }
+        //        }
     }
     /// Returns the layout attributes for the item at the specified index path. A layout attributes object containing the information to apply to the item’s cell.
     override  public func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
@@ -194,7 +234,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             
             var yCellOffset : CGFloat = CGFloat(attributes.indexPath.item / 7) * self.itemSize.height
             
-            if headerViewXibs.count > 0{
+            if headerViewXibs.count > 0 {
                 if let headerHeight = delegate?.collectionView(collectionView, layout: self, referenceSizeForHeaderInSection: attributes.indexPath.section) {
                     yCellOffset += headerHeight.height
                 }
@@ -220,7 +260,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
     public override func collectionViewContentSize() -> CGSize {
         var size = super.collectionViewContentSize()
         
-        size.width = self.collectionView!.bounds.size.width * CGFloat(numberOfSections * numberOfSectionsPerMonth)
+        size.width = self.collectionView!.bounds.size.width * CGFloat(numberOfMonthsInCalendar * numberOfSectionsPerMonth)
         return size
     }
     

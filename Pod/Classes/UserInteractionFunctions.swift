@@ -124,16 +124,12 @@ extension JTAppleCalendarView {
     /// - Parameter date: The date-cell with this date will be selected
     /// - Parameter triggerDidSelectDelegate: Triggers the delegate function only if the value is set to true. Sometimes it is necessary to setup some dates without triggereing the delegate e.g. For instance, when youre initally setting up data in your viewDidLoad
     public func selectDates(dates: [NSDate], triggerSelectionDelegate: Bool = true) {
-        guard let validCachedCalendar = self.calendar else {
-            return
-        }
-        
         var allIndexPathsToReload: [NSIndexPath] = []
         
         delayRunOnMainThread(0.0) {
             for date in dates {
-                let components = validCachedCalendar.components([.Year, .Month, .Day],  fromDate: date)
-                let firstDayOfDate = validCachedCalendar.dateFromComponents(components)!
+                let components = self.calendar.components([.Year, .Month, .Day],  fromDate: date)
+                let firstDayOfDate = self.calendar.dateFromComponents(components)!
                 
                 if !(firstDayOfDate >= self.startOfMonthCache && firstDayOfDate <= self.endOfMonthCache) {
                     // If the date is not within valid boundaries, then exit
@@ -243,14 +239,10 @@ extension JTAppleCalendarView {
     /// - Paramater animateScroll: Bool indicating if animation should be enabled
     /// - Parameter completionHandler: A completion handler that will be executed at the end of the scroll animation
     public func scrollToDate(date: NSDate, triggerScrollToDateDelegate: Bool = true, animateScroll: Bool = true, completionHandler:(()->Void)? = nil) {
-        guard let validCachedCalendar = calendar else {
-            return
-        }
-        
         self.triggerScrollToDateDelegate = triggerScrollToDateDelegate
         
-        let components = validCachedCalendar.components([.Year, .Month, .Day],  fromDate: date)
-        let firstDayOfDate = validCachedCalendar.dateFromComponents(components)!
+        let components = calendar.components([.Year, .Month, .Day],  fromDate: date)
+        let firstDayOfDate = calendar.dateFromComponents(components)!
         
         scrollInProgress = true
         delayRunOnMainThread(0.0, closure: {
