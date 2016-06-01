@@ -16,7 +16,8 @@ protocol JTAppleCalendarLayoutProtocol: class {
     var minimumInteritemSpacing: CGFloat {get set}
     var minimumLineSpacing: CGFloat {get set}
     
-    var cache: [Int:[UICollectionViewLayoutAttributes]] {get set}
+    var cellCache: [Int:[UICollectionViewLayoutAttributes]] {get set}
+    var headerCache: [UICollectionViewLayoutAttributes] {get set}
     
     func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint
     func clearCache()
@@ -49,7 +50,9 @@ public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalen
     var numberOfDaysPerSection: Int { get { return delegate!.numberOfDaysPerSection() } }
     var numberOfRows: Int { get { return delegate!.numberOfRows() } }
     
-    var cache: [Int:[UICollectionViewLayoutAttributes]] = [:]
+    var cellCache: [Int:[UICollectionViewLayoutAttributes]] = [:]
+    var headerCache: [UICollectionViewLayoutAttributes] = []
+
     
     
     
@@ -63,7 +66,8 @@ public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalen
     }
     
     func clearCache() {
-        cache.removeAll()
+        headerCache.removeAll()
+        cellCache.removeAll()
     }
     
 }
@@ -91,28 +95,34 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
     }
     
     public override func prepareLayout() {
-        if !cache.isEmpty {
+        if !cellCache.isEmpty {
             return
         }
         
         maxSections = numberOfMonthsInCalendar * numberOfSectionsPerMonth
         daysPerSection = numberOfDaysPerSection
 
-        
+        // // Generate and cache the headers
         for section in 0..<maxSections {
+            // generate header views
+            let sectionIndexPath = NSIndexPath(forItem: 0, inSection: section)
+            if let aHeaderAttr = layoutAttributesForSupplementaryViewOfKind(UICollectionElementKindSectionHeader, atIndexPath: sectionIndexPath) {
+                headerCache.append(aHeaderAttr)
+            }
+            
+            // Generate and cache the cells
             for item in 0..<daysPerSection {
                 let indexPath = NSIndexPath(forItem: item, inSection: section)
                 if let attribute = layoutAttributesForItemAtIndexPath(indexPath) {
-                    if cache[section] == nil {
-                        cache[section] = []
+                    if cellCache[section] == nil {
+                        cellCache[section] = []
                     }
-                    cache[section]!.append(attribute)
+                    cellCache[section]!.append(attribute)
                 } else {
-                    print("error")
+                    print("error.")
                 }
             }
         }
-        
     }
     
     /// Returns the layout attributes for all of the cells and views in the specified rectangle.
@@ -146,7 +156,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         for column in startColumn..<endColumn {
             let section = column / numberOfColumns
             
-            if let sectData = cache[section] {
+            if let sectData = cellCache[section] {
                 for val in sectData {
                     if CGRectIntersectsRect(val.frame, rect) {
                         attributes.append(val)
@@ -154,17 +164,11 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
                 }
             }
         }
-        
 
-        
         if headerViewXibs.count > 0 {
             for index in startSection...endSection {
-                let sectionIndexPath = NSIndexPath(forItem: 0, inSection: index)
-                if let aHeaderAttr = layoutAttributesForSupplementaryViewOfKind(UICollectionElementKindSectionHeader, atIndexPath: sectionIndexPath) {
-                    attributes.append(aHeaderAttr)
-                    
-                } else {
-                    print("error")
+                if CGRectIntersectsRect(headerCache[index].frame, rect) {
+                    attributes.append(headerCache[index])
                 }
             }
         }
