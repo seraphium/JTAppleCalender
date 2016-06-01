@@ -1,5 +1,5 @@
 //
-//  JTAppleCalendarFlowLayout.swift
+//  JTAppleCalendarHorizontalFlowLayout.swift
 //  JTAppleCalendar
 //
 //  Created by Jay Thomas on 2016-03-01.
@@ -16,7 +16,10 @@ protocol JTAppleCalendarLayoutProtocol: class {
     var minimumInteritemSpacing: CGFloat {get set}
     var minimumLineSpacing: CGFloat {get set}
     
+    var cache: [Int:[UICollectionViewLayoutAttributes]] {get set}
+    
     func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint
+    func clearCache()
 }
 
 protocol JTAppleCalendarDelegateProtocol: class {
@@ -24,6 +27,7 @@ protocol JTAppleCalendarDelegateProtocol: class {
     func numberOfColumns() -> Int
     func numberOfsectionsPermonth() -> Int
     func numberOfMonthsInCalendar() -> Int
+    func numberOfDaysPerSection() -> Int
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
 }
@@ -42,8 +46,13 @@ public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalen
     var numberOfColumns: Int { get { return delegate!.numberOfColumns() } }
     var numberOfMonthsInCalendar: Int { get { return delegate!.numberOfMonthsInCalendar() } }
     var numberOfSectionsPerMonth: Int { get { return delegate!.numberOfsectionsPermonth() } }
+    var numberOfDaysPerSection: Int { get { return delegate!.numberOfDaysPerSection() } }
     var numberOfRows: Int { get { return delegate!.numberOfRows() } }
     
+    var cache: [Int:[UICollectionViewLayoutAttributes]] = [:]
+    
+    
+    
     weak var delegate: JTAppleCalendarDelegateProtocol?
 
     /// Returns the content offset to use after an animation layout update or change.
@@ -52,36 +61,21 @@ public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalen
     public override func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint {
         return proposedContentOffset
     }
+    
+    func clearCache() {
+        cache.removeAll()
+    }
+    
 }
-/// Vertical flow layout for calendar view
-public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAppleCalendarLayoutProtocol {
-    var pointForFocusItem: CGPoint = CGPointZero
-    weak var delegate: JTAppleCalendarDelegateProtocol?
-    
-    /// Returns the content offset to use after an animation layout update or change.
-    /// - Parameter proposedContentOffset: The proposed point for the upper-left corner of the visible content
-    /// - returns: The content offset that you want to use instead
-    public override func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint {
-        return proposedContentOffset
-    }
-    
-    init(withDelegate delegate: JTAppleCalendarDelegateProtocol) {
-        super.init()
-        self.delegate = delegate
-    }
-    
-    /// Returns an object initialized from data in a given unarchiver. self, initialized using the data in decoder.
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-}
-
 
 
 /// The JTAppleCalendarFlowLayout class is a concrete layout object that organizes day-cells into a grid
 public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout {
     
-    var cache: [Int:[UICollectionViewLayoutAttributes]] = [:]
+    
+    var maxSections: Int = 0
+    var daysPerSection: Int = 0
+    
     
     init(withDelegate delegate: JTAppleCalendarDelegateProtocol) {
         super.init()
@@ -101,49 +95,37 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             return
         }
         
-        let maxSections = numberOfMonthsInCalendar * numberOfSectionsPerMonth
-        let maxColumns = maxSections * MAX_NUMBER_OF_DAYS_IN_WEEK
+        maxSections = numberOfMonthsInCalendar * numberOfSectionsPerMonth
+        daysPerSection = numberOfDaysPerSection
 
-        for index in 0..<numberOfRows {
-            for columnNumber in 0..<maxColumns {
-                let section = columnNumber / numberOfColumns
-                let sectionIndex = (columnNumber % numberOfColumns) + (index * numberOfColumns)
-                let indexPath = NSIndexPath(forItem: sectionIndex, inSection: section)
-                
+        
+        for section in 0..<maxSections {
+            for item in 0..<daysPerSection {
+                let indexPath = NSIndexPath(forItem: item, inSection: section)
                 if let attribute = layoutAttributesForItemAtIndexPath(indexPath) {
                     if cache[section] == nil {
                         cache[section] = []
                     }
-                    
                     cache[section]!.append(attribute)
-                    
                 } else {
                     print("error")
                 }
             }
         }
+        
     }
     
     /// Returns the layout attributes for all of the cells and views in the specified rectangle.
     override public func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         // Determine how many columns needs to be displayed
-        let requestedWidth = rect.width
         
-        let requestedColumns = Int(requestedWidth / itemSize.width) + 2
-        let requestSections = (requestedColumns / numberOfColumns) + 1
+        let requestedColumns = Int(ceil(rect.width / itemSize.width))
         
-        var startColumn = Int(rect.origin.x / itemSize.width)
+        let requestSections = requestedColumns / numberOfColumns
+        
+        var startColumn = Int(floor(rect.origin.x / itemSize.width))
         var endColumn = startColumn + requestedColumns
-        
-        
-//        print("requestedWidth: \(requestedWidth) itemSize: \(itemSize) = \(requestedWidth / itemSize.width)")
-//        print("requestedColumns: \(requestedColumns)")
-//        print("range: \(endColumn - startColumn)")
-//        print("startColumn: \(startColumn)")
-//        print("endColumn: \(endColumn)")
-        
-        let maxSections = numberOfMonthsInCalendar * numberOfSectionsPerMonth
-        let maxColumns = maxSections * 7
+        let maxColumns = maxSections * numberOfColumns
         
         
         if endColumn > maxColumns {
@@ -156,27 +138,26 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         
         var startSection = (startColumn + 1) / 7
         var endSection = startSection + requestSections
-        
-        
-        if endSection >= maxSections {
-            endSection = maxSections - 1
-        }
-        if startSection >= endSection {
-            startSection = endSection - 1
-        }
-        if startSection < 0 {
-            startSection = 0
-        }
 
-        for index in startSection...endSection {
-            let cachedVal = cache[index]!
-            attributes.appendContentsOf(cachedVal)
+        if endSection >= maxSections { endSection = maxSections - 1 }
+        if startSection >= endSection { startSection = endSection - 1 }
+        if startSection < 0 { startSection = 0 }
+    
+        for column in startColumn..<endColumn {
+            let section = column / numberOfColumns
+            
+            if let sectData = cache[section] {
+                for val in sectData {
+                    if CGRectIntersectsRect(val.frame, rect) {
+                        attributes.append(val)
+                    }
+                }
+            }
         }
+        
+
         
         if headerViewXibs.count > 0 {
-            print(startSection)
-            print(endSection)
-            print(abs(endSection - startSection))
             for index in startSection...endSection {
                 let sectionIndexPath = NSIndexPath(forItem: 0, inSection: index)
                 if let aHeaderAttr = layoutAttributesForSupplementaryViewOfKind(UICollectionElementKindSectionHeader, atIndexPath: sectionIndexPath) {
@@ -189,25 +170,8 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         }
         
         return attributes
-        
-        //        print("requestedColumns: \(requestedColumns)")
-        //        print("startColumn     : \(startColumn)")
-        //        print("endColumn       : \(endColumn)")
-        
-        //        for index in 0..<numberOfRows {
-        //            for columnNumber in startColumn..<endColumn {
-        //                let section = columnNumber / numberOfColumns
-        //                let sectionIndex = (columnNumber % numberOfColumns) + (index * numberOfColumns)
-        //                let indexPath = NSIndexPath(forItem: sectionIndex, inSection: section)
-        //
-        //                if let attribute = layoutAttributesForItemAtIndexPath(indexPath) {
-        //                    attributes.append(attribute)
-        //                } else {
-        //                    print("error")
-        //                }
-        //            }
-        //        }
     }
+    
     /// Returns the layout attributes for the item at the specified index path. A layout attributes object containing the information to apply to the item’s cell.
     override  public func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
         let attr = UICollectionViewLayoutAttributes(forCellWithIndexPath: indexPath)
@@ -240,19 +204,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
                 }
             }
             
-
-            
             attributes.frame = CGRectMake(xCellOffset, yCellOffset, self.itemSize.width, self.itemSize.height)
-            
-            
-            
-            if let visibleCell = collectionView.cellForItemAtIndexPath(attributes.indexPath) as? JTAppleDayCell {
-                // tell the cell to update its contents
-                visibleCell.bounds.origin.y = 0
-                visibleCell.bounds.origin.x = 0
- 
-                visibleCell.updateCellView(visibleCell.cellView) // Jt101 need to look into this
-            }
         }
     }
     
