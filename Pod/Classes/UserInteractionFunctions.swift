@@ -110,7 +110,7 @@ extension JTAppleCalendarView {
     
     /// Reloads the data on the calendar view
     public func reloadData() {
-        reloadData(true)
+        reloadData(checkDelegateDataSource: true)
     }
     
     /// Reload the date of specified date-cells on the calendar-view
@@ -256,7 +256,9 @@ extension JTAppleCalendarView {
             
             if retrievedPathsFromDates.count > 0 {
                 let sectionIndexPath =  self.pathsFromDates([date])[0]
-                self.delayedExecutionClosure = completionHandler
+                if let validCompletionHandler = completionHandler {
+                    self.delayedExecutionClosure.append(validCompletionHandler)
+                }
                 
                 let position: UICollectionViewScrollPosition = self.direction == .Horizontal ? .Left : .Top
                 if self.pagingEnabled {

@@ -158,9 +158,10 @@ public class JTAppleCalendarView: UIView {
     /// The scroll direction of the sections in JTAppleCalendar.
     public var direction : UICollectionViewScrollDirection = .Horizontal {
         didSet {
+            if oldValue == direction { return }
             let layout = generateNewLayout()
             calendarView.collectionViewLayout = layout
-            reloadData(false)
+            reloadData(checkDelegateDataSource: false)
         }
     }
     /// Enables/Disables multiple selection on JTAppleCalendar
@@ -210,25 +211,22 @@ public class JTAppleCalendarView: UIView {
             }
         }
         
-        get {
-            return cachedConfiguration.numberOfRows
-        }
+        get { return cachedConfiguration.numberOfRows }
     }
     /// The object that acts as the data source of the calendar view.
     public var dataSource : JTAppleCalendarViewDataSource? {
         didSet {
-            if monthInfo.count < 1 {
-                monthInfo = setupMonthInfoDataForStartAndEndDate()
-            }
-            reloadData(false)
+            monthInfo = setupMonthInfoDataForStartAndEndDate()
+            reloadData(checkDelegateDataSource: false)
         }
     }
     /// The object that acts as the delegate of the calendar view.
     public var delegate: JTAppleCalendarViewDelegate?
 
     var dateComponents = NSDateComponents()
-    var delayedExecutionClosure: (()->Void)?
+    var delayedExecutionClosure: [(()->Void)] = []
     var scrollToDatePathOnRowChange: NSDate?
+    var lastOrientation: UIDeviceOrientation?
     
     var currentSectionPage: Int {
         let cvbounds = self.calendarView.bounds
@@ -363,8 +361,19 @@ public class JTAppleCalendarView: UIView {
     /// The frame rectangle which defines the view's location and size in its superview coordinate system.
     override public var frame: CGRect {
         didSet {
+            
             calendarView.frame = CGRect(x:0.0, y:bufferTop, width: self.frame.size.width, height:self.frame.size.height - bufferBottom)
-            calendarView.collectionViewLayout.invalidateLayout()
+            
+            let orientation = UIDevice.currentDevice().orientation
+            if orientation == .Unknown { return }
+            if lastOrientation != orientation {
+                lastOrientation = orientation
+                calendarView.collectionViewLayout.invalidateLayout()
+                let layout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
+                layout.clearCache()
+                calendarView.reloadData()
+                
+            }
             updateLayoutItemSize(self.calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol)
         }
     }
@@ -437,18 +446,20 @@ public class JTAppleCalendarView: UIView {
         }
     }
     
-    func reloadData(checkDelegateDataSource: Bool) {
-        if checkDelegateDataSource {
-            self.reloadDelegateDataSource() // Reload the datasource
+    func reloadData(checkDelegateDataSource check: Bool) {
+        if check {
+            reloadDelegateDataSource() // Reload the datasource
         }
         
         // Delay on main thread. We want this to be called after the view is displayed ont he main run loop
-        if self.layoutNeedsUpdating {
+        if layoutNeedsUpdating {
             delayRunOnMainThread(0.0, closure: {
                 self.changeNumberOfRowsPerMonthTo(self.numberOfRowsPerMonth, withFocusDate: nil)
             })
         } else {
-            self.calendarView.reloadData()
+            (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).clearCache()
+            calendarView.reloadData()
+            
         }
     }
     
@@ -483,6 +494,7 @@ public class JTAppleCalendarView: UIView {
         let layout = calendarView.collectionViewLayout
         updateLayoutItemSize(layout as! JTAppleCalendarLayoutProtocol)
         self.calendarView.setCollectionViewLayout(layout, animated: true)
+        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).clearCache()
         self.calendarView.reloadData()
         layoutNeedsUpdating = false
         
@@ -840,6 +852,7 @@ extension JTAppleCalendarView: JTAppleCalendarDelegateProtocol {
     func numberOfColumns() -> Int { return MAX_NUMBER_OF_DAYS_IN_WEEK }
     func numberOfsectionsPermonth() -> Int { return numberOfSectionsPerMonth }
     func numberOfMonthsInCalendar() -> Int { return numberOfMonths }
+    func numberOfDaysPerSection() -> Int { return numberOfItemsPerSection }
 }
 
 /// NSDates can be compared with the == and != operators

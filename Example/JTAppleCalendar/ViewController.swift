@@ -15,6 +15,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var monthLabel: UILabel!
     let formatter = NSDateFormatter()
     let testCalendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)
+    var numberOfRows = 6
     
     @IBAction func changeToThreeRows(sender: UIButton) {
         let date = formatter.dateFromString("2016 04 11")
@@ -26,36 +27,45 @@ class ViewController: UIViewController {
         calendarView.changeNumberOfRowsPerMonthTo(6, withFocusDate: date)
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         formatter.dateFormat = "yyyy MM dd"
         testCalendar.timeZone = NSTimeZone(abbreviation: "GMT")!
 
-        calendarView.dataSource = self
+        
         calendarView.delegate = self
         
+        // Registering your cells is manditory   ******************************************************
+        
         calendarView.registerCellViewXib(fileName: "CellView") // Registering your cell is manditory
+//         calendarView.registerCellViewClass(fileName: "JTAppleCalendar_Example.CodeCellView")
+        
+        // ********************************************************************************************
+        
         
         // Enable the following code line to show headers. There are other lines of code to uncomment as well
          calendarView.registerHeaderViewXibs(fileNames: ["PinkSectionHeaderView", "WhiteSectionHeaderView"]) // headers are Optional. You can register multiple if you want.
         
+        
         // The following default code can be removed since they are already the default.
         // They are only included here so that you can know what properties can be configured
         calendarView.direction = .Horizontal                       // default is horizontal
-        calendarView.numberOfRowsPerMonth = 6                      // default is 6
         calendarView.cellInset = CGPoint(x: 0, y: 0)               // default is (3,3)
         calendarView.allowsMultipleSelection = false               // default is false
         calendarView.bufferTop = 0                                 // default is 0. - still work in progress on this
+        numberOfRows = 6
+        calendarView.dataSource = self
         calendarView.bufferBottom = 0                              // default is 0. - still work in progress on this
-        calendarView.firstDayOfWeek = .Sunday                      // default is Sunday
+        calendarView.firstDayOfWeek = .Monday                      // default is Sunday
         calendarView.scrollEnabled = true                          // default is true
-        calendarView.pagingEnabled = true                          // default is true
+        calendarView.pagingEnabled = false                          // default is true
         calendarView.scrollResistance = 0.75                       // default is 0.75 - this is only applicable when paging is not enabled.
         calendarView.reloadData()
         
-        let currentDate = calendarView.currentCalendarDateSegment()
-        setupViewsOfCalendar(currentDate.startDate, endDate: currentDate.endDate)
+//        calendarView.scrollToDate(NSDate(), triggerScrollToDateDelegate: true, animateScroll: false) {
+            let currentDate = self.calendarView.currentCalendarDateSegment()
+            self.setupViewsOfCalendar(currentDate.startDate, endDate: currentDate.endDate)
+//        }
     }
     
     @IBAction func select10(sender: AnyObject?) {
@@ -69,6 +79,10 @@ class ViewController: UIViewController {
                                                               // --> This is what happens when you select an invalid date
                                                               // --> It is simply not selected
         calendarView.selectDates(dates, triggerSelectionDelegate: false)
+    }
+    
+    @IBAction func reloadCal() {
+        calendarView.reloadData()
     }
     
     @IBAction func select11(sender: AnyObject?) {
@@ -117,17 +131,18 @@ class ViewController: UIViewController {
 
 // MARK : JTAppleCalendarDelegate
 extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDelegate {
-    func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, calendar: NSCalendar) {
+    func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, numberOfRows: Int, calendar: NSCalendar) {
         
         let firstDate = formatter.dateFromString("2016 01 05")
+//        let firstDate = formatter.dateFromString("2016 04 01")
         let secondDate = NSDate()
         let aCalendar = NSCalendar.currentCalendar() // Properly configure your calendar to your time zone here
 
-        return (startDate: firstDate!, endDate: secondDate, calendar: aCalendar)
+        return (startDate: firstDate!, endDate: secondDate, numberOfRows: numberOfRows, calendar: aCalendar)
     }
 
     func calendar(calendar: JTAppleCalendarView, isAboutToDisplayCell cell: JTAppleDayCellView, date: NSDate, cellState: CellState) {
-        (cell as! CellView).setupCellBeforeDisplay(cellState, date: date)
+        (cell as? CellView)?.setupCellBeforeDisplay(cellState, date: date)
     }
 
     func calendar(calendar: JTAppleCalendarView, didDeselectDate date: NSDate, cell: JTAppleDayCellView?, cellState: CellState) {

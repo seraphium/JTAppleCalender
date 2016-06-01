@@ -29,7 +29,10 @@ protocol JTAppleCalendarDelegateProtocol: class {
     func numberOfsectionsPermonth() -> Int
     func numberOfMonthsInCalendar() -> Int
     func numberOfDaysPerSection() -> Int
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize
+    
+    func referenceSizeForHeaderInSection(section: Int) -> CGSize
+    
+//    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
 }
 
@@ -193,7 +196,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             let offset = CGFloat(attributes.indexPath.section) * stride
             var xCellOffset : CGFloat = CGFloat(attributes.indexPath.item % 7) * self.itemSize.width
             xCellOffset += offset
-
+            
             if headerViewXibs.count > 0 {
                 if let sizeOfItem = delegate?.collectionView(collectionView, layout: self, sizeForItemAtIndexPath: attributes.indexPath) {
                     itemSize.height = sizeOfItem.height
@@ -203,9 +206,8 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
             var yCellOffset : CGFloat = CGFloat(attributes.indexPath.item / 7) * self.itemSize.height
             
             if headerViewXibs.count > 0 {
-                if let headerHeight = delegate?.collectionView(collectionView, layout: self, referenceSizeForHeaderInSection: attributes.indexPath.section) {
-                    yCellOffset += headerHeight.height
-                }
+                let headerHeight = delegate!.referenceSizeForHeaderInSection(attributes.indexPath.section)
+                yCellOffset += headerHeight.height
             }
             
             attributes.frame = CGRectMake(xCellOffset, yCellOffset, self.itemSize.width, self.itemSize.height)
@@ -223,16 +225,12 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
     /// Returns the layout attributes for the specified supplementary view.
     public override func layoutAttributesForSupplementaryViewOfKind(elementKind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
         let attributes = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: elementKind, withIndexPath: indexPath)
-        let size = delegate!.collectionView(collectionView!, layout: self, referenceSizeForHeaderInSection: indexPath.section)
+        let size = delegate!.referenceSizeForHeaderInSection(indexPath.section)
         let modifiedSize = CGSize(width: collectionView!.frame.size.width, height: size.height)
         let stride = collectionView!.frame.size.width
         let offset = CGFloat(attributes.indexPath.section) * stride
-
         attributes.frame = CGRect(x: offset, y: 0, width: modifiedSize.width, height: modifiedSize.height)
-        
-        if attributes.frame == CGRectZero {
-            return nil
-        }
+        if attributes.frame == CGRectZero { return nil }
         
         return attributes
     }

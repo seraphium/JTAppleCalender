@@ -13,8 +13,6 @@ class CellView: JTAppleDayCellView {
     @IBInspectable var todayColor: UIColor!// = UIColor(red: 254.0/255.0, green: 73.0/255.0, blue: 64.0/255.0, alpha: 0.3)
     @IBInspectable var normalDayColor: UIColor! //UIColor(white: 0.0, alpha: 0.1)
     @IBOutlet var selectedView: AnimationView!
-    @IBOutlet var backView: UIView!
-    @IBOutlet var supplimentaryView: UIView!
     @IBOutlet var dayLabel: UILabel!
     
     let textSelectedColor = UIColor.whiteColor()
@@ -40,7 +38,7 @@ class CellView: JTAppleDayCellView {
         configureTextColor(cellState)
 
         // Setup Cell Background color
-        backView?.backgroundColor = c.stringFromDate(date) == todayDate ? todayColor:normalDayColor
+        self.backgroundColor = c.stringFromDate(date) == todayDate ? todayColor:normalDayColor
         
         // Setup cell selection status
         configueViewIntoBubbleView(cellState)

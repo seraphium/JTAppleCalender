@@ -54,7 +54,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                     retval = CGPoint(x: recalcOffset, y: 0)
                 } else {
                     let targetSection =  Int(recalcOffset / self.calendarView.frame.size.width)
-                    let headerHeigt = self.collectionView(self.calendarView, layout: self.calendarView.collectionViewLayout, referenceSizeForHeaderInSection: targetSection)
+                    let headerHeigt = self.referenceSizeForHeaderInSection(targetSection)
                     retval = CGPoint(x: recalcOffset, y: headerHeigt.height)
                 }
             }
@@ -120,9 +120,8 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
             scrollViewDidEndDecelerating(scrollView)
         }
         
-        delayedExecutionClosure?()
-        delayedExecutionClosure = nil
-        
+        executeDelayedTasks()
+    
         // Update the focus item whenever scrolled
         (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pointForFocusItem = scrollView.contentOffset
     }
@@ -131,6 +130,16 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
     public func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         let currentSegmentDates = currentCalendarDateSegment()
         self.delegate?.calendar(self, didScrollToDateSegmentStartingWithdate: currentSegmentDates.startDate, endingWithDate: currentSegmentDates.endDate)
+    }
+    
+    func executeDelayedTasks() {
+        let tasksToExecute = delayedExecutionClosure
+        
+        for aTaskToExecute in tasksToExecute {
+            aTaskToExecute()
+        }
+        
+        delayedExecutionClosure.removeAll()
     }
 }
 
@@ -276,7 +285,13 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
 
 extension JTAppleCalendarView:  UICollectionViewDelegateFlowLayout {
     /// Asks the delegate for the size of the header view in the specified section.
-    public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+//    public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+//        if headerViewXibs.count < 1 { return CGSizeZero }
+//        let size = calendarViewHeaderSizeForSection(section)
+//        return size
+//    }
+    
+    func referenceSizeForHeaderInSection(section: Int) -> CGSize {
         if headerViewXibs.count < 1 { return CGSizeZero }
         let size = calendarViewHeaderSizeForSection(section)
         return size
@@ -288,7 +303,7 @@ extension JTAppleCalendarView:  UICollectionViewDelegateFlowLayout {
             return size.itemSize
         }
         
-        let headerHeight = self.collectionView(self.calendarView, layout: self.calendarView.collectionViewLayout, referenceSizeForHeaderInSection: indexPath.section)
+        let headerHeight = referenceSizeForHeaderInSection(indexPath.section)
         let currentItemSize = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize
         let size = CGSize(width: currentItemSize.width, height: (calendarView.frame.height - headerHeight.height) / CGFloat(numberOfRows()))
         indexPathSectionItemSize = (section: indexPath.section, itemSize: size)
