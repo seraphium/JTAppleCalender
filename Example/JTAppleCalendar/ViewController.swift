@@ -15,7 +15,6 @@ class ViewController: UIViewController {
     @IBOutlet weak var monthLabel: UILabel!
     let formatter = NSDateFormatter()
     let testCalendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)
-    var numberOfRows = 6
     
     @IBAction func changeToThreeRows(sender: UIButton) {
         let date = formatter.dateFromString("2016 04 11")
@@ -34,6 +33,7 @@ class ViewController: UIViewController {
 
         
         calendarView.delegate = self
+        calendarView.dataSource = self
         
         // Registering your cells is manditory   ******************************************************
         
@@ -53,19 +53,16 @@ class ViewController: UIViewController {
         calendarView.cellInset = CGPoint(x: 0, y: 0)               // default is (3,3)
         calendarView.allowsMultipleSelection = false               // default is false
         calendarView.bufferTop = 0                                 // default is 0. - still work in progress on this
-        numberOfRows = 6
-        calendarView.dataSource = self
         calendarView.bufferBottom = 0                              // default is 0. - still work in progress on this
         calendarView.firstDayOfWeek = .Monday                      // default is Sunday
         calendarView.scrollEnabled = true                          // default is true
-        calendarView.pagingEnabled = false                          // default is true
+        calendarView.pagingEnabled = true                          // default is true
         calendarView.scrollResistance = 0.75                       // default is 0.75 - this is only applicable when paging is not enabled.
         calendarView.reloadData()
         
-//        calendarView.scrollToDate(NSDate(), triggerScrollToDateDelegate: true, animateScroll: false) {
-            let currentDate = self.calendarView.currentCalendarDateSegment()
-            self.setupViewsOfCalendar(currentDate.startDate, endDate: currentDate.endDate)
-//        }
+        
+        let currentDate = self.calendarView.currentCalendarDateSegment()
+        self.setupViewsOfCalendar(currentDate.startDate, endDate: currentDate.endDate)
     }
     
     @IBAction func select10(sender: AnyObject?) {
@@ -134,10 +131,9 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
     func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, numberOfRows: Int, calendar: NSCalendar) {
         
         let firstDate = formatter.dateFromString("2016 01 05")
-//        let firstDate = formatter.dateFromString("2016 04 01")
         let secondDate = NSDate()
         let aCalendar = NSCalendar.currentCalendar() // Properly configure your calendar to your time zone here
-
+        let numberOfRows = 6
         return (startDate: firstDate!, endDate: secondDate, numberOfRows: numberOfRows, calendar: aCalendar)
     }
 

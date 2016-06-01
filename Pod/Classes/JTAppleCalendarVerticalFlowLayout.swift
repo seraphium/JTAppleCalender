@@ -56,7 +56,6 @@ public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAp
             return attrscp
         }
         return nil
-        
     }
     
     
@@ -76,23 +75,6 @@ public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAp
                 headerSize = delegate!.referenceSizeForHeaderInSection(attributes.indexPath.section)
             }
             
-//            var theItemSize =
-//            
-//            {
-//                print(indexPath)
-//                if let size = indexPathSectionItemSize where size.section == indexPath.section {
-//                    return size.itemSize
-//                }
-//                
-//                let headerHeight = self.collectionView(self.calendarView, layout: self.calendarView.collectionViewLayout, referenceSizeForHeaderInSection: indexPath.section)
-//                let currentItemSize = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize
-//                let size = CGSize(width: currentItemSize.width, height: (calendarView.frame.height - headerHeight.height) / CGFloat(numberOfRows()))
-//                indexPathSectionItemSize = (section: indexPath.section, itemSize: size)
-//            }
-            
-            
-            
-            
             if headerViewXibs.count > 0 {
                 if let sizeOfItem = delegate?.collectionView(collectionView, layout: self, sizeForItemAtIndexPath: attributes.indexPath) {
                     itemSize.height = sizeOfItem.height
@@ -108,7 +90,6 @@ public class JTAppleCalendarVerticalFlowLayout: UICollectionViewFlowLayout, JTAp
             yCellOffset += offset
             attributes.frame = CGRectMake(xCellOffset, yCellOffset, self.itemSize.width, self.itemSize.height)
         }
-        
     }
     
     func clearCache() {

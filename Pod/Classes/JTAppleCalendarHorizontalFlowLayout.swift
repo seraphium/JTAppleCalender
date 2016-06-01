@@ -203,7 +203,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
                 }
             }
             
-            var yCellOffset : CGFloat = CGFloat(attributes.indexPath.item / 7) * self.itemSize.height
+            var yCellOffset :CGFloat = CGFloat(attributes.indexPath.item / 7) * self.itemSize.height
             
             if headerViewXibs.count > 0 {
                 let headerHeight = delegate!.referenceSizeForHeaderInSection(attributes.indexPath.section)
