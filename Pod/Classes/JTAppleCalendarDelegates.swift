@@ -74,8 +74,6 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                         targetContentOffset.memory = CGPoint(x: targetOffset, y: 0)
                     }
                 }
-            } else {
-                print("")
             }
         }
         
@@ -180,7 +178,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         dayCell.updateCellView(dayCell.cellView)
         dayCell.bounds.origin = CGPoint(x: 0, y: 0)
         
-//        print(dayCell.frame)
+//        print(dayCell.frame.size)
 //        print(dayCell.cellView.frame)
 //        print(dayCell.bounds)
 //        print(dayCell.cellView.bounds)
