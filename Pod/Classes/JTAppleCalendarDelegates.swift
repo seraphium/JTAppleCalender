@@ -133,10 +133,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
     public func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         let currentSegmentDates = currentCalendarDateSegment()
         self.delegate?.calendar(self, didScrollToDateSegmentStartingWithdate: currentSegmentDates.startDate, endingWithDate: currentSegmentDates.endDate)
-        
     }
-    
-
 }
 
 // MARK: CollectionView delegates
@@ -159,6 +156,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
             }
             reuseIdentifier = identifier
         }
+        
         currentXib = reuseIdentifier
         let headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind,
                                                                                withReuseIdentifier: reuseIdentifier,
@@ -174,21 +172,20 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         
         let dayCell = collectionView.dequeueReusableCellWithReuseIdentifier(cellReuseIdentifier, forIndexPath: indexPath) as! JTAppleDayCell
         
-        
         let date = dateFromPath(indexPath)!
         let cellState = cellStateFromIndexPath(indexPath, withDate: date)
         
         delegate?.calendar(self, isAboutToDisplayCell: dayCell.cellView, date: date, cellState: cellState)
         
         dayCell.updateCellView(dayCell.cellView)
+        dayCell.bounds.origin = CGPoint(x: 0, y: 0)
         
-//        print("\n\(dayCell.frame)")
-//        print(indexPath)
-//        print("cFrame \(dayCell.frame) -- \(indexPath)")
-//        print("dFrame \(dayCell.cellView.frame) -- \(indexPath)")
-//        print("cBounds\(dayCell.bounds) -- \(indexPath)")
-//        print("dBounds\(dayCell.cellView.bounds) -- \(indexPath)\n")
-        
+//        print(dayCell.frame)
+//        print(dayCell.cellView.frame)
+//        print(dayCell.bounds)
+//        print(dayCell.cellView.bounds)
+//        print("\n")
+
         return dayCell
     }
     /// Asks your data source object for the number of sections in the collection view. The number of sections in collectionView.
