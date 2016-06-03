@@ -284,13 +284,6 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
 }
 
 extension JTAppleCalendarView:  UICollectionViewDelegateFlowLayout {
-    /// Asks the delegate for the size of the header view in the specified section.
-    public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if headerViewXibs.count < 1 { return CGSizeZero }
-        let size = calendarViewHeaderSizeForSection(section)
-        return size
-    }
-    
     func referenceSizeForHeaderInSection(section: Int) -> CGSize {
         if headerViewXibs.count < 1 { return CGSizeZero }
         let size = calendarViewHeaderSizeForSection(section)

@@ -30,9 +30,7 @@ protocol JTAppleCalendarDelegateProtocol: class {
     func numberOfMonthsInCalendar() -> Int
     func numberOfDaysPerSection() -> Int
     
-    func referenceSizeForHeaderInSection(section: Int) -> CGSize
-    
-//    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize
+    func referenceSizeForHeaderInSection(section: Int) -> CGSize    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
 }
 

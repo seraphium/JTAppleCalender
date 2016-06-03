@@ -63,6 +63,7 @@ public protocol JTAppleCalendarViewDataSource {
     /// - returns:
     ///     - startDate: The *start* boundary date for your calendarView.
     ///     - endDate: The *end* boundary date for your calendarView.
+    ///     - numberOfRows: The number of rows to be displayed per month
     ///     - calendar: The *calendar* to be used by the calendarView.
     func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, numberOfRows: Int, calendar: NSCalendar)
 }
