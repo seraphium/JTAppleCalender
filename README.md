@@ -104,12 +104,11 @@ The following structure was returned when a cell is about to be displayed.
 
 
 ```swift
-    public func changeNumberOfRowsPerMonthTo(number: Int, withFocusDate date: NSDate?) // After switching the number of rows shown, pick a date to autofocus on
     public func reloadData()
     public func scrollToNextSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil) 
     public func scrollToPreviousSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
     public func scrollToDate(date: NSDate, animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
-    public func selectDates(dates: [NSDate], triggerSelectionDelegate: Bool = true)
+    public func selectDates(dates: [NSDate])
     public func cellStatusForDateAtRow(row: Int, column: Int) -> CellState?
 ```
 
@@ -117,7 +116,7 @@ The following structure was returned when a cell is about to be displayed.
 ```swift
 // Note: You do not need to configure your calendar with this if it is already the default
 calendarView.direction = .Horizontal                       // default is horizontal
-calendarView.numberOfRowsPerMonth = 6                      // default is 6
+calendarView.numberOfRowsPerMonth                          // default is 6. This is now setup in the configure Datasource Delegate Methhod
 calendarView.cellInset = CGPoint(x: 0, y: 0)               // default is (3,3)
 calendarView.allowsMultipleSelection = false               // default is false
 calendarView.bufferTop = 0                                 // default is 0. - still work in progress
