@@ -148,6 +148,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
         var endSection = startSection + requestSections
 
         if endSection >= maxSections { endSection = maxSections - 1 }
+        if endSection < 0 { endSection = 0 }
         if startSection >= endSection { startSection = endSection - 1 }
         if startSection < 0 { startSection = 0 }
     

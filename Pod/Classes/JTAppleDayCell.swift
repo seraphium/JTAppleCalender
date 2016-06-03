@@ -49,8 +49,6 @@ public class JTAppleDayCell: UICollectionViewCell {
     }
     
     func updateCellView(view: JTAppleDayCellView) {
-        
-
         let vFrame = CGRectInset(self.frame, internalCellInset.x, internalCellInset.y)
         view.frame = vFrame
         view.center = CGPoint(x: self.bounds.size.width * 0.5, y: self.bounds.size.height * 0.5)

@@ -360,9 +360,7 @@ public class JTAppleCalendarView: UIView {
     /// The frame rectangle which defines the view's location and size in its superview coordinate system.
     override public var frame: CGRect {
         didSet {
-            
-            calendarView.frame = CGRect(x:0.0, y:bufferTop, width: self.frame.size.width, height:self.frame.size.height - bufferBottom)
-            
+            calendarView.frame = CGRect(x:0.0, y:/*bufferTop*/0.0, width: self.frame.size.width, height:self.frame.size.height/* - bufferBottom*/)
             let orientation = UIDevice.currentDevice().orientation
             if orientation == .Unknown { return }
             if lastOrientation != orientation {
@@ -371,7 +369,6 @@ public class JTAppleCalendarView: UIView {
                 let layout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
                 layout.clearCache()
                 calendarView.reloadData()
-                
             }
             updateLayoutItemSize(self.calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol)
         }
