@@ -41,19 +41,6 @@ extension JTAppleCalendarView {
         return nil
     }
     
-    /// Change the number of rows per month on the calendar view. Once the row count is changed, the calendar view will auto-focus on the date provided. The calendarView will also reload its data.
-    /// - Parameter number: The number of rows per month the calendar view should display. This is restricted to 1, 2, 3, & 6. 6 will be chosen as default.
-    public func changeNumberOfRowsPerMonthTo(number: Int, withFocusDate date: NSDate?) {
-        scrollToDatePathOnRowChange = date
-        switch number {
-        case 1, 2, 3:
-            numberOfRowsPerMonth = number
-        default:
-            numberOfRowsPerMonth = 6
-        }
-        configureChangeOfRows()
-    }
-    
     /// Returns the calendar view's current section boundary dates.
     /// - returns:
     ///     - startDate: The start date of the current section
@@ -88,7 +75,6 @@ extension JTAppleCalendarView {
         }
 
         for headerViewXibName in headerViewXibNames {
-            
             let viewObject = NSBundle.mainBundle().loadNibNamed(headerViewXibName, owner: self, options: [:])
             assert(viewObject.count > 0, "your nib file name \(headerViewXibName) could not be loaded)")
             
@@ -103,14 +89,11 @@ extension JTAppleCalendarView {
                                             forSupplementaryViewOfKind: UICollectionElementKindSectionHeader,
                                             withReuseIdentifier: headerViewXibName)
         }
-        
-        
-//        setupHeaderViews(nil)
     }
     
     /// Reloads the data on the calendar view
-    public func reloadData() {
-        reloadData(checkDelegateDataSource: true)
+    public func reloadData(withAnchorDate date:NSDate? = nil, completionHandler: (()->Void)? = nil) {
+        reloadData(checkDelegateDataSource: true, withAnchorDate: date, completionHandler: completionHandler)
     }
     
     /// Reload the date of specified date-cells on the calendar-view
@@ -265,7 +248,7 @@ extension JTAppleCalendarView {
                     if headerViewXibs.count > 0 {
                         // If both paging and header is on, then scroll to the actual date
                         if self.direction == .Vertical {
-                            self.scrollToHeaderInSection(sectionIndexPath.section)
+                            self.scrollToHeaderInSection(sectionIndexPath.section, animated: animateScroll)
                         } else {
                             self.calendarView.scrollToItemAtIndexPath(NSIndexPath(forItem: 0,
                                 inSection: sectionIndexPath.section),
@@ -276,7 +259,8 @@ extension JTAppleCalendarView {
                         // If paging is on and header is off, then scroll to the start date in section
                         self.calendarView.scrollToItemAtIndexPath(NSIndexPath(forItem: 0,
                             inSection: sectionIndexPath.section),
-                            atScrollPosition: position, animated: animateScroll
+                            atScrollPosition: position,
+                            animated: animateScroll
                         )
                     }
                 } else {
@@ -288,7 +272,10 @@ extension JTAppleCalendarView {
                 }
                 
                 if  !animateScroll {
-                    self.scrollViewDidEndScrollingAnimation(self.calendarView)
+                    delayRunOnMainThread(0.0, closure: {
+                        self.scrollViewDidEndScrollingAnimation(self.calendarView)
+                        self.scrollInProgress = false
+                    })
                 }
             }
             self.scrollInProgress = false

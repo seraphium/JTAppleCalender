@@ -72,7 +72,6 @@ public class JTAppleCalendarBaseFlowLayout: UICollectionViewLayout, JTAppleCalen
         headerCache.removeAll()
         cellCache.removeAll()
     }
-    
 }
 
 
@@ -131,9 +130,7 @@ public class JTAppleCalendarHorizontalFlowLayout: JTAppleCalendarBaseFlowLayout 
     /// Returns the layout attributes for all of the cells and views in the specified rectangle.
     override public func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         // Determine how many columns needs to be displayed
-        
         let requestedColumns = Int(ceil(rect.width / itemSize.width))
-        
         let requestSections = requestedColumns / numberOfColumns
         
         var startColumn = Int(floor(rect.origin.x / itemSize.width))

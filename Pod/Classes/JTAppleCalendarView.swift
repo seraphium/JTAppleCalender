@@ -225,7 +225,6 @@ public class JTAppleCalendarView: UIView {
 
     var dateComponents = NSDateComponents()
     var delayedExecutionClosure: [(()->Void)] = []
-    var scrollToDatePathOnRowChange: NSDate?
     var lastOrientation: UIDeviceOrientation?
     
     var currentSectionPage: Int {
@@ -436,25 +435,43 @@ public class JTAppleCalendarView: UIView {
         return nil
     }
     
-    func scrollToHeaderInSection(section:Int)  {
+    func scrollToHeaderInSection(section:Int, animated: Bool = true)  {
         let indexPath = NSIndexPath(forItem: 0, inSection: section)
         calendarView.layoutIfNeeded()
         if let attributes =  calendarView.layoutAttributesForSupplementaryElementOfKind(UICollectionElementKindSectionHeader, atIndexPath: indexPath) {
             
             let topOfHeader = CGPointMake(0, attributes.frame.origin.y - calendarView.contentInset.top)
-            calendarView.setContentOffset(topOfHeader, animated:true)
+            delayRunOnMainThread(0.0, closure: { 
+                self.calendarView.setContentOffset(topOfHeader, animated:animated)
+            })
         }
     }
     
-    func reloadData(checkDelegateDataSource check: Bool) {
+    func reloadData(checkDelegateDataSource check: Bool, withAnchorDate anchorDate: NSDate? = nil, completionHandler:(()->Void)? = nil) {
         if check {
             reloadDelegateDataSource() // Reload the datasource
         }
         
-        // Delay on main thread. We want this to be called after the view is displayed ont he main run loop
+        // Delay on main thread. We want this to be called after the view is displayed on the main run loop
         if layoutNeedsUpdating {
             delayRunOnMainThread(0.0, closure: {
-                self.changeNumberOfRowsPerMonthTo(self.numberOfRowsPerMonth, withFocusDate: nil)
+                self.configureChangeOfRows()
+                
+                guard let validAnchorDate = anchorDate else { // If the date is invalid just scroll to the the first item on the view or scroll to the start of a header (if header is enabled)
+                    if headerViewXibs.count < 1 {
+                        if !self.scrollInProgress { // Make sure this scroll only gets activated if no other scroll is in queue
+                            self.scrollToDate(self.startOfMonthCache, triggerScrollToDateDelegate: false, animateScroll: false, completionHandler: completionHandler)
+                        }
+                    } else {
+                        self.scrollToHeaderForDate(self.startOfMonthCache)
+                    }
+                    return
+                }
+                
+                delayRunOnMainThread(0.0, closure: { () -> () in
+                    self.scrollToDate(validAnchorDate, triggerScrollToDateDelegate: false, animateScroll: false, completionHandler: completionHandler)
+                })
+                
             })
         } else {
             (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).clearCache()
@@ -491,28 +508,14 @@ public class JTAppleCalendarView: UIView {
         // Refresh the entire layout
         monthInfo = setupMonthInfoDataForStartAndEndDate()
         
-        let layout = calendarView.collectionViewLayout
-        updateLayoutItemSize(layout as! JTAppleCalendarLayoutProtocol)
-        self.calendarView.setCollectionViewLayout(layout, animated: true)
-        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).clearCache()
+        let layout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
+        
+        updateLayoutItemSize(layout)
+        layout.clearCache()
+        
+        self.calendarView.setCollectionViewLayout(layout as! UICollectionViewLayout, animated: true)
         self.calendarView.reloadData()
         layoutNeedsUpdating = false
-        
-        guard let dateToScrollTo = scrollToDatePathOnRowChange else { // If the date is invalid just scroll to the the first item on the view or scroll to the start of a header (if header is enabled)
-            if headerViewXibs.count < 1 {
-                if !scrollInProgress { // Make sure this scroll only gets activated if no other scroll is in queue
-                    scrollToDate(startOfMonthCache, triggerScrollToDateDelegate: false)
-                }
-            } else {
-                scrollToHeaderForDate(startOfMonthCache)
-            }
-            return
-        }
-        
-        delayRunOnMainThread(0.0, closure: { () -> () in
-            self.scrollToDate(dateToScrollTo, triggerScrollToDateDelegate: true) // Delegate should be called here. User set the scroll to date
-            self.scrollToDatePathOnRowChange = nil // jt101 try moving this out to parent caller
-        })
     }
     
     func calendarViewHeaderSizeForSection(section: Int) -> CGSize {
@@ -612,9 +615,20 @@ public class JTAppleCalendarView: UIView {
     
     private func setupMonthInfoDataForStartAndEndDate()-> [[Int]] {
         var retval: [[Int]] = []
-        if let  validConfig = dataSource?.configureCalendar(self) {
+        if var validConfig = dataSource?.configureCalendar(self) {
             // check if the dates are in correct order
-            if validConfig.calendar.compareDate(validConfig.startDate, toDate: validConfig.endDate, toUnitGranularity: NSCalendarUnit.Nanosecond) == NSComparisonResult.OrderedDescending { return retval }
+            if validConfig.calendar.compareDate(validConfig.startDate, toDate: validConfig.endDate, toUnitGranularity: NSCalendarUnit.Nanosecond) == NSComparisonResult.OrderedDescending {
+                assert(false, "Error, your start date cannot be greater than your end date\n")
+                return retval
+            }
+            
+            // Check to see if we have a valid number of rows
+            switch validConfig.numberOfRows {
+            case 1, 2, 3:
+                break
+            default:
+                validConfig.numberOfRows = 6
+            }
             
             // Set the new cache
             cachedConfiguration = validConfig

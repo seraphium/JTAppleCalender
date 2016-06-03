@@ -9,7 +9,7 @@
 import JTAppleCalendar
 
 class ViewController: UIViewController {
-
+    var numberOfRows = 6
     
     @IBOutlet weak var calendarView: JTAppleCalendarView!
     @IBOutlet weak var monthLabel: UILabel!
@@ -17,13 +17,13 @@ class ViewController: UIViewController {
     let testCalendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)
     
     @IBAction func changeToThreeRows(sender: UIButton) {
-        let date = formatter.dateFromString("2016 04 11")
-        calendarView.changeNumberOfRowsPerMonthTo(3, withFocusDate: date)
+        numberOfRows = 3
+        calendarView.reloadData()
     }
     
     @IBAction func changeToSixRows(sender: UIButton) {
-        let date = formatter.dateFromString("2016 04 11")
-        calendarView.changeNumberOfRowsPerMonthTo(6, withFocusDate: date)
+        numberOfRows = 6
+        calendarView.reloadData()
     }
     
     override func viewDidLoad() {
@@ -60,7 +60,7 @@ class ViewController: UIViewController {
         calendarView.scrollResistance = 0.75                       // default is 0.75 - this is only applicable when paging is not enabled.
         calendarView.reloadData()
         
-        
+        // After reloading. Scroll to your selected date, and setup your calendar views
         let currentDate = self.calendarView.currentCalendarDateSegment()
         self.setupViewsOfCalendar(currentDate.startDate, endDate: currentDate.endDate)
     }
@@ -79,7 +79,12 @@ class ViewController: UIViewController {
     }
     
     @IBAction func reloadCal() {
+        monthLabel.text = ""
         calendarView.reloadData()
+        
+        let currentDate = self.calendarView.currentCalendarDateSegment()
+        self.setupViewsOfCalendar(currentDate.startDate, endDate: currentDate.endDate)
+
     }
     
     @IBAction func select11(sender: AnyObject?) {
@@ -130,10 +135,9 @@ class ViewController: UIViewController {
 extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDelegate {
     func configureCalendar(calendar: JTAppleCalendarView) -> (startDate: NSDate, endDate: NSDate, numberOfRows: Int, calendar: NSCalendar) {
         
-        let firstDate = formatter.dateFromString("2016 01 05")
+        let firstDate = formatter.dateFromString("2016 01 01")
         let secondDate = NSDate()
         let aCalendar = NSCalendar.currentCalendar() // Properly configure your calendar to your time zone here
-        let numberOfRows = 6
         return (startDate: firstDate!, endDate: secondDate, numberOfRows: numberOfRows, calendar: aCalendar)
     }
 
@@ -164,7 +168,7 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
     }
    
     func calendar(calendar: JTAppleCalendarView, sectionHeaderSizeForDate date: (startDate: NSDate, endDate: NSDate)) -> CGSize {
-        if formatter.stringFromDate(date.startDate) == "2016 01 01" {
+        if testCalendar.component(.Month, fromDate: date.startDate) % 2 == 1 {
             return CGSize(width: 200, height: 50)
         } else {
             return CGSize(width: 200, height: 100) // Yes you can have different size headers
