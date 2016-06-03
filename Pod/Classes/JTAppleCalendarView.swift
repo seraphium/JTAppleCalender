@@ -161,7 +161,6 @@ public class JTAppleCalendarView: UIView {
             if oldValue == direction { return }
             let layout = generateNewLayout()
             calendarView.collectionViewLayout = layout
-            reloadData(checkDelegateDataSource: false)
         }
     }
     /// Enables/Disables multiple selection on JTAppleCalendar
