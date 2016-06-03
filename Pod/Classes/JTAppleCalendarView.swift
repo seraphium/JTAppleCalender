@@ -206,7 +206,7 @@ public class JTAppleCalendarView: UIView {
         set {
             if newValue != cachedConfiguration.numberOfRows {
                 cachedConfiguration.numberOfRows = newValue
-                if newValue == 4 || newValue == 5 || newValue > 6 || newValue < 0 { numberOfRowsPerMonth = 6 }
+                if newValue == 4 || newValue == 5 || newValue > 6 || newValue < 0 { self.numberOfRowsPerMonth = 6 }
                 layoutNeedsUpdating = true
             }
         }
@@ -590,7 +590,6 @@ public class JTAppleCalendarView: UIView {
     }
     
     func xibFileValid() -> Bool {
-        return true //jt101 remove this
         //"Did you remember to register your xib file to JTAppleCalendarView? call the registerCellViewXib method on it because xib filename is nil"
         guard let xibName =  cellViewFromDeveloper else { return false }
         //"your nib file name \(cellViewXibName) could not be loaded)"

@@ -125,7 +125,7 @@ public class JTAppleCalendarVerticalFlowLayout: JTAppleCalendarBaseFlowLayout {
         if let collectionView = self.collectionView {
             let sectionStride = collectionView.frame.size.height
             let sectionOffset = CGFloat(attributes.indexPath.section) * sectionStride
-            var xCellOffset : CGFloat = CGFloat(attributes.indexPath.item % 7) * self.itemSize.width
+            let xCellOffset : CGFloat = CGFloat(attributes.indexPath.item % 7) * self.itemSize.width
             
             if headerViewXibs.count > 0 {
                 if let sizeOfItem = delegate?.collectionView(collectionView, layout: self, sizeForItemAtIndexPath: attributes.indexPath) {
