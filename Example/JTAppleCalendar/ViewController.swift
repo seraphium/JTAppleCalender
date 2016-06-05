@@ -46,7 +46,6 @@ class ViewController: UIViewController {
         // Enable the following code line to show headers. There are other lines of code to uncomment as well
          calendarView.registerHeaderViewXibs(fileNames: ["PinkSectionHeaderView", "WhiteSectionHeaderView"]) // headers are Optional. You can register multiple if you want.
         
-        
         // The following default code can be removed since they are already the default.
         // They are only included here so that you can know what properties can be configured
         calendarView.direction = .Horizontal                       // default is horizontal
@@ -60,9 +59,11 @@ class ViewController: UIViewController {
         calendarView.scrollResistance = 0.75                       // default is 0.75 - this is only applicable when paging is not enabled.
         calendarView.reloadData()
         
-        // After reloading. Scroll to your selected date, and setup your calendar views
-        let currentDate = self.calendarView.currentCalendarDateSegment()
-        self.setupViewsOfCalendar(currentDate.startDate, endDate: currentDate.endDate)
+        // After reloading. Scroll to your selected date, and setup your calendar
+        calendarView.scrollToDate(NSDate(), triggerScrollToDateDelegate: false, animateScroll: false) {
+            let currentDate = self.calendarView.currentCalendarDateSegment()
+            self.setupViewsOfCalendar(currentDate.startDate, endDate: currentDate.endDate)
+        }
     }
     
     @IBAction func select10(sender: AnyObject?) {
@@ -76,15 +77,6 @@ class ViewController: UIViewController {
                                                               // --> This is what happens when you select an invalid date
                                                               // --> It is simply not selected
         calendarView.selectDates(dates, triggerSelectionDelegate: false)
-    }
-    
-    @IBAction func reloadCal() {
-        monthLabel.text = ""
-        calendarView.reloadData()
-        
-        let currentDate = self.calendarView.currentCalendarDateSegment()
-        self.setupViewsOfCalendar(currentDate.startDate, endDate: currentDate.endDate)
-
     }
     
     @IBAction func select11(sender: AnyObject?) {

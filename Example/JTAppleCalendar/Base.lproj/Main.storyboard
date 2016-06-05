@@ -79,55 +79,48 @@
                             <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" distribution="fillEqually" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="iQI-Hq-aUc">
                                 <rect key="frame" x="16" y="14925" width="157" height="150"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nfk-D6-bAe">
-                                        <rect key="frame" x="0.0" y="0.0" width="47" height="22"/>
-                                        <state key="normal" title="Reload"/>
-                                        <connections>
-                                            <action selector="reloadCal" destination="BYZ-38-t0r" eventType="touchUpInside" id="asI-2d-7Db"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rWO-5s-mKQ">
-                                        <rect key="frame" x="0.0" y="22" width="107" height="22"/>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rWO-5s-mKQ">
+                                        <rect key="frame" x="0.0" y="0.0" width="107" height="25"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Change to 3 rows"/>
                                         <connections>
                                             <action selector="changeToThreeRows:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Wb1-go-yPa"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="13p-cR-5Oy">
-                                        <rect key="frame" x="0.0" y="43" width="110" height="22"/>
+                                    <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="13p-cR-5Oy">
+                                        <rect key="frame" x="0.0" y="25" width="110" height="25"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Change to 6 Rows"/>
                                         <connections>
                                             <action selector="changeToSixRows:" destination="BYZ-38-t0r" eventType="touchUpInside" id="YTT-Xm-Hgz"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EZB-eU-i2Z">
-                                        <rect key="frame" x="0.0" y="65" width="146" height="21"/>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EZB-eU-i2Z">
+                                        <rect key="frame" x="0.0" y="50" width="146" height="25"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Select many 2016 dates"/>
                                         <connections>
                                             <action selector="select10:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ce9-dQ-iNd"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WaY-fY-0lz">
-                                        <rect key="frame" x="0.0" y="86" width="126" height="22"/>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WaY-fY-0lz">
+                                        <rect key="frame" x="0.0" y="75" width="126" height="25"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Select 11th Feb 2016"/>
                                         <connections>
                                             <action selector="select11:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2hr-AE-WhN"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4fl-ZS-PXq">
-                                        <rect key="frame" x="0.0" y="107" width="139" height="22"/>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4fl-ZS-PXq">
+                                        <rect key="frame" x="0.0" y="100" width="139" height="25"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Scroll to 11th Mar 2016"/>
                                         <connections>
                                             <action selector="scrollToDate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="WYt-WI-pJk"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X5M-bv-yCY">
-                                        <rect key="frame" x="0.0" y="129" width="123" height="22"/>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X5M-bv-yCY">
+                                        <rect key="frame" x="0.0" y="125" width="123" height="25"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Print Selected dates"/>
                                         <connections>
@@ -250,8 +243,8 @@
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
-                                <exclude reference="SnB-SU-fZX"/>
                                 <exclude reference="jXl-ia-jmV"/>
+                                <exclude reference="SnB-SU-fZX"/>
                             </mask>
                         </variation>
                     </view>

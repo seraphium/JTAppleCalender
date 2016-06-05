@@ -92,8 +92,8 @@ extension JTAppleCalendarView {
     }
     
     /// Reloads the data on the calendar view
-    public func reloadData(withAnchorDate date:NSDate? = nil, completionHandler: (()->Void)? = nil) {
-        reloadData(checkDelegateDataSource: true, withAnchorDate: date, completionHandler: completionHandler)
+    public func reloadData(withAnchorDate date:NSDate? = nil, withAnimation animation: Bool = false, completionHandler: (()->Void)? = nil) {
+        reloadData(checkDelegateDataSource: true, withAnchorDate: date, withAnimation: animation, completionHandler: completionHandler)
     }
     
     /// Reload the date of specified date-cells on the calendar-view
@@ -239,57 +239,105 @@ extension JTAppleCalendarView {
             
             if retrievedPathsFromDates.count > 0 {
                 let sectionIndexPath =  self.pathsFromDates([date])[0]
-                if let validCompletionHandler = completionHandler {
-                    self.delayedExecutionClosure.append(validCompletionHandler)
+                let position: UICollectionViewScrollPosition = self.direction == .Horizontal ? .Left : .Top
+                
+                let scrollToIndexPath = {(iPath: NSIndexPath, withAnimation: Bool)-> Void in
+                    if let validCompletionHandler = completionHandler {
+                        self.delayedExecutionClosure.append(validCompletionHandler)
+                    }
+                     
+                    // regular movement
+                    self.calendarView.scrollToItemAtIndexPath(iPath, atScrollPosition: position, animated: animateScroll)
+                    
+                    
+                    if animateScroll {
+                        if let check = self.calendarOffsetIsAlreadyAtScrollPosition(forIndexPath: iPath) where check == true {
+                                self.scrollViewDidEndScrollingAnimation(self.calendarView)
+                                self.scrollInProgress = false
+                                return
+                        }
+                    }
                 }
                 
-                let position: UICollectionViewScrollPosition = self.direction == .Horizontal ? .Left : .Top
                 if self.pagingEnabled {
                     if headerViewXibs.count > 0 {
                         // If both paging and header is on, then scroll to the actual date
                         if self.direction == .Vertical {
-                            self.scrollToHeaderInSection(sectionIndexPath.section, animated: animateScroll)
+                            self.scrollToHeaderInSection(sectionIndexPath.section, triggerScrollToDateDelegate: triggerScrollToDateDelegate, withAnimation: animateScroll)
+                            return
                         } else {
-                            self.calendarView.scrollToItemAtIndexPath(NSIndexPath(forItem: 0,
-                                inSection: sectionIndexPath.section),
-                                atScrollPosition: position, animated: animateScroll
-                            )
+                            scrollToIndexPath(NSIndexPath(forItem: 0, inSection: sectionIndexPath.section), animateScroll)
                         }
                     } else {
                         // If paging is on and header is off, then scroll to the start date in section
-                        self.calendarView.scrollToItemAtIndexPath(NSIndexPath(forItem: 0,
-                            inSection: sectionIndexPath.section),
-                            atScrollPosition: position,
-                            animated: animateScroll
-                        )
+                        scrollToIndexPath(NSIndexPath(forItem: 0, inSection: sectionIndexPath.section), animateScroll)
                     }
                 } else {
                     // If paging is off, then scroll to the actual date in the section
-                    self.calendarView.scrollToItemAtIndexPath(sectionIndexPath,
-                        atScrollPosition: position,
-                        animated: animateScroll
-                    )
+                    scrollToIndexPath(sectionIndexPath, animateScroll)
                 }
                 
-                if  !animateScroll {
-                    delayRunOnMainThread(0.0, closure: {
+                // Jt101 put this into a function to reduce code between this and the scroll to header function
+                delayRunOnMainThread(0.0, closure: {
+                    if  !animateScroll  {
                         self.scrollViewDidEndScrollingAnimation(self.calendarView)
                         self.scrollInProgress = false
-                    })
-                }
+                    }
+                })
             }
-            self.scrollInProgress = false
         })
     }
     
+    func calendarOffsetIsAlreadyAtScrollPosition(forIndexPath indexPath:NSIndexPath) -> Bool? {
+        var retval: Bool?
+        
+        // If the scroll is set to animate, and the target content offset is already on the screen, then the didFinishScrollingAnimation
+        // delegate will not get called. Once animation is on let's force a scroll so the delegate MUST get caalled
+        if let attributes = self.calendarView.layoutAttributesForItemAtIndexPath(indexPath) {
+            let origin = attributes.frame.origin
+            let offset = direction == .Horizontal ? origin.x : origin.y
+            if
+                self.calendarView.contentOffset.x == offset ||
+                (self.pagingEnabled && (indexPath.section ==  currentSectionPage)){
+                
+                retval = true
+            } else {
+                retval = false
+            }
+        }
+
+        return retval
+    }
+    
+    func calendarOffsetIsAlreadyAtScrollPosition(forOffset offset:CGPoint) -> Bool? {
+        var retval: Bool?
+        
+        // If the scroll is set to animate, and the target content offset is already on the screen, then the didFinishScrollingAnimation
+        // delegate will not get called. Once animation is on let's force a scroll so the delegate MUST get caalled
+        
+        let theOffset = direction == .Horizontal ? offset.x : offset.y
+        let sectionForOffset = Int(theOffset / calendarView.frame.width)
+        if
+            self.calendarView.contentOffset.x == offset.x ||
+            (self.pagingEnabled && (sectionForOffset ==  currentSectionPage)){
+            retval = true
+        } else {
+            retval = false
+        }
+        
+    
+        return retval
+    }
+    
+    
+    
+    
     /// Scrolls the calendar view to the start of a section view header. If the calendar has no headers registered, then this function does nothing
     /// - Paramater date: The calendar view will scroll to the header of a this provided date
-    public func scrollToHeaderForDate(date: NSDate) {
-        // Return if sections are not registered
-        if headerViewXibs.count < 1 { return }
+    public func scrollToHeaderForDate(date: NSDate, triggerScrollToDateDelegate: Bool = false, withAnimation animation: Bool = false, completionHandler: (()->Void)? = nil) {
         let path = pathsFromDates([date])
         // Return if date was incalid and no path was returned
         if path.count < 1 { return }
-        scrollToHeaderInSection(path[0].section)
+        scrollToHeaderInSection(path[0].section, triggerScrollToDateDelegate: triggerScrollToDateDelegate, withAnimation: animation, completionHandler: completionHandler)
     }
 }

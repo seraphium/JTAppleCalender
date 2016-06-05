@@ -179,7 +179,7 @@ public class JTAppleCalendarView: UIView {
         }
     }
     
-    var triggerScrollToDateDelegate = true
+    var triggerScrollToDateDelegate: Bool? = true
     
     // Keeps track of item size for a section. This is an optimization
     var indexPathSectionItemSize: (section: Int, itemSize: CGSize)?
@@ -432,19 +432,41 @@ public class JTAppleCalendarView: UIView {
         return nil
     }
     
-    func scrollToHeaderInSection(section:Int, animated: Bool = true)  {
+    func scrollToHeaderInSection(section:Int, triggerScrollToDateDelegate: Bool = false, withAnimation animation: Bool = true, completionHandler: (()->Void)? = nil)  {
+        if headerViewXibs.count < 1 { return }
+        
+        self.triggerScrollToDateDelegate = triggerScrollToDateDelegate
+        
         let indexPath = NSIndexPath(forItem: 0, inSection: section)
         calendarView.layoutIfNeeded()
         if let attributes =  calendarView.layoutAttributesForSupplementaryElementOfKind(UICollectionElementKindSectionHeader, atIndexPath: indexPath) {
+            if let validHandler = completionHandler {
+                delayedExecutionClosure.append(validHandler)
+            }
             
-            let topOfHeader = CGPointMake(0, attributes.frame.origin.y - calendarView.contentInset.top)
-            delayRunOnMainThread(0.0, closure: { 
-                self.calendarView.setContentOffset(topOfHeader, animated:animated)
+            let topOfHeader = CGPointMake(attributes.frame.origin.x, attributes.frame.origin.y)
+            self.scrollInProgress = true
+            delayRunOnMainThread(0.0, closure: {
+                self.calendarView.setContentOffset(topOfHeader, animated:animation)
+
+                delayRunOnMainThread(0.0, closure: {
+                    if  !animation {
+                        self.scrollViewDidEndScrollingAnimation(self.calendarView)
+                        self.scrollInProgress = false
+                    } else {
+                        // If the scroll is set to animate, and the target content offset is already on the screen, then the didFinishScrollingAnimation
+                        // delegate will not get called. Once animation is on let's force a scroll so the delegate MUST get caalled
+                        if let check = self.calendarOffsetIsAlreadyAtScrollPosition(forOffset: topOfHeader) where check == true {
+                            self.scrollViewDidEndScrollingAnimation(self.calendarView)
+                            self.scrollInProgress = false
+                        }
+                    }
+                })
             })
         }
     }
     
-    func reloadData(checkDelegateDataSource check: Bool, withAnchorDate anchorDate: NSDate? = nil, completionHandler:(()->Void)? = nil) {
+    func reloadData(checkDelegateDataSource check: Bool, withAnchorDate anchorDate: NSDate? = nil, withAnimation animation: Bool = false, completionHandler:(()->Void)? = nil) {
         if check {
             reloadDelegateDataSource() // Reload the datasource
         }
@@ -452,22 +474,26 @@ public class JTAppleCalendarView: UIView {
         // Delay on main thread. We want this to be called after the view is displayed on the main run loop
         if layoutNeedsUpdating {
             delayRunOnMainThread(0.0, closure: {
-                self.configureChangeOfRows()
-                
-                guard let validAnchorDate = anchorDate else { // If the date is invalid just scroll to the the first item on the view or scroll to the start of a header (if header is enabled)
-                    if headerViewXibs.count < 1 {
-                        if !self.scrollInProgress { // Make sure this scroll only gets activated if no other scroll is in queue
-                            self.scrollToDate(self.startOfMonthCache, triggerScrollToDateDelegate: false, animateScroll: false, completionHandler: completionHandler)
+                if !self.scrollInProgress { // Make sure this scroll only gets activated if no other scroll is in queue
+                    self.configureChangeOfRows()
+                    
+                    guard let validAnchorDate = anchorDate else { // If the date is invalid just scroll to the the first item on the view or scroll to the start of a header (if header is enabled)
+                        if headerViewXibs.count < 1 {
+                            self.scrollToDate(self.startOfMonthCache, triggerScrollToDateDelegate: false, animateScroll: animation, completionHandler: completionHandler)
+                        } else {
+                            self.scrollToHeaderForDate(self.startOfMonthCache, triggerScrollToDateDelegate: false, withAnimation: animation, completionHandler: completionHandler)
                         }
-                    } else {
-                        self.scrollToHeaderForDate(self.startOfMonthCache)
+                        return
                     }
-                    return
+                    
+                    delayRunOnMainThread(0.0, closure: { () -> () in
+                        self.scrollToDate(validAnchorDate, triggerScrollToDateDelegate: false, animateScroll: animation, completionHandler: completionHandler)
+                    })
+                } else {
+                    if let validHandler = completionHandler {
+                        self.delayedExecutionClosure.append(validHandler)
+                    }
                 }
-                
-                delayRunOnMainThread(0.0, closure: { () -> () in
-                    self.scrollToDate(validAnchorDate, triggerScrollToDateDelegate: false, animateScroll: false, completionHandler: completionHandler)
-                })
                 
             })
         } else {
