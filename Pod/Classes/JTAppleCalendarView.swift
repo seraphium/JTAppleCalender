@@ -46,7 +46,10 @@ public struct CellState {
     public let date: NSDate
     /// returns the day
     public let day: DaysOfWeek
-    
+    /// returns the row in which the date cell appears visually
+    public let row: Int
+    /// returns the column in which the date cell appears visually
+    public let column: Int
 }
 
 /// Days of the week. By setting you calandar's first day of week, you can change which day is the first for the week. Sunday is by default.
@@ -807,12 +810,18 @@ extension JTAppleCalendarView {
             dayOfWeek = .Saturday
         }
         
+        let row = {()->Int in return (itemIndex / 7) }
+        
+        let column = {()->Int in return (itemIndex % 7) }
+        
         let cellState = CellState(
             isSelected: theSelectedIndexPaths.contains(indexPath),
             text: cellText,
             dateBelongsTo: dateBelongsTo,
             date: date,
-            day: dayOfWeek   
+            day: dayOfWeek,
+            row: row(),
+            column: column()
         )
         
         return cellState
