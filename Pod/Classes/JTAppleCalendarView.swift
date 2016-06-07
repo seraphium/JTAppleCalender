@@ -331,10 +331,8 @@ public class JTAppleCalendarView: UIView {
     
     lazy var calendarView : UICollectionView = {
         
-        let layout = JTAppleCalendarHorizontalFlowLayout(withDelegate: self)
+        let layout = JTAppleCalendarFlowLayout(withDelegate: self)
         layout.scrollDirection = self.direction
-        layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
         
         let cv = UICollectionView(frame: CGRectZero, collectionViewLayout: layout)
         cv.dataSource = self
@@ -629,12 +627,10 @@ public class JTAppleCalendarView: UIView {
     }
     
     func generateNewLayout() -> UICollectionViewLayout {
-        let layout: UICollectionViewLayout = direction == .Horizontal ? JTAppleCalendarHorizontalFlowLayout(withDelegate: self) : JTAppleCalendarVerticalFlowLayout(withDelegate: self)
+        let layout: UICollectionViewLayout = JTAppleCalendarFlowLayout(withDelegate: self)
         let conformingProtocolLayout = layout as! JTAppleCalendarLayoutProtocol
         
         conformingProtocolLayout.scrollDirection = direction
-        conformingProtocolLayout.minimumInteritemSpacing = 0
-        conformingProtocolLayout.minimumLineSpacing = 0
         return layout
     }
     
