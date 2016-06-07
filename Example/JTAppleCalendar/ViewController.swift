@@ -116,11 +116,6 @@ class ViewController: UIViewController {
             ),
             dispatch_get_main_queue(), closure)
     }
-    
-//    override func viewDidLayoutSubviews() {
-//        super.viewDidLayoutSubviews()
-////        calendarView.frame = calendarView.frame
-//    }
 }
 
 // MARK : JTAppleCalendarDelegate
