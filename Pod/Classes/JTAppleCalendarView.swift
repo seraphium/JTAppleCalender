@@ -186,20 +186,6 @@ public class JTAppleCalendarView: UIView {
     
     // Keeps track of item size for a section. This is an optimization
     var indexPathSectionItemSize: (section: Int, itemSize: CGSize)?
-    
-    /// Sets the sectionInset of the calendar view
-    public var sectionInset: UIEdgeInsets {
-        set {
-            let flowLayout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
-            flowLayout.sectionInset = newValue
-        }
-        
-        get {
-            let flowLayout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
-            return flowLayout.sectionInset
-        }
-    }
-    
     var scrollInProgress = false
     
     private var layoutNeedsUpdating = false
@@ -331,7 +317,7 @@ public class JTAppleCalendarView: UIView {
     
     lazy var calendarView : UICollectionView = {
         
-        let layout = JTAppleCalendarFlowLayout(withDelegate: self)
+        let layout = JTAppleCalendarLayout(withDelegate: self)
         layout.scrollDirection = self.direction
         
         let cv = UICollectionView(frame: CGRectZero, collectionViewLayout: layout)
@@ -627,7 +613,7 @@ public class JTAppleCalendarView: UIView {
     }
     
     func generateNewLayout() -> UICollectionViewLayout {
-        let layout: UICollectionViewLayout = JTAppleCalendarFlowLayout(withDelegate: self)
+        let layout: UICollectionViewLayout = JTAppleCalendarLayout(withDelegate: self)
         let conformingProtocolLayout = layout as! JTAppleCalendarLayoutProtocol
         
         conformingProtocolLayout.scrollDirection = direction

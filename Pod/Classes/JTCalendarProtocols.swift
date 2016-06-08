@@ -7,15 +7,9 @@
 //
 
 protocol JTAppleCalendarLayoutProtocol: class {
-    var sectionInset: UIEdgeInsets {get set}
     var itemSize: CGSize {get set}
-    var pointForFocusItem: CGPoint {get set}
     var headerReferenceSize: CGSize {get set}
-    var footerReferenceSize: CGSize {get set}
     var scrollDirection: UICollectionViewScrollDirection {get set}
-    var minimumInteritemSpacing: CGFloat {get set}
-    var minimumLineSpacing: CGFloat {get set}
-    
     var cellCache: [Int:[UICollectionViewLayoutAttributes]] {get set}
     var headerCache: [UICollectionViewLayoutAttributes] {get set}
     

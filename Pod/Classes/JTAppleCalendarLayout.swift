@@ -1,5 +1,5 @@
 //
-//  JTAppleCalendarFlowLayout.swift
+//  JTAppleCalendarLayout.swift
 //  JTAppleCalendar
 //
 //  Created by Jay Thomas on 2016-03-01.
@@ -8,15 +8,10 @@
 
 
 /// Base class for the Horizontal layout
-public class JTAppleCalendarFlowLayout: UICollectionViewLayout, JTAppleCalendarLayoutProtocol {
-    var sectionInset: UIEdgeInsets = UIEdgeInsetsZero
+public class JTAppleCalendarLayout: UICollectionViewLayout, JTAppleCalendarLayoutProtocol {
     var itemSize: CGSize = CGSizeZero
     var headerReferenceSize: CGSize = CGSizeZero
-    var footerReferenceSize: CGSize = CGSizeZero
-    var pointForFocusItem = CGPointZero
     var scrollDirection: UICollectionViewScrollDirection = .Horizontal
-    var minimumInteritemSpacing: CGFloat = 0
-    var minimumLineSpacing: CGFloat = 0
     var maxSections: Int = 0
     var daysPerSection: Int = 0
     
@@ -74,21 +69,10 @@ public class JTAppleCalendarFlowLayout: UICollectionViewLayout, JTAppleCalendarL
         let attributes = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: elementKind, withIndexPath: indexPath)
         let size = delegate!.referenceSizeForHeaderInSection(indexPath.section)
         let modifiedSize = CGSize(width: collectionView!.frame.size.width, height: size.height)
-        
-        let stride: CGFloat
-        if scrollDirection == .Horizontal {
-            stride = collectionView!.frame.size.width
-        } else {
-            stride = collectionView!.frame.size.height
-        }
-        
+        let stride = scrollDirection == .Horizontal ? collectionView!.frame.size.width : collectionView!.frame.size.height
         let offset = CGFloat(attributes.indexPath.section) * stride
         
-        if scrollDirection == .Horizontal {
-            attributes.frame = CGRect(x: offset, y: 0, width: modifiedSize.width, height: modifiedSize.height)
-        } else {
-            attributes.frame = CGRect(x: 0, y: offset, width: modifiedSize.width, height: modifiedSize.height)
-        }
+        attributes.frame = scrollDirection == .Horizontal ? CGRect(x: offset, y: 0, width: modifiedSize.width, height: modifiedSize.height) : CGRect(x: 0, y: offset, width: modifiedSize.width, height: modifiedSize.height)
         if attributes.frame == CGRectZero { return nil }
         
         return attributes

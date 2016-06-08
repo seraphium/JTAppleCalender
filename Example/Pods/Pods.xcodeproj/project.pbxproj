@@ -15,7 +15,7 @@
 		5B06E8554848B98BBCD7DC780475FAD9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E4E89230EF59BC255123B67864ACF77 /* Foundation.framework */; };
 		6B2601191C99F7F2003ED015 /* JTAppleCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B2601151C99F7F2003ED015 /* JTAppleCalendarView.swift */; };
 		6B26011B1C99F7F2003ED015 /* JTAppleViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B2601171C99F7F2003ED015 /* JTAppleViews.swift */; };
-		6B26011C1C99F7F2003ED015 /* JTAppleCalendarFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B2601181C99F7F2003ED015 /* JTAppleCalendarFlowLayout.swift */; };
+		6B26011C1C99F7F2003ED015 /* JTAppleCalendarLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B2601181C99F7F2003ED015 /* JTAppleCalendarLayout.swift */; };
 		6B4ED9671CE4FAE400ADB643 /* UserInteractionFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B4ED9661CE4FAE400ADB643 /* UserInteractionFunctions.swift */; };
 		6B4ED9691CE504E400ADB643 /* JTAppleCalendarDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B4ED9681CE504E400ADB643 /* JTAppleCalendarDelegates.swift */; };
 		6B8B06FA1D0773AC00CE0D55 /* JTCalendarProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B8B06F91D0773AC00CE0D55 /* JTCalendarProtocols.swift */; };
@@ -67,7 +67,7 @@
 		3E9491B2892FFD85370550133B08F4BC /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6B2601151C99F7F2003ED015 /* JTAppleCalendarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JTAppleCalendarView.swift; sourceTree = "<group>"; };
 		6B2601171C99F7F2003ED015 /* JTAppleViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JTAppleViews.swift; sourceTree = "<group>"; };
-		6B2601181C99F7F2003ED015 /* JTAppleCalendarFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JTAppleCalendarFlowLayout.swift; sourceTree = "<group>"; };
+		6B2601181C99F7F2003ED015 /* JTAppleCalendarLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JTAppleCalendarLayout.swift; sourceTree = "<group>"; };
 		6B4ED9661CE4FAE400ADB643 /* UserInteractionFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInteractionFunctions.swift; sourceTree = "<group>"; };
 		6B4ED9681CE504E400ADB643 /* JTAppleCalendarDelegates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JTAppleCalendarDelegates.swift; sourceTree = "<group>"; };
 		6B8B06F91D0773AC00CE0D55 /* JTCalendarProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JTCalendarProtocols.swift; sourceTree = "<group>"; };
@@ -215,7 +215,7 @@
 				6BDFF7CB1C9DD34500571F98 /* JTAppleDayCell.swift */,
 				6B2601171C99F7F2003ED015 /* JTAppleViews.swift */,
 				6BCA1FDA1CE33CA90058F1FF /* JTAppleCollectionReusableView.swift */,
-				6B2601181C99F7F2003ED015 /* JTAppleCalendarFlowLayout.swift */,
+				6B2601181C99F7F2003ED015 /* JTAppleCalendarLayout.swift */,
 				6B8B06F91D0773AC00CE0D55 /* JTCalendarProtocols.swift */,
 				6B4ED9661CE4FAE400ADB643 /* UserInteractionFunctions.swift */,
 				6B4ED9681CE504E400ADB643 /* JTAppleCalendarDelegates.swift */,
@@ -440,7 +440,7 @@
 				6B4ED9671CE4FAE400ADB643 /* UserInteractionFunctions.swift in Sources */,
 				6B4ED9691CE504E400ADB643 /* JTAppleCalendarDelegates.swift in Sources */,
 				6BCA1FDB1CE33CA90058F1FF /* JTAppleCollectionReusableView.swift in Sources */,
-				6B26011C1C99F7F2003ED015 /* JTAppleCalendarFlowLayout.swift in Sources */,
+				6B26011C1C99F7F2003ED015 /* JTAppleCalendarLayout.swift in Sources */,
 				6B8B06FA1D0773AC00CE0D55 /* JTCalendarProtocols.swift in Sources */,
 				6B26011B1C99F7F2003ED015 /* JTAppleViews.swift in Sources */,
 				6B2601191C99F7F2003ED015 /* JTAppleCalendarView.swift in Sources */,

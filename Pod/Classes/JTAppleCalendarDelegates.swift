@@ -12,7 +12,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
     /// Tells the delegate when the user finishes scrolling the content.
     public func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         if pagingEnabled {
-            (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pointForFocusItem = targetContentOffset.memory
+//            (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pointForFocusItem = targetContentOffset.memory
             return
         }
         
@@ -77,8 +77,6 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
             }
         }
         
-        
-        
         if (directionVelocity == 0) {
             guard let
                     indexPath = calendarView.indexPathForItemAtPoint(calcTestPoint(directionVelocity)),
@@ -111,7 +109,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                 setTestPoint(calcTestPoint(directionVelocity))
             }
         }
-        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pointForFocusItem = targetContentOffset.memory
+//        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pointForFocusItem = targetContentOffset.memory
     }
     
     /// Tells the delegate when a scrolling animation in the scroll view concludes.
@@ -124,7 +122,7 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
         executeDelayedTasks()
     
         // Update the focus item whenever scrolled
-        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pointForFocusItem = scrollView.contentOffset
+//        (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).pointForFocusItem = scrollView.contentOffset
         
         // A scroll was just completed. 
         scrollInProgress = false
