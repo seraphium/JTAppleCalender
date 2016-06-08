@@ -69,7 +69,7 @@ extension JTAppleCalendarView {
     /// Register header views with the calender. This needs to be done before the view can be displayed
     /// - Parameter fileNames: A dictionary containing [headerViewNames:HeaderviewSizes]
     public func registerHeaderViewXibs(fileNames headerViewXibNames: [String]) {
-        headerViewXibs.removeAll()
+        headerViewXibs.removeAll() // remove the already registered xib files if the user re-registers again.
         
         if headerViewXibNames.count < 1 {
             return
