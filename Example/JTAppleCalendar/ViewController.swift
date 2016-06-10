@@ -107,15 +107,6 @@ class ViewController: UIViewController {
         let year = NSCalendar.currentCalendar().component(NSCalendarUnit.Year, fromDate: startDate)
         monthLabel.text = monthName + " " + String(year)
     }
-    
-    func delayRunOnMainThread(delay:Double, closure:()->()) {
-        dispatch_after(
-            dispatch_time(
-                DISPATCH_TIME_NOW,
-                Int64(delay * Double(NSEC_PER_SEC))
-            ),
-            dispatch_get_main_queue(), closure)
-    }
 }
 
 // MARK : JTAppleCalendarDelegate
@@ -172,4 +163,14 @@ extension ViewController: JTAppleCalendarViewDataSource, JTAppleCalendarViewDele
             headerCell?.title.text = "In any color or size you want"
         }
     }
+}
+
+
+func delayRunOnMainThread(delay:Double, closure:()->()) {
+    dispatch_after(
+        dispatch_time(
+            DISPATCH_TIME_NOW,
+            Int64(delay * Double(NSEC_PER_SEC))
+        ),
+        dispatch_get_main_queue(), closure)
 }
