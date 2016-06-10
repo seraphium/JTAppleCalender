@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "JTAppleCalendar"
-  s.version          = "4.0.0"
+  s.version          = "4.0.1"
   s.summary          = "The final calendar control you'll ever try"
 
 # This description is used to generate tags and improve search results.
