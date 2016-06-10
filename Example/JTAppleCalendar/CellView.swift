@@ -41,7 +41,9 @@ class CellView: JTAppleDayCellView {
         self.backgroundColor = c.stringFromDate(date) == todayDate ? todayColor:normalDayColor
         
         // Setup cell selection status
-        configueViewIntoBubbleView(cellState)
+        delayRunOnMainThread(0.0) {
+            self.configueViewIntoBubbleView(cellState)
+        }
         
         // Configure Visibility
         configureVisibility(cellState)
@@ -70,7 +72,6 @@ class CellView: JTAppleDayCellView {
     
     func cellSelectionChanged(cellState: CellState) {
         if cellState.isSelected == true {
-
             if selectedView.hidden == true {
                 configueViewIntoBubbleView(cellState)
                 self.userInteractionEnabled = false
@@ -85,12 +86,8 @@ class CellView: JTAppleDayCellView {
     
     private func configueViewIntoBubbleView(cellState: CellState, animateDeselection: Bool = false) {
         if cellState.isSelected {
-
-            delayRunOnMainThread(0.0, closure: { 
-                self.selectedView.layer.cornerRadius =  self.selectedView.frame.width  / 2
-                self.selectedView.hidden = false
-            })
-
+            self.selectedView.layer.cornerRadius =  self.selectedView.frame.width  / 2
+            self.selectedView.hidden = false
             configureTextColor(cellState)
             
         } else {
