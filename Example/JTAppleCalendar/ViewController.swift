@@ -26,6 +26,10 @@ class ViewController: UIViewController {
         calendarView.reloadData()
     }
     
+    
+    @IBAction func reloadData(sender: UIButton) {
+        calendarView.reloadData()
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         formatter.dateFormat = "yyyy MM dd"
