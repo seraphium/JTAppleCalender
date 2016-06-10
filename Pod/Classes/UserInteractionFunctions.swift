@@ -60,6 +60,8 @@ extension JTAppleCalendarView {
         cellViewFromDeveloper = name
     }
     
+    /// Let's the calendar know which cell class to use for the displaying of it's date-cells.
+    /// - Parameter name: The name of the xib of your cell design
     public func registerCellViewClass(fileName name: String) {
         cellViewIsClass = true
         cellViewFromDeveloper = name
