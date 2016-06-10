@@ -54,8 +54,8 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                     retval = CGPoint(x: recalcOffset, y: 0)
                 } else {
                     let targetSection =  Int(recalcOffset / self.calendarView.frame.size.width)
-                    let headerHeigt = self.referenceSizeForHeaderInSection(targetSection)
-                    retval = CGPoint(x: recalcOffset, y: headerHeigt.height)
+                    let headerHeight = self.referenceHeightForHeaderInSection(targetSection)
+                    retval = CGPoint(x: recalcOffset, y: headerHeight)
                 }
             }
             
@@ -171,6 +171,10 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
                                                                                withReuseIdentifier: reuseIdentifier,
                                                                                forIndexPath: indexPath) as! JTAppleCollectionReusableView
 
+//        print("\n")
+//        print(headerView.frame.size)
+//        print(headerView.frame.origin)
+        
         delegate?.calendar(self, isAboutToDisplaySectionHeader: headerView.view, date: date, identifier: reuseIdentifier)
         return headerView
     }
@@ -180,14 +184,15 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         restoreSelectionStateForCellAtIndexPath(indexPath)
         
         let dayCell = collectionView.dequeueReusableCellWithReuseIdentifier(cellReuseIdentifier, forIndexPath: indexPath) as! JTAppleDayCell
-        
         let date = dateFromPath(indexPath)!
         let cellState = cellStateFromIndexPath(indexPath, withDate: date)
         
-        delegate?.calendar(self, isAboutToDisplayCell: dayCell.cellView, date: date, cellState: cellState)
-        
         dayCell.updateCellView(dayCell.cellView)
         dayCell.bounds.origin = CGPoint(x: 0, y: 0)
+        
+        delegate?.calendar(self, isAboutToDisplayCell: dayCell.cellView, date: date, cellState: cellState)
+        
+        
         
 //        print(dayCell.frame.size)
 //        print(dayCell.cellView.frame)
