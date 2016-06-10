@@ -430,20 +430,17 @@ public class JTAppleCalendarView: UIView {
             self.scrollInProgress = true
             delayRunOnMainThread(0.0, closure: {
                 self.calendarView.setContentOffset(topOfHeader, animated:animation)
-
-                delayRunOnMainThread(0.0, closure: {
-                    if  !animation {
+                if  !animation {
+                    self.scrollViewDidEndScrollingAnimation(self.calendarView)
+                    self.scrollInProgress = false
+                } else {
+                    // If the scroll is set to animate, and the target content offset is already on the screen, then the didFinishScrollingAnimation
+                    // delegate will not get called. Once animation is on let's force a scroll so the delegate MUST get caalled
+                    if let check = self.calendarOffsetIsAlreadyAtScrollPosition(forOffset: topOfHeader) where check == true {
                         self.scrollViewDidEndScrollingAnimation(self.calendarView)
                         self.scrollInProgress = false
-                    } else {
-                        // If the scroll is set to animate, and the target content offset is already on the screen, then the didFinishScrollingAnimation
-                        // delegate will not get called. Once animation is on let's force a scroll so the delegate MUST get caalled
-                        if let check = self.calendarOffsetIsAlreadyAtScrollPosition(forOffset: topOfHeader) where check == true {
-                            self.scrollViewDidEndScrollingAnimation(self.calendarView)
-                            self.scrollInProgress = false
-                        }
                     }
-                })
+                }
             })
         }
     }
