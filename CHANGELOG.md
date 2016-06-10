@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 `JTAppleCalendar` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
+- `4.0.0` Releases - [4.0.0](#400)|[4.0.1](#401)
+
+#### 3.x Releases
 - `3.0.0` Releases - [3.0.0](#300)|[3.0.1](#301)
 
 #### 2.x Releases
@@ -14,6 +17,16 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100)
 
 ---
+## [4.0.1](https://github.com/patchthecode/JTAppleCalendar/releases/tag/4.0.1)
+- Fixed issue: Performance fixes 
+- Fixed issue: Layout issues
+  - Updated by [JayT](https://github.com/patchthecode).
+
+## [4.0.0](https://github.com/patchthecode/JTAppleCalendar/releases/tag/4.0.0)
+- Fixed issue: Performance fixes 
+- Fixed issue: Changed way numberOfRows is configured. New way solves concurrency issues
+  - Updated by [JayT](https://github.com/patchthecode).
+
 ## [3.0.1](https://github.com/patchthecode/JTAppleCalendar/releases/tag/3.0.1)
 - Fixed issue: Cell Inset was borken with 3.0.0 release
 - Fixed issue: canSelectDate always returned true. 
