@@ -27,7 +27,7 @@ public class JTAppleCalendarLayout: UICollectionViewLayout, JTAppleCalendarLayou
     
     weak var delegate: JTAppleCalendarDelegateProtocol?
     
-    var currentHeader: (section: Int, height: CGFloat)? // Tracks the current header size
+    var currentHeader: (section: Int, size: CGSize)? // Tracks the current header size
     var currentCell: (section: Int, itemSize: CGSize)? // Tracks the current cell size
     
     init(withDelegate delegate: JTAppleCalendarDelegateProtocol) {
@@ -117,8 +117,8 @@ public class JTAppleCalendarLayout: UICollectionViewLayout, JTAppleCalendarLayou
         let attributes = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: elementKind, withIndexPath: indexPath)
         
         // We cache the header here so we dont call the delegate so much
-        let headerHeight = cachedHeaderSizeForSection(indexPath.section)
-        let modifiedSize = CGSize(width: collectionView!.frame.size.width, height: headerHeight)
+        let headerSize = cachedHeaderSizeForSection(indexPath.section)
+        let modifiedSize = CGSize(width: collectionView!.frame.size.width, height: headerSize.height)
         let stride = scrollDirection == .Horizontal ? collectionView!.frame.size.width : collectionView!.frame.size.height
         let offset = CGFloat(attributes.indexPath.section) * stride
         
@@ -128,16 +128,16 @@ public class JTAppleCalendarLayout: UICollectionViewLayout, JTAppleCalendarLayou
         return attributes
     }
     
-    func cachedHeaderSizeForSection(section: Int) -> CGFloat {
+    func cachedHeaderSizeForSection(section: Int) -> CGSize {
         // We cache the header here so we dont call the delegate so much
-        let headerHeight: CGFloat
+        let headerSize: CGSize
         if let cachedHeader  = currentHeader where cachedHeader.section == section {
-            headerHeight = cachedHeader.height
+            headerSize = cachedHeader.size
         } else {
-            headerHeight = delegate!.referenceHeightForHeaderInSection(section)
-            currentHeader = (section, headerHeight)
+            headerSize = delegate!.referenceSizeForHeaderInSection(section)
+            currentHeader = (section, headerSize)
         }
-        return headerHeight
+        return headerSize
     }
     
     /// Returns the layout attributes for the item at the specified index path. A layout attributes object containing the information to apply to the item’s cell.
@@ -175,17 +175,17 @@ public class JTAppleCalendarLayout: UICollectionViewLayout, JTAppleCalendarLayou
             }
             
             if headerViewXibs.count > 0 {
-                let headerHeight = cachedHeaderSizeForSection(attributes.indexPath.section)
-                yCellOffset += headerHeight
+                let headerSize = cachedHeaderSizeForSection(attributes.indexPath.section)
+                yCellOffset += headerSize.height
             }
             attributes.frame = CGRectMake(xCellOffset, yCellOffset, self.itemSize.width, self.itemSize.height)
         }
     }
     
     func sizeForitemAtIndexPath(indexPath: NSIndexPath) -> CGSize {
-        let headerHeight = cachedHeaderSizeForSection(indexPath.section)
+        let headerSize = cachedHeaderSizeForSection(indexPath.section)
         let currentItemSize = itemSize
-        let size = CGSize(width: currentItemSize.width, height: (collectionView!.frame.height - headerHeight) / CGFloat(numberOfRows))
+        let size = CGSize(width: currentItemSize.width, height: (collectionView!.frame.height - headerSize.height) / CGFloat(numberOfRows))
         currentCell = (section: indexPath.section, itemSize: size)
         return size
     }

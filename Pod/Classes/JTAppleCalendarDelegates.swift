@@ -54,8 +54,8 @@ extension JTAppleCalendarView: UIScrollViewDelegate {
                     retval = CGPoint(x: recalcOffset, y: 0)
                 } else {
                     let targetSection =  Int(recalcOffset / self.calendarView.frame.size.width)
-                    let headerHeight = self.referenceHeightForHeaderInSection(targetSection)
-                    retval = CGPoint(x: recalcOffset, y: headerHeight)
+                    let headerSize = self.referenceSizeForHeaderInSection(targetSection)
+                    retval = CGPoint(x: recalcOffset, y: headerSize.height)
                 }
             }
             
@@ -248,7 +248,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
             if let anUnselectedCounterPartIndexPath = deselectCounterPartCellIndexPath(indexPath, date: dateDeselectedByUser, dateOwner: cellState.dateBelongsTo) {
                 deleteCellFromSelectedSetIfSelected(anUnselectedCounterPartIndexPath)
                 // ONLY if the counterPart cell is visible, then we need to inform the delegate
-                refreshIndexPathIfVisible(anUnselectedCounterPartIndexPath)
+                reloadIndexPathsIfVisible([anUnselectedCounterPartIndexPath])
             }
             
             delegate.calendar(self, didDeselectDate: dateDeselectedByUser, cell: selectedCell?.cellView, cellState: cellState)
@@ -276,36 +276,17 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
             // Update model
             addCellToSelectedSetIfUnselected(indexPath, date:dateSelectedByUser)
             
-            let selectedCell = collectionView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell
-            let cellState = cellStateFromIndexPath(indexPath, withDate: dateSelectedByUser)
-            
             // If cell has a counterpart cell, then select it as well
-            if let aSelectedCounterPartIndexPath = selectCounterPartCellIndexPath(indexPath, date: dateSelectedByUser, dateOwner: cellState.dateBelongsTo) {
+            let cellState = cellStateFromIndexPath(indexPath, withDate: dateSelectedByUser)
+            if let aSelectedCounterPartIndexPath = selectCounterPartCellIndexPathIfExists(indexPath, date: dateSelectedByUser, dateOwner: cellState.dateBelongsTo) {
                 // ONLY if the counterPart cell is visible, then we need to inform the delegate
-                refreshIndexPathIfVisible(aSelectedCounterPartIndexPath)
+                delayRunOnMainThread(0.0, closure: {
+                    self.reloadIndexPathsIfVisible([aSelectedCounterPartIndexPath])
+                })
             }
+            
+            let selectedCell = collectionView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell
             delegate.calendar(self, didSelectDate: dateSelectedByUser, cell: selectedCell?.cellView, cellState: cellState)
         }
-    }
-}
-
-extension JTAppleCalendarView:  UICollectionViewDelegateFlowLayout {
-    func referenceSizeForHeaderInSection(section: Int) -> CGSize {
-        if headerViewXibs.count < 1 { return CGSizeZero }
-        let size = calendarViewHeaderSizeForSection(section)
-        return size
-    }
-    
-    /// Asks the delegate for the size of the specified item’s cell.
-    public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        if let size = indexPathSectionItemSize where size.section == indexPath.section {
-            return size.itemSize
-        }
-        
-        let headerHeight = referenceSizeForHeaderInSection(indexPath.section)
-        let currentItemSize = (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).itemSize
-        let size = CGSize(width: currentItemSize.width, height: (calendarView.frame.height - headerHeight.height) / CGFloat(numberOfRows()))
-        indexPathSectionItemSize = (section: indexPath.section, itemSize: size)
-        return size
     }
 }

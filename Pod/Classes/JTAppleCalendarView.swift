@@ -792,7 +792,7 @@ extension JTAppleCalendarView {
         return nextSection
     }
     
-    func refreshIndexPathIfVisible(indexPath: [NSIndexPath]) {
+    func reloadIndexPathsIfVisible(indexPath: [NSIndexPath]) {
         var visiblePaths: [NSIndexPath] = []
         for path in indexPath {
             if (calendarView.cellForItemAtIndexPath(path) as? JTAppleDayCell) != nil {
