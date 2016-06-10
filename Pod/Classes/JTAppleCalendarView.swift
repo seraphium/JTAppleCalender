@@ -186,8 +186,8 @@ public class JTAppleCalendarView: UIView {
     
     // Keeps track of item size for a section. This is an optimization
     var scrollInProgress = false
-    
     private var layoutNeedsUpdating = false
+    
     /// Number of rows to be displayed per month. Allowed values are 1, 2, 3 & 6.
     /// After changing this value, you should reload your calendarView to show your change
     public var numberOfRowsPerMonth: Int {
@@ -474,6 +474,8 @@ public class JTAppleCalendarView: UIView {
                     }
                 }
                 
+                // Set layoutNeedsUpdating to false
+                self.layoutNeedsUpdating = false
             })
         } else {
             (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).clearCache()
@@ -506,10 +508,8 @@ public class JTAppleCalendarView: UIView {
         theSelectedIndexPaths.removeAll()
         let layout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
         layout.clearCache()
-        
         monthInfo = setupMonthInfoDataForStartAndEndDate()
         self.calendarView.reloadData()
-        layoutNeedsUpdating = false
     }
     
     func calendarViewHeaderSizeForSection(section: Int) -> CGSize {
