@@ -185,7 +185,6 @@ public class JTAppleCalendarView: UIView {
     var triggerScrollToDateDelegate: Bool? = true
     
     // Keeps track of item size for a section. This is an optimization
-    var indexPathSectionItemSize: (section: Int, itemSize: CGSize)?
     var scrollInProgress = false
     
     private var layoutNeedsUpdating = false
@@ -393,12 +392,8 @@ public class JTAppleCalendarView: UIView {
     }
     
     func restoreSelectionStateForCellAtIndexPath(indexPath: NSIndexPath) {
-        if theSelectedIndexPaths.count > 0 {
-            if theSelectedIndexPaths.contains(indexPath) {
-                calendarView.selectItemAtIndexPath(indexPath, animated: false, scrollPosition: .None)
-            } else {
-                calendarView.deselectItemAtIndexPath(indexPath, animated: false)
-            }
+        if theSelectedIndexPaths.contains(indexPath) {
+            calendarView.selectItemAtIndexPath(indexPath, animated: false, scrollPosition: .None)
         }
     }
     
@@ -486,7 +481,6 @@ public class JTAppleCalendarView: UIView {
         } else {
             (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).clearCache()
             calendarView.reloadData()
-            
         }
     }
     
@@ -513,17 +507,10 @@ public class JTAppleCalendarView: UIView {
     func configureChangeOfRows() {
         theSelectedDates.removeAll()
         theSelectedIndexPaths.removeAll()
-        indexPathSectionItemSize = nil
-        
-        // Refresh the entire layout
-        monthInfo = setupMonthInfoDataForStartAndEndDate()
-        
         let layout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
-        
-        updateLayoutItemSize(layout)
         layout.clearCache()
         
-        self.calendarView.setCollectionViewLayout(layout as! UICollectionViewLayout, animated: true)
+        monthInfo = setupMonthInfoDataForStartAndEndDate()
         self.calendarView.reloadData()
         layoutNeedsUpdating = false
     }
@@ -714,13 +701,6 @@ public class JTAppleCalendarView: UIView {
         }
         return retval
     }
-
-    
-    func reloadPaths(indexPaths: [NSIndexPath]) {
-        if indexPaths.count > 0 {
-            calendarView.reloadItemsAtIndexPaths(indexPaths)
-        }
-    }
     
     func pathsFromDates(dates:[NSDate])-> [NSIndexPath] {
         var returnPaths: [NSIndexPath] = []
@@ -815,9 +795,18 @@ extension JTAppleCalendarView {
         return nextSection
     }
     
-    func refreshIndexPathIfVisible(indexPath: NSIndexPath) {
-        if (calendarView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell) != nil {
-            calendarView.reloadItemsAtIndexPaths([indexPath])
+    func refreshIndexPathIfVisible(indexPath: [NSIndexPath]) {
+        var visiblePaths: [NSIndexPath] = []
+        for path in indexPath {
+            if (calendarView.cellForItemAtIndexPath(path) as? JTAppleDayCell) != nil {
+                visiblePaths.append(path)
+                
+            }
+        }
+        if visiblePaths.count > 0 {
+            delayRunOnMainThread(0.0, closure: {
+                self.calendarView.reloadItemsAtIndexPaths(visiblePaths)
+            })
         }
     }
     
@@ -842,9 +831,9 @@ extension JTAppleCalendarView {
         return nil
     }
     
-    func selectCounterPartCellIndexPath(indexPath: NSIndexPath, date: NSDate, dateOwner: CellState.DateOwner) -> NSIndexPath? {
-        if let
-            counterPartCellIndexPath = indexPathOfdateCellCounterPart(date, indexPath: indexPath, dateOwner: dateOwner) {
+    func selectCounterPartCellIndexPathIfExists(indexPath: NSIndexPath, date: NSDate, dateOwner: CellState.DateOwner) -> NSIndexPath? {
+        if let counterPartCellIndexPath = indexPathOfdateCellCounterPart(date, indexPath: indexPath, dateOwner: dateOwner) {
+            
             let dateComps = calendar.components([.Month, .Day, .Year], fromDate: date)
             guard let counterpartDate = calendar.dateFromComponents(dateComps) else {
                 return nil
@@ -880,6 +869,12 @@ extension JTAppleCalendarView: JTAppleCalendarDelegateProtocol {
     func numberOfsectionsPermonth() -> Int { return numberOfSectionsPerMonth }
     func numberOfMonthsInCalendar() -> Int { return numberOfMonths }
     func numberOfDaysPerSection() -> Int { return numberOfItemsPerSection }
+    
+    func referenceSizeForHeaderInSection(section: Int) -> CGSize {
+        if headerViewXibs.count < 1 { return CGSizeZero }
+        return calendarViewHeaderSizeForSection(section)
+    }
+    
 }
 
 /// NSDates can be compared with the == and != operators
