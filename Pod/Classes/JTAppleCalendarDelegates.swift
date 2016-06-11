@@ -221,11 +221,11 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
         if let
             delegate = self.delegate,
             dateUserSelected = dateFromPath(indexPath),
-            cell = collectionView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell {
-            if cellWasNotDisabledOrHiddenByTheUser(cell) {
-                let cellState = cellStateFromIndexPath(indexPath, withDate: dateUserSelected)
-                return delegate.calendar(self, canSelectDate: dateUserSelected, cell: cell.cellView, cellState: cellState)
-            }
+            cell = collectionView.cellForItemAtIndexPath(indexPath) as? JTAppleDayCell
+        where
+            cellWasNotDisabledOrHiddenByTheUser(cell) {
+            let cellState = cellStateFromIndexPath(indexPath, withDate: dateUserSelected)
+            return delegate.calendar(self, canSelectDate: dateUserSelected, cell: cell.cellView, cellState: cellState)
         }
         return false
     }
@@ -269,6 +269,7 @@ extension JTAppleCalendarView: UICollectionViewDataSource, UICollectionViewDeleg
     }
     /// Tells the delegate that the item at the specified index path was selected. The collection view calls this method when the user successfully selects an item in the collection view. It does not call this method when you programmatically set the selection.
     public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        print(indexPath)
         if let
             delegate = self.delegate,
             dateSelectedByUser = dateFromPath(indexPath) {

@@ -83,32 +83,50 @@ public class JTAppleCalendarLayout: UICollectionViewLayout, JTAppleCalendarLayou
     /// Returns the layout attributes for all of the cells and views in the specified rectangle.
     override public func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         var startSectionIndex = scrollDirection == .Horizontal ? Int(floor(rect.origin.x / collectionView!.frame.width)): Int(floor(rect.origin.y / collectionView!.frame.height))
-        if startSectionIndex < 1 { startSectionIndex = 0 }
+        if startSectionIndex < 0 { startSectionIndex = 0 }
         if startSectionIndex > cellCache.count { startSectionIndex = cellCache.count }
-
+        
+//        let requestedSections = scrollDirection == .Horizontal ? Int(ceil(rect.width / collectionView!.frame.width)) : Int(ceil(rect.height / collectionView!.frame.height))
+//        let endsection = startSectionIndex + requestedSections
+        
         // keep looping until there were no interception rects
         var attributes: [UICollectionViewLayoutAttributes] = []
+        let maxMissCount = scrollDirection == .Horizontal ? 6 : 7
         for sectionIndex in startSectionIndex..<cellCache.count {
+//            print("checking section: \(sectionIndex)")
             if let validSection = cellCache[sectionIndex] where validSection.count > 0 {
-
+                
                 // Add header view attributes
+                var interceptCount: Int  = 0
                 if headerViewXibs.count > 0 {
+                    interceptCount += 1
                     if CGRectIntersectsRect(headerCache[sectionIndex].frame, rect) {
                         attributes.append(headerCache[sectionIndex])
                     }
                 }
                 
-                var interceptCount: Int  = 0
+                var missCount = 0
+                var beganIntercepting = false
                 for val in validSection {
                     if CGRectIntersectsRect(val.frame, rect) {
-                        interceptCount += 1
+                        missCount = 0
+                        beganIntercepting = true
                         attributes.append(val)
+//                        print("s: \(sectionIndex) i: \(index)")
+                    } else {
+                        missCount += 1
+                        if missCount > maxMissCount && beganIntercepting { // If there are at least 8 misses in a row since intercepting began, then this section has no more interceptions. So break
+//                            print("There are no more interceptions for section: \(sectionIndex)")
+                            break
+                        }
                     }
                 }
-                if interceptCount < 1 { break }
+                if missCount > maxMissCount && beganIntercepting {
+//                    print("breaking also from outter loop. Rect was: \(rect)")
+                    break
+                }
             }
         }
-        
         return attributes
     }
     
