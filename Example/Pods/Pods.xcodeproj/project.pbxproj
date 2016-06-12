@@ -129,12 +129,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0EBA60929B0013F902724A35A4260B0A /* Source */ = {
+		0EBA60929B0013F902724A35A4260B0A /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				B621D6FA7D7B42029C14E8F76BD84A8C /* Classes */,
 			);
-			path = Source;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		2056869F790FA436FBEC3FE88E801711 /* Development Pods */ = {
@@ -226,7 +226,7 @@
 		B623CC553B9B355F15EAA2A665FD37F3 /* JTAppleCalendar */ = {
 			isa = PBXGroup;
 			children = (
-				0EBA60929B0013F902724A35A4260B0A /* Source */,
+				0EBA60929B0013F902724A35A4260B0A /* Sources */,
 				24B76A756B943541A40F16F976D6CE0C /* Support Files */,
 			);
 			name = JTAppleCalendar;
