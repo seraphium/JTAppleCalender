@@ -9,7 +9,7 @@ Inspiration for this control was made possible by Michael @ Karmadust. Want to k
 [![CI Status](http://img.shields.io/travis/patchthecode/JTAppleCalendar.svg?style=flat)](https://travis-ci.org/patchthecode/JTAppleCalendar) [![Version](https://img.shields.io/cocoapods/v/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![License](https://img.shields.io/cocoapods/l/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar) [![Platform](https://img.shields.io/cocoapods/p/JTAppleCalendar.svg?style=flat)](http://cocoapods.org/pods/JTAppleCalendar)
 
 ### **About Screenshots**
-The look of this calendar is up to the developer. Check out what people have developed with this library and also post you own images [at this link](https://github.com/patchthecode/JTAppleCalendar/issues/2). A sample iOS application is also included in this project's [Github Repository](https://github.com/patchthecode/JTAppleCalendar) to give you an idea of what you can do.
+The look of this calendar is up to the developer. Check out what people have developed with this library and also post your own images [at this link](https://github.com/patchthecode/JTAppleCalendar/issues/2). A sample iOS application is also included in this project's [Github Repository](https://github.com/patchthecode/JTAppleCalendar) to give you an idea of what you can do.
 
 * Downloaded and liked this calendar's ease of use?
 * Then don't forget to leave a ★ Star rating on Github. It's needed to make this control #1 :)
@@ -101,15 +101,18 @@ The following structure was returned when a cell is about to be displayed.
 * `.FollowingMonthWithinBoundary` = date belongs to following month, within boundary
 * `.FollowingMonthOutsideBoundary` = date belongs to following month, outside boundary
 
-
+#### User functions
 
 ```swift
     public func reloadData()
-    public func scrollToNextSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil) 
-    public func scrollToPreviousSegment(animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
-    public func scrollToDate(date: NSDate, animateScroll: Bool = true, completionHandler:(()->Void)? = nil)
-    public func selectDates(dates: [NSDate])
+    public func reloadDates(dates: [NSDate])
+    public func scrollToNextSegment() 
+    public func scrollToPreviousSegment()
+    public func scrollToDate()
+    public func selectDates()
     public func cellStatusForDateAtRow(row: Int, column: Int) -> CellState?
+    public func currentCalendarDateSegment() -> (startDate: NSDate, endDate: NSDate)
+    public func scrollToHeaderForDate(date: NSDate)
 ```
 
 #### Properties you can configure
