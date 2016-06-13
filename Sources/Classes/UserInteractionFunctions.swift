@@ -329,52 +329,6 @@ extension JTAppleCalendarView {
         })
     }
     
-    func calendarOffsetIsAlreadyAtScrollPosition(forIndexPath indexPath:NSIndexPath) -> Bool? {
-        var retval: Bool?
-        
-        // If the scroll is set to animate, and the target content offset is already on the screen, then the didFinishScrollingAnimation
-        // delegate will not get called. Once animation is on let's force a scroll so the delegate MUST get caalled
-        if let attributes = self.calendarView.layoutAttributesForItemAtIndexPath(indexPath) {
-            let origin = attributes.frame.origin
-            let offset = direction == .Horizontal ? origin.x : origin.y
-            if
-                self.calendarView.contentOffset.x == offset ||
-                (self.pagingEnabled && (indexPath.section ==  currentSectionPage)){
-                
-                retval = true
-            } else {
-                retval = false
-            }
-        }
-
-        return retval
-    }
-    
-    func calendarOffsetIsAlreadyAtScrollPosition(forOffset offset:CGPoint) -> Bool? {
-        var retval: Bool?
-        
-        // If the scroll is set to animate, and the target content offset is already on the screen, then the didFinishScrollingAnimation
-        // delegate will not get called. Once animation is on let's force a scroll so the delegate MUST get caalled
-        
-        let theOffset = direction == .Horizontal ? offset.x : offset.y
-        let divValue = direction == .Horizontal ? calendarView.frame.width : calendarView.frame.height
-        let sectionForOffset = Int(theOffset / divValue)
-        let calendarCurrentOffset = direction == .Horizontal ? calendarView.contentOffset.x : calendarView.contentOffset.y
-        if
-            calendarCurrentOffset == theOffset ||
-            (self.pagingEnabled && (sectionForOffset ==  currentSectionPage)){
-            retval = true
-        } else {
-            retval = false
-        }
-        
-    
-        return retval
-    }
-    
-    
-    
-    
     /// Scrolls the calendar view to the start of a section view header. If the calendar has no headers registered, then this function does nothing
     /// - Paramater date: The calendar view will scroll to the header of a this provided date
     public func scrollToHeaderForDate(date: NSDate, triggerScrollToDateDelegate: Bool = false, withAnimation animation: Bool = false, completionHandler: (()->Void)? = nil) {
