@@ -220,6 +220,9 @@ extension JTAppleCalendarView {
         let page = currentSectionPage
         if page + 1 < monthInfo.count {
             let position: UICollectionViewScrollPosition = self.direction == .Horizontal ? .Left : .Top
+            if let validHandler = completionHandler {
+              delayedExecutionClosure.append(validHandler)
+            }
             calendarView.scrollToItemAtIndexPath(NSIndexPath(forItem: 0, inSection:page + 1), atScrollPosition: position, animated: animateScroll)
         }
     }
@@ -230,6 +233,9 @@ extension JTAppleCalendarView {
         let page = currentSectionPage
         if page - 1 > -1 {
             let position: UICollectionViewScrollPosition = self.direction == .Horizontal ? .Left : .Top
+            if let validHandler = completionHandler {
+              delayedExecutionClosure.append(validHandler)
+            }
             calendarView.scrollToItemAtIndexPath(NSIndexPath(forItem: 0, inSection:page - 1), atScrollPosition: position, animated: animateScroll)
         }
     }
