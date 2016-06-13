@@ -228,22 +228,6 @@ public class JTAppleCalendarView: UIView {
         return page > 0 ? page : 0
     }
   
-    public var hasNextSection: Bool {
-        let page = currentSectionPage
-        if page + 1 < monthInfo.count {
-            return true
-        }
-        return false
-    }
-
-    public var hasPreviousSection: Bool {
-        let page = currentSectionPage
-        if page - 1 > -1 {
-            return true
-        }
-        return false
-    }
-    
     var startDateCache: NSDate {
         get { return cachedConfiguration.startDate }
     }
