@@ -56,15 +56,19 @@ extension JTAppleCalendarView {
     /// Let's the calendar know which cell xib to use for the displaying of it's date-cells.
     /// - Parameter name: The name of the xib of your cell design
     public func registerCellViewXib(fileName name: String) {
-        cellViewIsClass = false
-        cellViewFromDeveloper = name
+        cellViewSource = JTAppleCallendarCellViewSource.fromXib(name)
     }
     
     /// Let's the calendar know which cell class to use for the displaying of it's date-cells.
-    /// - Parameter name: The name of the xib of your cell design
+    /// - Parameter name: The class name of your cell design
     public func registerCellViewClass(fileName name: String) {
-        cellViewIsClass = true
-        cellViewFromDeveloper = name
+        cellViewSource = JTAppleCallendarCellViewSource.fromClassName(name)
+    }
+    
+    /// Let's the calendar know which cell class to use for the displaying of it's date-cells.
+    /// - Parameter name: The type of your cell design
+    public func registerCellViewClass(cellClass cellClass: AnyClass) {
+        cellViewSource = JTAppleCallendarCellViewSource.fromType(cellClass)
     }
     
     
