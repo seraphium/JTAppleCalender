@@ -630,13 +630,22 @@ public class JTAppleCalendarView: UIView {
     }
     
     func xibFileValid() -> Bool {
-        //"Did you remember to register your xib file to JTAppleCalendarView? call the registerCellViewXib method on it because xib filename is nil"
-        guard let xibName =  cellViewFromDeveloper else { return false }
-        //"your nib file name \(cellViewXibName) could not be loaded)"
-        guard let viewObject = NSBundle.mainBundle().loadNibNamed(xibName, owner: self, options: [:]) where viewObject.count > 0 else { return false }
-        //"xib file class does not conform to the protocol<JTAppleDayCellViewProtocol>"
-        guard let _ = viewObject[0] as? JTAppleDayCellView else { return false }
-        return true
+        // Did you remember to register your JTAppleCalendarView? Because we can't find any"
+        guard let cellViewSource = cellViewSource else { return false }
+        
+        switch cellViewSource {
+        case let .fromXib(xibName):
+            // "your nib file name \(cellViewXibName) could not be loaded)"
+            guard let viewObject = NSBundle.mainBundle().loadNibNamed(xibName, owner: self, options: [:]) where viewObject.count > 0 else { return false }
+            // "xib file class does not conform to the protocol<JTAppleDayCellViewProtocol>"
+            guard let _ = viewObject[0] as? JTAppleDayCellView else { return false }
+            
+            return true
+        default:
+            // todo: check other source cases
+            // asume that developer used right type of class
+            return true
+        }
     }
     
     func generateNewLayout() -> UICollectionViewLayout {

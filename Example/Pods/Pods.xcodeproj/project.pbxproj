@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0D8513D34612125E9ADC6A29E2ACD9B0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E4E89230EF59BC255123B67864ACF77 /* Foundation.framework */; };
 		17A50D07A017A44F937051301320BD69 /* Pods-JTAppleCalendar_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = AF014C9CECE6B439B1F4484B44F6839D /* Pods-JTAppleCalendar_Tests-dummy.m */; };
+		22BFB12C1D114ADF00579170 /* JTAppleCalendarCellViewSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFB12B1D114ADF00579170 /* JTAppleCalendarCellViewSource.swift */; };
 		3A17D016A98E131F39D1631FCA308C3C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E4E89230EF59BC255123B67864ACF77 /* Foundation.framework */; };
 		50912F176483B1CCF6D09FBF6574CCC4 /* Pods-JTAppleCalendar_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = CFEAC2F61AA0E311E2C41A521A947487 /* Pods-JTAppleCalendar_Example-dummy.m */; };
 		54EF02B44C818A0BB12D32BC5F644766 /* JTAppleCalendar-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C82A8461BAC14D837D1C245ACCC05B36 /* JTAppleCalendar-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -56,6 +57,7 @@
 		0677EC1ACF7D28075CE61A36E7053D39 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C379A8DA30C0BA959E8301AEC8DEAFF /* Pods-JTAppleCalendar_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-JTAppleCalendar_Example-umbrella.h"; sourceTree = "<group>"; };
 		21E678B9D88C5357159E7F8519FEEC3D /* Pods-JTAppleCalendar_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-JTAppleCalendar_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		22BFB12B1D114ADF00579170 /* JTAppleCalendarCellViewSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JTAppleCalendarCellViewSource.swift; sourceTree = "<group>"; };
 		2AE1DF0CF022267650A83BDF39298C12 /* Pods-JTAppleCalendar_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-JTAppleCalendar_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		2C34373990FC16119C2D1059659AA605 /* Pods-JTAppleCalendar_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-JTAppleCalendar_Example-acknowledgements.plist"; sourceTree = "<group>"; };
 		35A62886FA6572337D6AE300FD8EED57 /* JTAppleCalendar.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = JTAppleCalendar.modulemap; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 		B621D6FA7D7B42029C14E8F76BD84A8C /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				22BFB12B1D114ADF00579170 /* JTAppleCalendarCellViewSource.swift */,
 				6B2601151C99F7F2003ED015 /* JTAppleCalendarView.swift */,
 				6BDFF7CB1C9DD34500571F98 /* JTAppleDayCell.swift */,
 				6B2601171C99F7F2003ED015 /* JTAppleViews.swift */,
@@ -443,6 +446,7 @@
 				6B26011C1C99F7F2003ED015 /* JTAppleCalendarLayout.swift in Sources */,
 				6B8B06FA1D0773AC00CE0D55 /* JTCalendarProtocols.swift in Sources */,
 				6B26011B1C99F7F2003ED015 /* JTAppleViews.swift in Sources */,
+				22BFB12C1D114ADF00579170 /* JTAppleCalendarCellViewSource.swift in Sources */,
 				6B2601191C99F7F2003ED015 /* JTAppleCalendarView.swift in Sources */,
 				D8F6CFC26E5DD4CDEE4AFDA7DEA0E4D5 /* JTAppleCalendar-dummy.m in Sources */,
 				6BDFF7CC1C9DD34500571F98 /* JTAppleDayCell.swift in Sources */,
