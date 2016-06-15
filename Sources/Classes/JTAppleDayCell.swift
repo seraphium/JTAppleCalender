@@ -6,8 +6,13 @@
 //  Copyright © 2016 OS-Tech. All rights reserved.
 //
 
-var cellViewSource: JTAppleCallendarCellViewSource?
+enum JTAppleCallendarCellViewSource {
+    case fromXib(String)
+    case fromType(AnyClass)
+    case fromClassName(String)
+}
 
+var cellViewSource: JTAppleCallendarCellViewSource?
 var internalCellInset: CGPoint = CGPoint(x: 3.0, y: 3.0)
 
 /// The JTAppleDayCell class defines the attributes and behavior of the cells that appear in JTAppleCalendarView objects.
